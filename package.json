@@ -1,0 +1,43 @@
+{
+  "name": "variant-curation",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "webpack",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@babel/cli": "^7",
+    "@babel/core": "^7",
+    "@babel/node": "^7",
+    "@babel/plugin-proposal-class-properties": "^7",
+    "@babel/plugin-proposal-object-rest-spread": "^7",
+    "@babel/preset-env": "^7",
+    "@babel/preset-react": "^7",
+    "babel-eslint": "^10",
+    "babel-loader": "^8",
+    "clean-webpack-plugin": "^1.0.1",
+    "eslint": "^5",
+    "eslint-config-airbnb": "17.1.0",
+    "eslint-config-prettier": "4.0.0",
+    "eslint-plugin-import": "^2",
+    "eslint-plugin-jsx-a11y": "^6",
+    "eslint-plugin-prettier": "^3",
+    "eslint-plugin-react": "^7",
+    "prettier": "^1",
+    "webpack": "^4",
+    "webpack-bundle-tracker": "^0.3",
+    "webpack-cli": "^3",
+    "webpack-dev-server": "^3"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7",
+    "lodash": "^4.17",
+    "mousetrap": "^1.6",
+    "prop-types": "^15.7",
+    "react": "^16.8",
+    "react-dom": "^16.8",
+    "react-router-dom": "^4.3.1",
+    "semantic-ui-react": "^0.84"
+  }
+}

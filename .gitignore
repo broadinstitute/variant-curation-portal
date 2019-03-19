@@ -1,0 +1,12 @@
+# Database
+*.sqlite
+*.sqlite3
+
+# Dependencies
+node_modules
+
+# Generated files
+*.pyc
+__pycache__
+static/bundles
+webpack-stats.json

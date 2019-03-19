@@ -1,0 +1,12 @@
+[MASTER]
+load-plugins=pylint_django
+
+[MESSAGES_CONTROL]
+# bad-continuation: conflicts with Black's formatting
+disable=bad-continuation,missing-docstring
+
+[MISCELLANEOUS]
+notes=FIXME,TODO
+
+[FORMAT]
+max-line-length=120

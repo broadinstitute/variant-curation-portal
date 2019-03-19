@@ -1,0 +1,58 @@
+"""
+URL Configuration.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/2.1/topics/http/urls/
+"""
+
+from django.urls import path
+from django.views.generic import TemplateView
+
+from curation_portal.views.auth import SigninView
+from curation_portal.views.curate_variant import CurateVariantView
+from curation_portal.views.projects import ProjectsView
+from curation_portal.views.project_assignments import ProjectAssignmentsView
+from curation_portal.views.project_admin import ProjectAdminView, DownloadProjectResultsView
+from curation_portal.views.user import ProfileView
+
+
+urlpatterns = [
+    path("", TemplateView.as_view(template_name="default.template.html"), name="home"),
+    path("signin/", SigninView.as_view(), name="signin"),
+    path("projects/", TemplateView.as_view(template_name="default.template.html"), name="projects"),
+    path(
+        "project/<int:project_id>/assignments/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="project-assignments",
+    ),
+    path(
+        "project/<int:project_id>/variant/<int:variant_id>/curate/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="curate-variant",
+    ),
+    path(
+        "project/<int:project_id>/admin/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="project-admin",
+    ),
+    path("api/projects/", ProjectsView.as_view(), name="api-projects"),
+    path(
+        "api/project/<int:project_id>/assignments/",
+        ProjectAssignmentsView.as_view(),
+        name="api-project-assignments",
+    ),
+    path(
+        "api/project/<int:project_id>/variant/<int:variant_id>/curate/",
+        CurateVariantView.as_view(),
+        name="api-curate-variant",
+    ),
+    path(
+        "api/project/<int:project_id>/admin/", ProjectAdminView.as_view(), name="api-project-admin"
+    ),
+    path(
+        "api/project/<int:project_id>/results/",
+        DownloadProjectResultsView.as_view(),
+        name="api-project-results",
+    ),
+    path("api/profile/", ProfileView.as_view(), name="api-profile"),
+]

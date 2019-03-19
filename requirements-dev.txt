@@ -1,0 +1,5 @@
+black==19.3b0
+pydocstyle==3.0.0
+pylint==2.3.1
+pylint-django==2.0.6
+tox==3.7.0
