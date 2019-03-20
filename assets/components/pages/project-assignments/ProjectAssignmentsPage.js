@@ -12,11 +12,16 @@ import Legend from "./Legend";
 const ProjectAssignmentsPage = ({ projectId }) => {
   return (
     <BasePage dataURL={`/api/project/${projectId}/assignments/`}>
-      {({ data: project }) => {
-        const numAssignments = project.assignments.length;
-        const numCompleted = project.assignments.filter(
+      {({ data: { project, assignments } }) => {
+        const numAssignments = assignments.length;
+        const numCompleted = assignments.filter(
           assignment => assignment.result && assignment.result.verdict !== null
         ).length;
+
+        const renderedAssignments = assignments.map((assignment, index) => ({
+          ...assignment,
+          index,
+        }));
 
         return (
           <div>
@@ -42,7 +47,7 @@ const ProjectAssignmentsPage = ({ projectId }) => {
               </Segment>
             </div>
             <Item.Group>
-              {project.assignments.map(assignment => (
+              {renderedAssignments.map(assignment => (
                 <AssignmentListItem
                   key={assignment.variant.variant_id}
                   assignment={assignment}

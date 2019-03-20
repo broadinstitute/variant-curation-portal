@@ -2,15 +2,21 @@ import csv
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
-from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.views import View
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
 
-from curation_portal.models import Project, CurationAssignment, CurationResult
+from curation_portal.models import CurationAssignment, CurationResult, Project
+
+
+class ProjectSerializer(ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ("id", "name")
 
 
 class ProjectAdminView(APIView):
@@ -63,7 +69,7 @@ class ProjectAdminView(APIView):
 
             return Response(
                 dict(
-                    project=model_to_dict(project, fields=["id", "name"]),
+                    project=ProjectSerializer(project).data,
                     assignments=assignments,
                     variants=variants,
                 )

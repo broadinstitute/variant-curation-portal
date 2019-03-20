@@ -196,7 +196,14 @@ class CurateVariantPage extends React.Component {
                   <strong>Callset AN:</strong> {variant.AN}
                 </List.Item>
                 <List.Item>
-                  <strong>Consequence:</strong> {variant.consequence}
+                  <strong>Annotations:</strong>
+                  <List>
+                    {variant.annotations.map(annotation => (
+                      <List.Item key={annotation.transcript_id}>
+                        {annotation.transcript_id}: {annotation.consequence}
+                      </List.Item>
+                    ))}
+                  </List>
                 </List.Item>
               </List>
 

@@ -42,7 +42,7 @@ const AssignmentListItem = ({ assignment, projectId }) => {
         <Item.Meta>
           <List className="variant-attributes" horizontal>
             <List.Item>
-              <strong>Gene:</strong> {variant.gene_name}
+              <strong>Genes:</strong> {variant.genes.join(", ")}
             </List.Item>
             <List.Item>
               <strong>AC:</strong> {variant.AC}

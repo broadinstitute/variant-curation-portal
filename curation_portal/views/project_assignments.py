@@ -1,17 +1,49 @@
-from django.forms.models import model_to_dict
+from django.db.models import Prefetch
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework.views import APIView
 
-from curation_portal.models import Project
+from curation_portal.models import (
+    CurationAssignment,
+    CurationResult,
+    Project,
+    Variant,
+    VariantAnnotation,
+)
 
 
-def serialize_assignment(assignment):
-    return {
-        "variant": model_to_dict(assignment.variant, exclude=["curator", "project"]),
-        "result": model_to_dict(assignment.result) if assignment.result else None,
-    }
+class VariantSerializer(ModelSerializer):
+    genes = SerializerMethodField()
+
+    def get_genes(self, obj):  # pylint: disable=no-self-use
+        return set(a.gene_symbol for a in obj.annotations.all())
+
+    class Meta:
+        model = Variant
+        fields = ("id", "variant_id", "AC", "AN", "AF", "genes")
+
+
+class ResultSerializer(ModelSerializer):
+    class Meta:
+        model = CurationResult
+        fields = "__all__"
+
+
+class AssignmentSerializer(ModelSerializer):
+    variant = VariantSerializer()
+    result = ResultSerializer()
+
+    class Meta:
+        model = CurationAssignment
+        fields = ("variant", "result")
+
+
+class ProjectSerializer(ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ("id", "name")
 
 
 class ProjectAssignmentsView(APIView):
@@ -24,6 +56,12 @@ class ProjectAssignmentsView(APIView):
             assignments = list(
                 request.user.curation_assignments.filter(variant__project=project_id)
                 .select_related("result", "variant")
+                .prefetch_related(
+                    Prefetch(
+                        "variant__annotations",
+                        queryset=VariantAnnotation.objects.only("gene_symbol", "variant_id", "id"),
+                    )
+                )
                 .order_by("variant__xpos", "variant__ref", "variant__alt")
                 .all()
             )
@@ -33,12 +71,8 @@ class ProjectAssignmentsView(APIView):
             if not assignments:
                 raise PermissionDenied("You do not have permission to view this project")
 
+            project_serializer = ProjectSerializer(project)
+            assignments_serializer = AssignmentSerializer(assignments, many=True)
             return Response(
-                dict(
-                    model_to_dict(project, fields=["id", "name"]),
-                    assignments=[
-                        dict(serialize_assignment(assignment), index=i)
-                        for i, assignment in enumerate(assignments)
-                    ],
-                )
+                {"project": project_serializer.data, "assignments": assignments_serializer.data}
             )

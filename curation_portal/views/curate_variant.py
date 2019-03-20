@@ -1,13 +1,53 @@
 from django.forms import ModelForm
-from django.forms.models import model_to_dict
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
 
-from curation_portal.models import Project, CurationAssignment, CurationResult
+from curation_portal.models import (
+    CurationAssignment,
+    CurationResult,
+    Project,
+    Sample,
+    Variant,
+    VariantAnnotation,
+)
+
+
+class ProjectSerializer(ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ("id", "name")
+
+
+class ResultSerializer(ModelSerializer):
+    class Meta:
+        model = CurationResult
+        exclude = ("id",)
+
+
+class SampleSerializer(ModelSerializer):
+    class Meta:
+        model = Sample
+        exclude = ("id", "variant")
+
+
+class VariantAnnotationSerializer(ModelSerializer):
+    class Meta:
+        model = VariantAnnotation
+        exclude = ("id", "variant")
+
+
+class VariantSerializer(ModelSerializer):
+    annotations = VariantAnnotationSerializer(many=True)
+    samples = SampleSerializer(many=True)
+
+    class Meta:
+        model = Variant
+        exclude = ("project",)
 
 
 class CurationForm(ModelForm):
@@ -36,7 +76,7 @@ class CurateVariantView(APIView):
             project = Project.objects.get(id=project_id)
             assignment = (
                 request.user.curation_assignments.select_related("variant", "result")
-                .prefetch_related("variant__samples")
+                .prefetch_related("variant__annotations", "variant__samples")
                 .get(variant=variant_id, variant__project=project_id)
             )
         except Project.DoesNotExist:
@@ -67,14 +107,11 @@ class CurateVariantView(APIView):
 
             return Response(
                 {
-                    "project": model_to_dict(project, fields=["id", "name"]),
-                    "variant": dict(
-                        model_to_dict(assignment.variant, exclude=["project"]),
-                        samples=[model_to_dict(s) for s in assignment.variant.samples.all()],
-                    ),
+                    "project": ProjectSerializer(project).data,
+                    "variant": VariantSerializer(assignment.variant).data,
                     "next_variant": serialize_adjacent_variant(next_variant),
                     "previous_variant": serialize_adjacent_variant(previous_variant),
-                    "result": model_to_dict(assignment.result) if assignment.result else None,
+                    "result": ResultSerializer(assignment.result).data,
                 }
             )
 

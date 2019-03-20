@@ -36,11 +36,6 @@ class Variant(models.Model):
     AN = models.IntegerField(null=True, blank=True)
     AF = models.FloatField(null=True, blank=True)
 
-    gene_name = models.CharField(max_length=100, null=True, blank=True)
-    transcript_id = models.CharField(max_length=100, null=True, blank=True)
-
-    consequence = models.CharField(max_length=1000, null=True, blank=True)
-
     class Meta:
         db_table = "curation_variant"
         unique_together = ("project", "variant_id")
@@ -60,6 +55,24 @@ def set_xpos(sender, instance, **kwargs):  # pylint: disable=unused-argument
             chrom_number = int(instance.chrom)
 
         instance.xpos = chrom_number * 1_000_000_000 + instance.pos
+
+
+class VariantAnnotation(models.Model):
+    variant = models.ForeignKey(
+        Variant,
+        on_delete=models.CASCADE,
+        related_name="annotations",
+        related_query_name="annotation",
+    )
+
+    consequence = models.CharField(max_length=1000)
+    gene_id = models.CharField(max_length=16)
+    gene_symbol = models.CharField(max_length=16)
+    transcript_id = models.CharField(max_length=16)
+
+    class Meta:
+        db_table = "curation_variant_annotation"
+        unique_together = ("variant", "transcript_id")
 
 
 class Sample(models.Model):
