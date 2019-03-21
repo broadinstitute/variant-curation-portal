@@ -6,7 +6,7 @@ from django.db.models import Count
 from django.http import HttpResponse
 from django.views import View
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
@@ -79,7 +79,9 @@ class ProjectAdminView(APIView):
 
 
 class CreateProjectView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, DjangoModelPermissions)
+
+    queryset = Project.objects.none()  # required for DjangoModelPermissions
 
     def post(self, request, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data)
