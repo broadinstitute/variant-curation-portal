@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError, transaction
 from django.db.models import Count
 from django.http import HttpResponse
+from django.utils import timezone
 from django.views import View
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
@@ -88,7 +89,7 @@ class CreateProjectView(APIView):
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
 
-        project = serializer.save()
+        project = serializer.save(created_by=request.user)
         project.owners.set([request.user])
         return Response(serializer.data)
 
@@ -113,6 +114,8 @@ class ProjectVariantsView(APIView):
             try:
                 with transaction.atomic():
                     serializer.save(project=project)
+                    project.updated_at = timezone.now()
+                    project.save()
 
                 return Response({})
             except IntegrityError:

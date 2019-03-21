@@ -14,6 +14,10 @@ class Project(models.Model):
         User, related_name="owned_projects", related_query_name="owned_project"
     )
 
+    created_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         db_table = "curation_project"
 

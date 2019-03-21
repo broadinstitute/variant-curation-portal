@@ -52,4 +52,5 @@ def test_create_project_creates_project(db_setup):
     assert response.status_code == 200
     assert Project.objects.filter(name="Create Project Test Project").exists()
     project = Project.objects.get(name="Create Project Test Project")
+    assert project.created_by == user
     assert user in project.owners.all()
