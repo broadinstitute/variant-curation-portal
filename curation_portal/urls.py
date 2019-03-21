@@ -24,6 +24,12 @@ from curation_portal.views.user import ProfileView
 urlpatterns = [
     path("", TemplateView.as_view(template_name="default.template.html"), name="home"),
     path("signin/", SigninView.as_view(), name="signin"),
+    path(
+        "privacy/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="privacy-policy",
+    ),
+    path("terms/", TemplateView.as_view(template_name="default.template.html"), name="terms"),
     path("projects/", TemplateView.as_view(template_name="default.template.html"), name="projects"),
     path(
         "projects/create/",

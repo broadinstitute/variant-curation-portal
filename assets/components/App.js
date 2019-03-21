@@ -4,10 +4,12 @@ import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 
 import CurateVariantPage from "./pages/curate-variant/CurateVariantPage";
 import HomePage from "./pages/HomePage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/project-admin/CreateProjectPage";
 import ProjectAdminPage from "./pages/project-admin/ProjectAdminPage";
 import ProjectAssignmentsPage from "./pages/project-assignments/ProjectAssignmentsPage";
+import TermsPage from "./pages/TermsPage";
 import UploadVariantsPage from "./pages/project-admin/UploadVariantsPage";
 
 class App extends Component {
@@ -57,12 +59,15 @@ class App extends Component {
             </Container>
           </Menu>
 
-          <div style={{ marginTop: "65px" }}>
+          <div style={{ paddingTop: "65px" }}>
             <Route
               exact
               path="/"
               render={props => (user ? <Redirect to="/projects/" /> : <HomePage {...props} />)}
             />
+            <Route exact path="/privacy/" component={PrivacyPolicyPage} />
+            <Route exact path="/terms/" component={TermsPage} />
+
             <Route exact path="/projects/" component={ProjectsPage} />
             <Route exact path="/projects/create/" component={CreateProjectPage} />
             <Route
@@ -78,6 +83,17 @@ class App extends Component {
               component={CurateVariantPage}
             />
           </div>
+
+          <Menu fixed="bottom" size="mini">
+            <Container fluid>
+              <Menu.Item>
+                <Link to="/privacy/">Privacy Policy</Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Link to="/terms/">Terms of Service</Link>
+              </Menu.Item>
+            </Container>
+          </Menu>
         </div>
       </Router>
     );
