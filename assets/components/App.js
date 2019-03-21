@@ -5,8 +5,10 @@ import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 import CurateVariantPage from "./pages/curate-variant/CurateVariantPage";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
+import CreateProjectPage from "./pages/project-admin/CreateProjectPage";
 import ProjectAdminPage from "./pages/project-admin/ProjectAdminPage";
 import ProjectAssignmentsPage from "./pages/project-assignments/ProjectAssignmentsPage";
+import UploadVariantsPage from "./pages/project-admin/UploadVariantsPage";
 
 class App extends Component {
   state = {
@@ -58,11 +60,13 @@ class App extends Component {
           <div style={{ marginTop: "65px" }}>
             <Route exact path="/" component={HomePage} />
             <Route exact path="/projects/" component={ProjectsPage} />
+            <Route exact path="/projects/create/" component={CreateProjectPage} />
             <Route
               exact
               path="/project/:projectId/assignments/"
               component={ProjectAssignmentsPage}
             />
+            <Route exact path="/project/:projectId/variants/" component={UploadVariantsPage} />
             <Route exact path="/project/:projectId/admin/" component={ProjectAdminPage} />
             <Route
               exact

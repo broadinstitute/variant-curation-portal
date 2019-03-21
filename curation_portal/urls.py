@@ -12,7 +12,12 @@ from curation_portal.views.auth import SigninView
 from curation_portal.views.curate_variant import CurateVariantView
 from curation_portal.views.projects import ProjectsView
 from curation_portal.views.project_assignments import ProjectAssignmentsView
-from curation_portal.views.project_admin import ProjectAdminView, DownloadProjectResultsView
+from curation_portal.views.project_admin import (
+    CreateProjectView,
+    ProjectAdminView,
+    ProjectVariantsView,
+    DownloadProjectResultsView,
+)
 from curation_portal.views.user import ProfileView
 
 
@@ -21,9 +26,19 @@ urlpatterns = [
     path("signin/", SigninView.as_view(), name="signin"),
     path("projects/", TemplateView.as_view(template_name="default.template.html"), name="projects"),
     path(
+        "projects/create/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="create-project",
+    ),
+    path(
         "project/<int:project_id>/assignments/",
         TemplateView.as_view(template_name="default.template.html"),
         name="project-assignments",
+    ),
+    path(
+        "project/<int:project_id>/variants/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="project-variants",
     ),
     path(
         "project/<int:project_id>/variant/<int:variant_id>/curate/",
@@ -36,10 +51,16 @@ urlpatterns = [
         name="project-admin",
     ),
     path("api/projects/", ProjectsView.as_view(), name="api-projects"),
+    path("api/projects/create/", CreateProjectView.as_view(), name="api-create-project"),
     path(
         "api/project/<int:project_id>/assignments/",
         ProjectAssignmentsView.as_view(),
         name="api-project-assignments",
+    ),
+    path(
+        "api/project/<int:project_id>/variants/",
+        ProjectVariantsView.as_view(),
+        name="api-project-variants",
     ),
     path(
         "api/project/<int:project_id>/variant/<int:variant_id>/curate/",

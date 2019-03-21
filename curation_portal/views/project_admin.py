@@ -1,16 +1,18 @@
 import csv
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import IntegrityError, transaction
 from django.db.models import Count
 from django.http import HttpResponse
 from django.views import View
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
 
 from curation_portal.models import CurationAssignment, CurationResult, Project
+from curation_portal.serializers import VariantSerializer
 
 
 class ProjectSerializer(ModelSerializer):
@@ -74,6 +76,45 @@ class ProjectAdminView(APIView):
                     variants=variants,
                 )
             )
+
+
+class CreateProjectView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = ProjectSerializer(data=request.data)
+        if not serializer.is_valid():
+            raise ValidationError(serializer.errors)
+
+        project = serializer.save()
+        project.owners.set([request.user])
+        return Response(serializer.data)
+
+
+class ProjectVariantsView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs["project_id"]
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            raise NotFound("Project does not exist")
+        else:
+            if not project.owners.filter(id=request.user.id).exists():
+                raise PermissionDenied("You do not have permission to view this page")
+
+            serializer = VariantSerializer(data=request.data, many=True)
+            if not serializer.is_valid():
+                raise ValidationError(serializer.errors)
+
+            try:
+                with transaction.atomic():
+                    serializer.save(project=project)
+
+                return Response({})
+            except IntegrityError:
+                raise ValidationError("Integrity error")
 
 
 class DownloadProjectResultsView(LoginRequiredMixin, View):

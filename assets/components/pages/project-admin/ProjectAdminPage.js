@@ -19,6 +19,10 @@ const ProjectAdminPage = ({ projectId }) => (
           <div>
             <Link to="/projects/">Return to all projects</Link>
           </div>
+          <Header as="h2">Manage</Header>
+          <p>
+            <Link to={`/project/${projectId}/variants`}>Upload variants</Link>
+          </p>
           <Header as="h2">Curators</Header>
           <Item.Group>
             {Object.entries(assignments).map(([curator, { total, completed }]) => (

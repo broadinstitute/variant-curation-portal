@@ -2,23 +2,19 @@
 import pytest
 from rest_framework.test import APIClient
 
-from curation_portal.models import CurationAssignment, Project, User, Variant
+from curation_portal.models import CurationAssignment, Project, User
 
 pytestmark = pytest.mark.django_db  # pylint: disable=invalid-name
 
 
 @pytest.fixture(scope="module")
-def db_setup(django_db_setup, django_db_blocker):
+def db_setup(django_db_setup, django_db_blocker, create_variant):
     with django_db_blocker.unblock():
         project1 = Project.objects.create(name="Project #1")
-        variant1 = Variant.objects.create(
-            project=project1, variant_id="1-100-A-G", chrom="1", pos=100, ref="A", alt="G"
-        )
+        variant1 = create_variant(project1, "1-100-A-G")
 
         project2 = Project.objects.create(name="Project #2")
-        variant2 = Variant.objects.create(
-            project=project2, variant_id="2-300-C-G", chrom="2", pos=300, ref="C", alt="G"
-        )
+        variant2 = create_variant(project2, "2-300-C-G")
 
         user1 = User.objects.create(username="user1@example.com")
         user2 = User.objects.create(username="user2@example.com")

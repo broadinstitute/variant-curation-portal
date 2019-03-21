@@ -1,7 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 
 
 class User(AbstractUser):
@@ -40,21 +38,6 @@ class Variant(models.Model):
         db_table = "curation_variant"
         unique_together = ("project", "variant_id")
         ordering = ("xpos", "ref", "alt")
-
-
-@receiver(pre_save, sender=Variant)
-def set_xpos(sender, instance, **kwargs):  # pylint: disable=unused-argument
-    if not instance.xpos:
-        if instance.chrom == "X":
-            chrom_number = 23
-        elif instance.chrom == "Y":
-            chrom_number = 24
-        elif instance.chrom == "M":
-            chrom_number = 25
-        else:
-            chrom_number = int(instance.chrom)
-
-        instance.xpos = chrom_number * 1_000_000_000 + instance.pos
 
 
 class VariantAnnotation(models.Model):
