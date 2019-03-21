@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Link, Redirect, Route } from "react-router-dom";
+import { BrowserRouter as Router, Link, Redirect, Route, Switch } from "react-router-dom";
 import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 
 import CurateVariantPage from "./pages/curate-variant/CurateVariantPage";
 import HomePage from "./pages/HomePage";
+import PageNotFoundPage from "./pages/PageNotFoundPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/project-admin/CreateProjectPage";
@@ -60,30 +61,33 @@ class App extends Component {
           </Menu>
 
           <div style={{ paddingTop: "65px" }}>
-            <Route
-              exact
-              path="/"
-              render={props => (user ? <Redirect to="/projects/" /> : <HomePage {...props} />)}
-            />
-            <Route exact path="/privacy/" component={PrivacyPolicyPage} />
-            <Route exact path="/terms/" component={TermsPage} />
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={props => (user ? <Redirect to="/projects/" /> : <HomePage {...props} />)}
+              />
+              <Route exact path="/privacy/" component={PrivacyPolicyPage} />
+              <Route exact path="/terms/" component={TermsPage} />
 
-            <Route exact path="/projects/" component={ProjectsPage} />
-            {user && user.permissions.includes("add_project") && (
-              <Route exact path="/projects/create/" component={CreateProjectPage} />
-            )}
-            <Route
-              exact
-              path="/project/:projectId/assignments/"
-              component={ProjectAssignmentsPage}
-            />
-            <Route exact path="/project/:projectId/variants/" component={UploadVariantsPage} />
-            <Route exact path="/project/:projectId/admin/" component={ProjectAdminPage} />
-            <Route
-              exact
-              path="/project/:projectId/variant/:variantId/curate/"
-              component={CurateVariantPage}
-            />
+              <Route exact path="/projects/" component={ProjectsPage} />
+              {user && user.permissions.includes("add_project") && (
+                <Route exact path="/projects/create/" component={CreateProjectPage} />
+              )}
+              <Route
+                exact
+                path="/project/:projectId/assignments/"
+                component={ProjectAssignmentsPage}
+              />
+              <Route exact path="/project/:projectId/variants/" component={UploadVariantsPage} />
+              <Route exact path="/project/:projectId/admin/" component={ProjectAdminPage} />
+              <Route
+                exact
+                path="/project/:projectId/variant/:variantId/curate/"
+                component={CurateVariantPage}
+              />
+              <Route component={PageNotFoundPage} />
+            </Switch>
           </div>
 
           <Menu fixed="bottom" size="mini">
