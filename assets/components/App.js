@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Link, Route } from "react-router-dom";
+import { BrowserRouter as Router, Link, Redirect, Route } from "react-router-dom";
 import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 
 import CurateVariantPage from "./pages/curate-variant/CurateVariantPage";
@@ -58,7 +58,11 @@ class App extends Component {
           </Menu>
 
           <div style={{ marginTop: "65px" }}>
-            <Route exact path="/" component={HomePage} />
+            <Route
+              exact
+              path="/"
+              render={props => (user ? <Redirect to="/projects/" /> : <HomePage {...props} />)}
+            />
             <Route exact path="/projects/" component={ProjectsPage} />
             <Route exact path="/projects/create/" component={CreateProjectPage} />
             <Route
