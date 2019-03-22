@@ -52,7 +52,7 @@ const config = {
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: "production" }),
     new BundleTracker({ filename: "./webpack-stats.json" }),
-    new CleanWebpackPlugin(path.resolve(__dirname, "static/bundles")),
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: isDev ? "[name].css" : "[name]-[hash].css",
       chunkFilename: isDev ? "[id].css" : "[id]-[hash].css",
