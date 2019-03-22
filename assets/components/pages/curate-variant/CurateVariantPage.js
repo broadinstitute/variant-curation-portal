@@ -10,6 +10,7 @@ import BasePage from "../BasePage";
 import withParamsAsProps from "../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
+import SampleTable from "./SampleTable";
 
 class CurateVariantPage extends React.Component {
   static propTypes = {
@@ -210,47 +211,7 @@ class CurateVariantPage extends React.Component {
               {/**
                 Sample list
                */}
-
-              {/* <table style={{ borderSpacing: '10px', textAlign: 'center', width: '100%' }}>
-          <thead>
-            <tr>
-              <th />
-              <th>Genotype</th>
-              <th style={{ width: '150px' }}>
-                Allele Balance
-                <br />
-                <span style={{ fontSize: '10px' }}>REF, ALT (ALT/DP)</span>
-              </th>
-              <th>DP</th>
-              <th>GQ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.samples.map((sample, i) => (
-              <tr key={sample.sample_id}>
-                <td>{i + 1}</td>
-                <td>{sample.GT === '1/1' ? 'HOM' : sample.GT === '0/1' ? 'HET' : sample.GT}</td>
-                <td
-                  style={{
-                    backgroundColor:
-                      sample.GT !== '1/1' ? 'white' : sample.AB >= 0.8 ? 'LightGreen' : '#FF9999',
-                  }}
-                >
-                  {sample.AD_REF}, {sample.AD_ALT} ({Math.round(sample.AB * 100)}%)
-                </td>
-                <td
-                  style={{
-                    backgroundColor:
-                      sample.GT !== '1/1' ? 'white' : sample.DP >= 7 ? 'white' : '#FF9999',
-                  }}
-                >
-                  {sample.DP}
-                </td>
-                <td>{sample.GQ}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
+              <SampleTable samples={variant.samples} />
 
               <hr style={{ margin: "30px 0" }} />
 
