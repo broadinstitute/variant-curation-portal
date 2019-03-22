@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Link, Redirect, Route, Switch } from "react-router-dom";
+import "semantic-ui-css/semantic.css";
 import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 
 import CurateVariantPage from "./pages/curate-variant/CurateVariantPage";

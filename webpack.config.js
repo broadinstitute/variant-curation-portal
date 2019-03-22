@@ -2,6 +2,7 @@ const path = require("path");
 
 const BundleTracker = require("webpack-bundle-tracker");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 
 const isDev = process.env.NODE_ENV === "development";
@@ -33,17 +34,29 @@ const config = {
           },
         },
       },
+      {
+        test: /\.css$/,
+        use: [isDev ? "style-loader" : MiniCssExtractPlugin.loader, "css-loader"],
+      },
+      {
+        test: /\.(png|svg|eot|ttf|woff2?)$/,
+        use: "file-loader",
+      },
     ],
   },
   output: {
     path: path.resolve(__dirname, "static/bundles"),
     publicPath: "/static/bundles/",
-    filename: "[name]-[hash].js",
+    filename: isDev ? "[name].js" : "[name]-[hash].js",
   },
   plugins: [
     new webpack.EnvironmentPlugin({ NODE_ENV: "production" }),
     new BundleTracker({ filename: "./webpack-stats.json" }),
     new CleanWebpackPlugin(path.resolve(__dirname, "static/bundles")),
+    new MiniCssExtractPlugin({
+      filename: isDev ? "[name].css" : "[name]-[hash].css",
+      chunkFilename: isDev ? "[id].css" : "[id]-[hash].css",
+    }),
   ],
 };
 
