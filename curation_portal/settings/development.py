@@ -12,3 +12,9 @@ LOGGING = {
     "handlers": {"console": {"level": "DEBUG", "class": "logging.StreamHandler"}},
     "loggers": {"django": {"handlers": ["console"], "level": "DEBUG", "propagate": False}},
 }
+
+SECURE_SSL_REDIRECT = False
+
+SESSION_COOKIE_SECURE = False
+
+CSRF_COOKIE_SECURE = False
