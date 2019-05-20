@@ -4,17 +4,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-class ProjectsView(APIView):
+class AssignedProjectsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        owned_projects = list(request.user.owned_projects.values("id", "name").all())
-
         assigned_projects = list(
             request.user.curation_assignments.values("variant__project", "variant__project__name")
             .annotate(num_assignments=Count("variant_id"))
             .all()
         )
+
         completed_assignments_by_project = {
             result["variant__project"]: result["count"]
             for result in request.user.curation_assignments.filter(result__verdict__isnull=False)
@@ -25,8 +24,7 @@ class ProjectsView(APIView):
 
         return Response(
             {
-                "owned": owned_projects,
-                "assigned": [
+                "projects": [
                     {
                         "id": project["variant__project"],
                         "name": project["variant__project__name"],
@@ -36,6 +34,15 @@ class ProjectsView(APIView):
                         ),
                     }
                     for project in assigned_projects
-                ],
+                ]
             }
         )
+
+
+class OwnedProjectsView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        owned_projects = list(request.user.owned_projects.values("id", "name").all())
+
+        return Response({"projects": owned_projects})

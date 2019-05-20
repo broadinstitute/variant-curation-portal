@@ -56,8 +56,14 @@ def test_projects_list_includes_owned_projects(db_setup, username, expected_proj
     client = APIClient()
     client.force_authenticate(User.objects.get(username=username))
     response = client.get("/api/projects/").json()
-    owned_projects = [project["name"] for project in response["owned"]]
+    owned_projects = [project["name"] for project in response["projects"]]
     assert owned_projects == expected_projects
+
+
+def test_assigned_projects_list_requires_authentication(db_setup):
+    client = APIClient()
+    response = client.get("/api/assignments/")
+    assert response.status_code == 403
 
 
 @pytest.mark.parametrize(
@@ -69,9 +75,9 @@ def test_projects_list_includes_owned_projects(db_setup, username, expected_proj
         ("user4@example.com", []),
     ],
 )
-def test_projects_list_includes_assigned_projects(db_setup, username, expected_projects):
+def test_assigned_projects_list_includes_assigned_projects(db_setup, username, expected_projects):
     client = APIClient()
     client.force_authenticate(User.objects.get(username=username))
-    response = client.get("/api/projects/").json()
-    assigned_projects = [project["name"] for project in response["assigned"]]
+    response = client.get("/api/assignments/").json()
+    assigned_projects = [project["name"] for project in response["projects"]]
     assert assigned_projects == expected_projects

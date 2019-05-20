@@ -7,6 +7,7 @@ import CurateVariantPage from "./pages/curate-variant/CurateVariantPage";
 import HomePage from "./pages/HomePage";
 import PageNotFoundPage from "./pages/PageNotFoundPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import AssignedProjectsPage from "./pages/projects/AssignedProjectsPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/project-admin/CreateProjectPage";
 import ProjectAdminPage from "./pages/project-admin/ProjectAdminPage";
@@ -55,6 +56,12 @@ class App extends Component {
               <Menu.Item header>
                 <Link to="/">Variant Curation</Link>
               </Menu.Item>
+              <Menu.Item>
+                <Link to="/assignments/">Assignments</Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Link to="/projects/">Projects</Link>
+              </Menu.Item>
               <Menu.Item position="right">
                 {user ? user.username : <a href="/signin/">Sign in</a>}
               </Menu.Item>
@@ -66,11 +73,12 @@ class App extends Component {
               <Route
                 exact
                 path="/"
-                render={props => (user ? <Redirect to="/projects/" /> : <HomePage {...props} />)}
+                render={props => (user ? <Redirect to="/assignments/" /> : <HomePage {...props} />)}
               />
               <Route exact path="/privacy/" component={PrivacyPolicyPage} />
               <Route exact path="/terms/" component={TermsPage} />
 
+              <Route exact path="/assignments/" component={AssignedProjectsPage} />
               <Route exact path="/projects/" component={ProjectsPage} />
               {user && user.permissions.includes("add_project") && (
                 <Route exact path="/projects/create/" component={CreateProjectPage} />

@@ -2,7 +2,7 @@
 import pytest
 from rest_framework.test import APIClient
 
-from curation_portal.models import CurationAssignment, Project, User
+from curation_portal.models import CurationAssignment, Project, User, Variant
 
 pytestmark = pytest.mark.django_db  # pylint: disable=invalid-name
 
@@ -58,8 +58,10 @@ def test_curate_variant_view_can_only_be_viewed_by_variant_curators(
     client = APIClient()
     client.force_authenticate(User.objects.get(username=username))
 
-    response = client.get("/api/project/1/variant/1/curate/")
+    variant1 = Variant.objects.get(variant_id="1-100-A-G", project__id=1)
+
+    response = client.get(f"/api/project/1/variant/{variant1.id}/curate/")
     assert response.status_code == expected_status_code
 
-    response = client.post("/api/project/1/variant/1/curate/", {}, format="json")
+    response = client.post(f"/api/project/1/variant/{variant1.id}/curate/", {}, format="json")
     assert response.status_code == expected_status_code

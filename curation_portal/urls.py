@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 
 from curation_portal.views.auth import SigninView
 from curation_portal.views.curate_variant import CurateVariantView
-from curation_portal.views.projects import ProjectsView
+from curation_portal.views.projects import AssignedProjectsView, OwnedProjectsView
 from curation_portal.views.project_assignments import ProjectAssignmentsView
 from curation_portal.views.project_admin import (
     CreateProjectView,
@@ -30,6 +30,11 @@ urlpatterns = [
         name="privacy-policy",
     ),
     path("terms/", TemplateView.as_view(template_name="default.template.html"), name="terms"),
+    path(
+        "assignments/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="assignments",
+    ),
     path("projects/", TemplateView.as_view(template_name="default.template.html"), name="projects"),
     path(
         "projects/create/",
@@ -56,7 +61,8 @@ urlpatterns = [
         TemplateView.as_view(template_name="default.template.html"),
         name="project-admin",
     ),
-    path("api/projects/", ProjectsView.as_view(), name="api-projects"),
+    path("api/assignments/", AssignedProjectsView.as_view(), name="api-assignments"),
+    path("api/projects/", OwnedProjectsView.as_view(), name="api-projects"),
     path("api/projects/create/", CreateProjectView.as_view(), name="api-create-project"),
     path(
         "api/project/<int:project_id>/assignments/",

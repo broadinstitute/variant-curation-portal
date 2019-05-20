@@ -7,19 +7,18 @@ import BasePage from "../BasePage";
 
 const ProjectsPage = () => {
   return (
-    <BasePage dataURL="/api/projects/" title="Projects">
+    <BasePage dataURL="/api/projects/">
       {({ data }) => {
         return (
-          <div>
+          <React.Fragment>
+            <Header as="h1" dividing>
+              Projects
+            </Header>
             <DocumentTitle title="Projects" />
-            {data.owned.length > 0 && (
+            {data.projects.length > 0 ? (
               <React.Fragment>
-                <Header as="h2" dividing>
-                  Projects
-                </Header>
-                <Header as="h2">Owned Projects</Header>
                 <Item.Group>
-                  {data.owned.map(project => (
+                  {data.projects.map(project => (
                     <Item key={project.id}>
                       <Item.Content>
                         <Item.Header>
@@ -30,27 +29,10 @@ const ProjectsPage = () => {
                   ))}
                 </Item.Group>
               </React.Fragment>
+            ) : (
+              <p>No projects.</p>
             )}
-            {data.assigned.length > 0 && (
-              <React.Fragment>
-                <Header as="h2">Assigned Projects</Header>
-                <Item.Group>
-                  {data.assigned.map(project => (
-                    <Item key={project.id}>
-                      <Item.Content>
-                        <Item.Header>
-                          <Link to={`/project/${project.id}/assignments/`}>{project.name}</Link>
-                        </Item.Header>
-                        <Item.Meta>
-                          {project.variants_curated} / {project.variants_assigned} variants curated
-                        </Item.Meta>
-                      </Item.Content>
-                    </Item>
-                  ))}
-                </Item.Group>
-              </React.Fragment>
-            )}
-          </div>
+          </React.Fragment>
         );
       }}
     </BasePage>
