@@ -6,13 +6,13 @@
 
   ```
   pip install -r requirements.txt
-  npm install
+  yarn
   ```
 
 - Build front end
 
   ```
-  npm run build
+  yarn run build
   ```
 
 - Migrate database
