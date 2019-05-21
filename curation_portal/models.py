@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 
 
 class User(AbstractUser):
@@ -100,6 +102,12 @@ class CurationAssignment(models.Model):
     class Meta:
         db_table = "curation_assignment"
         unique_together = ("variant", "curator")
+
+
+@receiver(post_delete, sender=CurationAssignment)
+def delete_assignment_result(sender, instance, *args, **kwargs):  # pylint: disable=unused-argument
+    if instance.result:
+        instance.result.delete()
 
 
 class CurationResult(models.Model):
