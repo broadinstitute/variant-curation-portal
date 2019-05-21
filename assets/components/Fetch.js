@@ -48,29 +48,40 @@ class BaseFetch extends Component {
 
     this.currentRequest = makeCancelable(fetch(url));
     this.currentRequest
-      .then(response => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
-      })
       .then(
-        data => {
-          this.setState({
-            data,
-            error: null,
-            isFetching: false,
-          });
-        },
-        response =>
-          response.json().then(data => {
+        response => {
+          if (!response.ok) {
+            return response.json().then(data => {
+              this.setState({
+                data,
+                error: response,
+                isFetching: false,
+              });
+            });
+          }
+          return response.json().then(data => {
             this.setState({
               data,
-              error: response,
+              error: null,
               isFetching: false,
             });
-          })
-      );
+          });
+        },
+        error => {
+          this.setState({
+            data: null,
+            error,
+            isFetching: false,
+          });
+        }
+      )
+      .then(null, error => {
+        this.setState({
+          data: null,
+          error,
+          isFetching: false,
+        });
+      });
   }
 
   render() {
@@ -94,7 +105,7 @@ const Fetch = ({ children, url }) => (
         return (
           <Message error>
             <Message.Header>Error</Message.Header>
-            <p>{data.detail || "Unknown error"}</p>
+            <p>{(data && data.detail) || "Unknown error"}</p>
             <p>
               <Link to="/">Return to home page</Link>
             </p>
