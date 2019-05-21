@@ -10,10 +10,7 @@ import TermsPage from "./pages/TermsPage";
 import AssignedProjectsPage from "./pages/projects/AssignedProjectsPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/projects/CreateProjectPage";
-import ProjectAssignmentsPage from "./pages/project/assignments/ProjectAssignmentsPage";
-import ProjectAdminPage from "./pages/project/admin/ProjectAdminPage";
-import UploadVariantsPage from "./pages/project/admin/UploadVariantsPage";
-import CurateVariantPage from "./pages/project/curate/CurateVariantPage";
+import ProjectPage from "./pages/project/ProjectPage";
 
 class App extends Component {
   state = {
@@ -87,17 +84,10 @@ class App extends Component {
               <Route exact path="/projects/create/" component={CreateProjectPage} />
 
               <Route
-                exact
-                path="/project/:projectId/assignments/"
-                component={ProjectAssignmentsPage}
+                path="/project/:projectId/"
+                render={props => <ProjectPage {...props} user={user} />}
               />
-              <Route exact path="/project/:projectId/variants/" component={UploadVariantsPage} />
-              <Route exact path="/project/:projectId/admin/" component={ProjectAdminPage} />
-              <Route
-                exact
-                path="/project/:projectId/variant/:variantId/curate/"
-                component={CurateVariantPage}
-              />
+
               <Route component={PageNotFoundPage} />
             </Switch>
           </div>

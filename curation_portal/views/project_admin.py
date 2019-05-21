@@ -2,7 +2,6 @@ import csv
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError, transaction
-from django.db.models import Count
 from django.http import HttpResponse
 from django.utils import timezone
 from django.views import View
@@ -20,63 +19,6 @@ class ProjectSerializer(ModelSerializer):
     class Meta:
         model = Project
         fields = ("id", "name")
-
-
-class ProjectAdminView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request, *args, **kwargs):
-        project_id = kwargs["project_id"]
-        try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            raise NotFound("Project does not exist")
-        else:
-            if not project.owners.filter(id=request.user.id).exists():
-                raise PermissionDenied("You do not have permission to view this page")
-
-            total_assignments_by_curator = dict(
-                CurationAssignment.objects.filter(variant__project=project)
-                .values_list("curator__username")
-                .annotate(num_assignments=Count("variant"))
-                .all()
-            )
-            completed_assignments_by_curator = dict(
-                CurationAssignment.objects.filter(
-                    variant__project=project, result__verdict__isnull=False
-                )
-                .values_list("curator__username")
-                .annotate(num_assignments=Count("variant"))
-                .all()
-            )
-
-            assignments = {
-                curator: {
-                    "total": num_assignments,
-                    "completed": completed_assignments_by_curator.get(curator, 0),
-                }
-                for curator, num_assignments in total_assignments_by_curator.items()
-            }
-
-            total_variants = project.variants.count()
-            num_curated_variants = (
-                CurationAssignment.objects.filter(
-                    variant__project=project, result__verdict__isnull=False
-                )
-                .values("variant__variant_id")
-                .distinct()
-                .count()
-            )
-
-            variants = {"total": total_variants, "curated": num_curated_variants}
-
-            return Response(
-                dict(
-                    project=ProjectSerializer(project).data,
-                    assignments=assignments,
-                    variants=variants,
-                )
-            )
 
 
 class CreateProjectView(APIView):

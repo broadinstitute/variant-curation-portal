@@ -5,15 +5,16 @@ import { Button, Form, Header, Icon, Message } from "semantic-ui-react";
 
 import getCookie from "../../../../utilities/getCookie";
 import DocumentTitle from "../../../DocumentTitle";
-import BasePage from "../../BasePage";
-import withParamsAsProps from "../../withParamsAsProps";
 
 class UploadVariantsPage extends Component {
   static propTypes = {
     history: PropTypes.shape({
       push: PropTypes.func.isRequired,
     }).isRequired,
-    projectId: PropTypes.number.isRequired,
+    project: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    }).isRequired,
   };
 
   variantData = null;
@@ -28,10 +29,10 @@ class UploadVariantsPage extends Component {
   };
 
   onSubmit = () => {
-    const { history, projectId } = this.props;
+    const { history, project } = this.props;
 
     this.setState({ isSaving: true, saveError: null });
-    fetch(`/api/project/${projectId}/variants/`, {
+    fetch(`/api/project/${project.id}/variants/`, {
       body: JSON.stringify(this.variantData),
       credentials: "same-origin",
       headers: {
@@ -47,7 +48,7 @@ class UploadVariantsPage extends Component {
         return response.json();
       })
       .then(() => {
-        history.push(`/project/${projectId}/admin/`);
+        history.push(`/project/${project.id}/`);
       })
       .catch(error => {
         this.setState({ isSaving: false, saveError: error });
@@ -88,51 +89,45 @@ class UploadVariantsPage extends Component {
   };
 
   render() {
-    const { projectId } = this.props;
+    const { project } = this.props;
     const { fileName, fileReadError, hasFileData, isReadingFile, isSaving, saveError } = this.state;
 
     return (
-      <BasePage dataURL={`/api/project/${projectId}/admin/`} title="Variant">
-        {({ data: { project } }) => (
-          <div>
-            <DocumentTitle title={`${project.name} | Upload Variants`} />
-            <Header as="h1" dividing>
-              {project.name}
-            </Header>
-            <div>
-              <Form
-                error={Boolean(fileReadError || saveError)}
-                style={{ marginBottom: "1rem" }}
-                onSubmit={this.onSubmit}
-              >
-                <Button as="label" htmlFor="variant-file">
-                  <Icon name="upload" />
-                  {fileName || "Select variant file"}
-                  <input
-                    disabled={isReadingFile}
-                    hidden
-                    id="variant-file"
-                    type="file"
-                    onChange={e => this.onSelectFile(e.target.files[0])}
-                  />
-                </Button>
-                {fileReadError && <Message error header="Failed to read file" />}
-                {saveError && <Message error header="Failed to upload variants" />}
-                <Button disabled={!hasFileData || isSaving} primary type="submit">
-                  Upload
-                </Button>
-              </Form>
-              <Button as={Link} to={`/project/${projectId}/admin/`}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        )}
-      </BasePage>
+      <React.Fragment>
+        <DocumentTitle title={project.name} />
+        <Header as="h1" dividing>
+          {project.name}
+        </Header>
+        <div>
+          <Form
+            error={Boolean(fileReadError || saveError)}
+            style={{ marginBottom: "1rem" }}
+            onSubmit={this.onSubmit}
+          >
+            <Button as="label" htmlFor="variant-file">
+              <Icon name="upload" />
+              {fileName || "Select variant file"}
+              <input
+                disabled={isReadingFile}
+                hidden
+                id="variant-file"
+                type="file"
+                onChange={e => this.onSelectFile(e.target.files[0])}
+              />
+            </Button>
+            {fileReadError && <Message error header="Failed to read file" />}
+            {saveError && <Message error header="Failed to upload variants" />}
+            <Button disabled={!hasFileData || isSaving} primary type="submit">
+              Upload
+            </Button>
+          </Form>
+          <Button as={Link} to={`/project/${project.id}/`}>
+            Cancel
+          </Button>
+        </div>
+      </React.Fragment>
     );
   }
 }
 
-export default withParamsAsProps(({ projectId }) => ({
-  projectId: parseInt(projectId, 10),
-}))(UploadVariantsPage);
+export default UploadVariantsPage;

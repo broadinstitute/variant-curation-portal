@@ -38,9 +38,9 @@ def db_setup(django_db_setup, django_db_blocker, create_variant):
         user4.delete()
 
 
-def test_project_admin_view_requires_authentication(db_setup):
+def test_project_view_requires_authentication(db_setup):
     client = APIClient()
-    response = client.get("/api/project/1/admin/")
+    response = client.get("/api/project/1/")
     assert response.status_code == 403
 
 
@@ -49,14 +49,40 @@ def test_project_admin_view_requires_authentication(db_setup):
     [
         ("user1@example.com", 200),
         ("user2@example.com", 200),
-        ("user3@example.com", 403),
+        ("user3@example.com", 200),
         ("user4@example.com", 403),
     ],
 )
-def test_project_admin_view_can_only_be_viewed_by_project_owners(
+def test_project_view_can_only_be_viewed_by_project_owners_or_curators(
     db_setup, username, expected_status_code
 ):
     client = APIClient()
     client.force_authenticate(User.objects.get(username=username))
-    response = client.get("/api/project/1/admin/")
+    response = client.get("/api/project/1/")
     assert response.status_code == expected_status_code
+
+
+def test_project_view_returns_project_information(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.get("/api/project/1/").json()
+
+    assert response["id"] == 1
+    assert response["name"] == "Test Project"
+
+    assert response["owners"] == ["user1@example.com", "user2@example.com"]
+
+    assert response["assignments"] == {
+        "user2@example.com": {"total": 3, "completed": 0},
+        "user3@example.com": {"total": 2, "completed": 0},
+    }
+
+    assert response["variants"] == {"total": 4, "curated": 0}
+
+
+def test_project_view_returns_limited_information_for_curator(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user3@example.com"))
+    response = client.get("/api/project/1/").json()
+
+    assert response == {"id": 1, "name": "Test Project"}

@@ -21,7 +21,7 @@ const AssignedProjectsPage = () => {
                   <Item key={project.id}>
                     <Item.Content>
                       <Item.Header>
-                        <Link to={`/project/${project.id}/assignments/`}>{project.name}</Link>
+                        <Link to={`/project/${project.id}/`}>{project.name}</Link>
                       </Item.Header>
                       <Item.Meta>
                         {project.variants_curated} / {project.variants_assigned} variants curated

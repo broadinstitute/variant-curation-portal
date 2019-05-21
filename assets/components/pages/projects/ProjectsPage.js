@@ -23,7 +23,7 @@ const ProjectsPage = ({ user }) => {
                     <Item key={project.id}>
                       <Item.Content>
                         <Item.Header>
-                          <Link to={`/project/${project.id}/admin/`}>{project.name}</Link>
+                          <Link to={`/project/${project.id}/`}>{project.name}</Link>
                         </Item.Header>
                       </Item.Content>
                     </Item>
