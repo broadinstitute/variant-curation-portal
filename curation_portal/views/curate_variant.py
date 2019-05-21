@@ -17,12 +17,6 @@ from curation_portal.models import (
 )
 
 
-class ProjectSerializer(ModelSerializer):
-    class Meta:
-        model = Project
-        fields = ("id", "name")
-
-
 class ResultSerializer(ModelSerializer):
     class Meta:
         model = CurationResult
@@ -73,7 +67,7 @@ class CurateVariantView(APIView):
         project_id = kwargs["project_id"]
         variant_id = kwargs["variant_id"]
         try:
-            project = Project.objects.get(id=project_id)
+            Project.objects.get(id=project_id)
             assignment = (
                 request.user.curation_assignments.select_related("variant", "result")
                 .prefetch_related("variant__annotations", "variant__samples")
@@ -107,7 +101,6 @@ class CurateVariantView(APIView):
 
             return Response(
                 {
-                    "project": ProjectSerializer(project).data,
                     "variant": VariantSerializer(assignment.variant).data,
                     "next_variant": serialize_adjacent_variant(next_variant),
                     "previous_variant": serialize_adjacent_variant(previous_variant),
