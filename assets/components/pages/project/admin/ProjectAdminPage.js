@@ -5,41 +5,51 @@ import { Button, Header, Item } from "semantic-ui-react";
 
 import DocumentTitle from "../../../DocumentTitle";
 
-const ProjectAdminPage = ({ project }) => (
-  <React.Fragment>
-    <DocumentTitle title={project.name} />
-    <Header as="h1" dividing>
-      {project.name}
-    </Header>
-    <div>
-      <Link to="/projects/">Return to all projects</Link>
-    </div>
-    <Header as="h2">Manage</Header>
-    <p>
-      <Link to={`/project/${project.id}/variants`}>Upload variants</Link>
-    </p>
-    <Header as="h2">Curators</Header>
-    <Item.Group>
-      {Object.entries(project.assignments).map(([curator, { total, completed }]) => (
-        <Item key={curator}>
-          <Item.Content>
-            <Item.Header>{curator}</Item.Header>
-            <Item.Meta>
-              {completed} / {total} variants curated
-            </Item.Meta>
-          </Item.Content>
-        </Item>
-      ))}
-    </Item.Group>
-    <Header as="h2">Results</Header>
-    <p>
-      {project.variants.curated} / {project.variants.total} variants curated
-    </p>
-    <Button as="a" download href={`/api/project/${project.id}/results/`}>
-      Download
-    </Button>
-  </React.Fragment>
-);
+const ProjectAdminPage = ({ project }) => {
+  const curators = Object.keys(project.assignments);
+  return (
+    <React.Fragment>
+      <DocumentTitle title={project.name} />
+      <Header as="h1" dividing>
+        {project.name}
+      </Header>
+      <div>
+        <Link to="/projects/">Return to all projects</Link>
+      </div>
+      <Header as="h2">Manage</Header>
+      <p>
+        <Link to={`/project/${project.id}/variants`}>Upload variants</Link>
+      </p>
+      <Header as="h2">Curators</Header>
+      {curators.length ? (
+        <Item.Group>
+          {curators.map(curator => {
+            const { total, completed } = project.assignments[curator];
+            return (
+              <Item key={curator}>
+                <Item.Content>
+                  <Item.Header>{curator}</Item.Header>
+                  <Item.Meta>
+                    {completed} / {total} variants curated
+                  </Item.Meta>
+                </Item.Content>
+              </Item>
+            );
+          })}
+        </Item.Group>
+      ) : (
+        <p>No curators assigned</p>
+      )}
+      <Header as="h2">Results</Header>
+      <p>
+        {project.variants.curated} / {project.variants.total} variants curated
+      </p>
+      <Button as="a" download href={`/api/project/${project.id}/results/`}>
+        Download
+      </Button>
+    </React.Fragment>
+  );
+};
 
 ProjectAdminPage.propTypes = {
   project: PropTypes.shape({
