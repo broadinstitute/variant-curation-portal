@@ -1,11 +1,12 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Header, Item } from "semantic-ui-react";
+import { Button, Header, Item } from "semantic-ui-react";
 
 import DocumentTitle from "../../DocumentTitle";
 import BasePage from "../BasePage";
 
-const ProjectsPage = () => {
+const ProjectsPage = ({ user }) => {
   return (
     <BasePage dataURL="/api/projects/">
       {({ data }) => {
@@ -32,11 +33,27 @@ const ProjectsPage = () => {
             ) : (
               <p>No projects.</p>
             )}
+
+            {user && user.permissions.includes("add_project") && (
+              <Button as={Link} to="/projects/create">
+                Create project
+              </Button>
+            )}
           </React.Fragment>
         );
       }}
     </BasePage>
   );
+};
+
+ProjectsPage.propTypes = {
+  user: PropTypes.shape({
+    permissions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }),
+};
+
+ProjectsPage.defaultProps = {
+  user: null,
 };
 
 export default ProjectsPage;

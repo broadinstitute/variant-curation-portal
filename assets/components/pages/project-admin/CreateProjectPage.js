@@ -73,7 +73,7 @@ class CreateProjectPage extends Component {
               Create Project
             </Button>
           </Form>
-          <Button as={Link} to="/">
+          <Button as={Link} to="/projects/">
             Cancel
           </Button>
         </div>

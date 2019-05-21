@@ -79,10 +79,13 @@ class App extends Component {
               <Route exact path="/terms/" component={TermsPage} />
 
               <Route exact path="/assignments/" component={AssignedProjectsPage} />
-              <Route exact path="/projects/" component={ProjectsPage} />
-              {user && user.permissions.includes("add_project") && (
-                <Route exact path="/projects/create/" component={CreateProjectPage} />
-              )}
+              <Route
+                exact
+                path="/projects/"
+                render={props => <ProjectsPage {...props} user={user} />}
+              />
+              <Route exact path="/projects/create/" component={CreateProjectPage} />
+
               <Route
                 exact
                 path="/project/:projectId/assignments/"
