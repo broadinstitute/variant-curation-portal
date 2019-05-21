@@ -3,9 +3,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Header, Item, Segment } from "semantic-ui-react";
 
-import DocumentTitle from "../../DocumentTitle";
-import BasePage from "../BasePage";
-import withParamsAsProps from "../withParamsAsProps";
+import DocumentTitle from "../../../DocumentTitle";
+import BasePage from "../../BasePage";
+import withParamsAsProps from "../../withParamsAsProps";
 import AssignmentListItem from "./AssignmentListItem";
 import Legend from "./Legend";
 

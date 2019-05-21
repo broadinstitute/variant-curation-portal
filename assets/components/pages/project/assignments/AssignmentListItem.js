@@ -3,9 +3,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Item, List } from "semantic-ui-react";
 
-import { verdictColors, verdictSymbols } from "../../../constants/verdicts";
-import { CurationAssignmentPropType, CurationResultPropType } from "../../propTypes";
-import VariantId from "../../VariantId";
+import { verdictColors, verdictSymbols } from "../../../../constants/verdicts";
+import { CurationAssignmentPropType, CurationResultPropType } from "../../../propTypes";
+import VariantId from "../../../VariantId";
 
 const Flags = ({ result }) => (
   <span style={{ fontFamily: "monospace" }}>

@@ -3,17 +3,17 @@ import { BrowserRouter as Router, Link, Redirect, Route, Switch } from "react-ro
 import "semantic-ui-css/semantic.css";
 import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 
-import CurateVariantPage from "./pages/curate-variant/CurateVariantPage";
 import HomePage from "./pages/HomePage";
 import PageNotFoundPage from "./pages/PageNotFoundPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsPage from "./pages/TermsPage";
 import AssignedProjectsPage from "./pages/projects/AssignedProjectsPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
-import CreateProjectPage from "./pages/project-admin/CreateProjectPage";
-import ProjectAdminPage from "./pages/project-admin/ProjectAdminPage";
-import ProjectAssignmentsPage from "./pages/project-assignments/ProjectAssignmentsPage";
-import TermsPage from "./pages/TermsPage";
-import UploadVariantsPage from "./pages/project-admin/UploadVariantsPage";
+import CreateProjectPage from "./pages/projects/CreateProjectPage";
+import ProjectAssignmentsPage from "./pages/project/assignments/ProjectAssignmentsPage";
+import ProjectAdminPage from "./pages/project/admin/ProjectAdminPage";
+import UploadVariantsPage from "./pages/project/admin/UploadVariantsPage";
+import CurateVariantPage from "./pages/project/curate/CurateVariantPage";
 
 class App extends Component {
   state = {

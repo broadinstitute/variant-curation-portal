@@ -5,7 +5,7 @@ import verdicts, {
   verdictColors,
   verdictLabels,
   verdictSymbols,
-} from "../../../constants/verdicts";
+} from "../../../../constants/verdicts";
 
 const Legend = () => (
   <List relaxed>

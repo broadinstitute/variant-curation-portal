@@ -3,11 +3,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Header, List, Segment } from "semantic-ui-react";
 
-import DocumentTitle from "../../DocumentTitle";
-import KeyboardShortcut, { KeyboardShortcutHint } from "../../KeyboardShortcut";
-import VariantId from "../../VariantId";
-import BasePage from "../BasePage";
-import withParamsAsProps from "../withParamsAsProps";
+import DocumentTitle from "../../../DocumentTitle";
+import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
+import VariantId from "../../../VariantId";
+import BasePage from "../../BasePage";
+import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
 import SampleTable from "./SampleTable";

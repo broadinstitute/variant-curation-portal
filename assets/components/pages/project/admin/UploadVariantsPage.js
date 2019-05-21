@@ -3,10 +3,10 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button, Form, Header, Icon, Message } from "semantic-ui-react";
 
-import getCookie from "../../../utilities/getCookie";
-import DocumentTitle from "../../DocumentTitle";
-import BasePage from "../BasePage";
-import withParamsAsProps from "../withParamsAsProps";
+import getCookie from "../../../../utilities/getCookie";
+import DocumentTitle from "../../../DocumentTitle";
+import BasePage from "../../BasePage";
+import withParamsAsProps from "../../withParamsAsProps";
 
 class UploadVariantsPage extends Component {
   static propTypes = {

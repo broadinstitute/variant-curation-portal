@@ -13,10 +13,10 @@ import {
   TextArea,
 } from "semantic-ui-react";
 
-import verdicts, { verdictLabels } from "../../../constants/verdicts";
-import getCookie from "../../../utilities/getCookie";
-import { CurationResultPropType } from "../../propTypes";
-import KeyboardShortcut, { KeyboardShortcutHint } from "../../KeyboardShortcut";
+import verdicts, { verdictLabels } from "../../../../constants/verdicts";
+import getCookie from "../../../../utilities/getCookie";
+import { CurationResultPropType } from "../../../propTypes";
+import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
 
 class CurationForm extends React.Component {
   static propTypes = {
