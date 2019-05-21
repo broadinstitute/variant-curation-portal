@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
-import { Component } from "react";
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import { Dimmer, Loader, Message } from "semantic-ui-react";
 
 import makeCancelable from "../utilities/makeCancelable";
 
-class Fetch extends Component {
+class BaseFetch extends Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired,
@@ -76,5 +78,38 @@ class Fetch extends Component {
     return children(this.state);
   }
 }
+
+const Fetch = ({ children, url }) => (
+  <BaseFetch url={url}>
+    {({ data, error, isFetching }) => {
+      if (isFetching) {
+        return (
+          <Dimmer active inverted>
+            <Loader inverted content="Loading" />
+          </Dimmer>
+        );
+      }
+
+      if (error) {
+        return (
+          <Message error>
+            <Message.Header>Error</Message.Header>
+            <p>{data.detail || "Unknown error"}</p>
+            <p>
+              <Link to="/">Return to home page</Link>
+            </p>
+          </Message>
+        );
+      }
+
+      return children({ data });
+    }}
+  </BaseFetch>
+);
+
+Fetch.propTypes = {
+  children: PropTypes.func.isRequired,
+  url: PropTypes.string.isRequired,
+};
 
 export default Fetch;
