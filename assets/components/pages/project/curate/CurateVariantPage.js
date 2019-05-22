@@ -48,6 +48,10 @@ class CurateVariantPage extends React.Component {
           {({
             data: { variant, next_variant: nextVariant, previous_variant: previousVariant, result },
           }) => {
+            const shouldShowUCSCGeneView = !!variant.annotations.find(
+              a => a.gene_symbol && a.transcript_id
+            );
+
             return (
               <React.Fragment>
                 <DocumentTitle title={`${project.name} | ${variant.variant_id}`} />
@@ -142,7 +146,11 @@ class CurateVariantPage extends React.Component {
                             <a href="#ucsc">UCSC (variant)</a>
                           </List.Item>
                           <List.Item>
-                            <a href="#ucsc-gene">UCSC (gene)</a>
+                            {shouldShowUCSCGeneView ? (
+                              <a href="#ucsc-gene">UCSC (gene)</a>
+                            ) : (
+                              "UCSC (gene)"
+                            )}
                           </List.Item>
                         </List>
                       </span>
