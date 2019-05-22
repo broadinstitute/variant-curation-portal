@@ -5,8 +5,8 @@ https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basi
 - Create password file and add a user.
 
   ```
-  touch ./docker/nginx/basic-auth/htpasswd
-  htpasswd -b ./docker/nginx/basic-auth/htpasswd username password
+  touch ./docker/nginx-basic-auth/htpasswd
+  htpasswd -b ./docker/nginx-basic-auth/htpasswd username password
   ```
 
 - Configure app. Fill in values below.
@@ -17,6 +17,7 @@ https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basi
   DB_DATABASE=
   DB_USER=
   DB_PASSWORD=
+  EOF
   ```
 
   To generate a random secret key, use:
