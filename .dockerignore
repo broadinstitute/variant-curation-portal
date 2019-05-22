@@ -1,0 +1,20 @@
+*
+
+# Front end dependencies
+!package.json
+!yarn.lock
+
+# Required for front end build
+!babel.config.js
+!webpack.config.js
+
+# Front end code
+!assets
+
+# App dependencies
+!requirements.txt
+
+# App code
+!curation_portal
+curation_portal/**/__pycache__
+!manage.py
