@@ -11,3 +11,6 @@ __pycache__
 static/bundles
 webpack-stats.json
 .tox
+
+# dotenv for Docker Compose
+.env
