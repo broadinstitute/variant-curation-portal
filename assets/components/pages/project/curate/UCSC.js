@@ -29,7 +29,9 @@ UCSCVariantView.propTypes = {
 };
 
 export const UCSCGeneView = ({ variant }) => {
-  if (!(variant.gene_name && variant.transcript_id)) {
+  const annotation = variant.annotations.find(a => a.gene_symbol && a.transcript_id);
+
+  if (!annotation) {
     return null;
   }
 
@@ -40,9 +42,9 @@ export const UCSCGeneView = ({ variant }) => {
       width="100%"
       height="4000px"
       src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=${
-        variant.gene_name
+        annotation.gene_symbol
       }&singleSearch=knownCanonical&hgFind.matches=${
-        variant.transcript_id
+        annotation.transcript_id
       }&highlight=${encodeURIComponent(`hg19.chr${variant.chrom}:${variant.pos}-${variant.pos}`)}`}
     />
   );
@@ -50,6 +52,14 @@ export const UCSCGeneView = ({ variant }) => {
 
 UCSCGeneView.propTypes = {
   variant: PropTypes.shape({
+    annotations: PropTypes.arrayOf(
+      PropTypes.shape({
+        consequence: PropTypes.string,
+        gene_id: PropTypes.string,
+        gene_symbol: PropTypes.string,
+        transcript_id: PropTypes.string,
+      })
+    ).isRequired,
     chrom: PropTypes.string.isRequired,
     pos: PropTypes.number.isRequired,
   }).isRequired,
