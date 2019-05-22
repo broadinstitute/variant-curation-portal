@@ -11,6 +11,7 @@ import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
 import SampleTable from "./SampleTable";
+import { UCSCVariantView, UCSCGeneView } from "./UCSC";
 
 class CurateVariantPage extends React.Component {
   static propTypes = {
@@ -226,46 +227,10 @@ class CurateVariantPage extends React.Component {
                 />
                 <br />
 
-                {/* https://genome.ucsc.edu/FAQ/FAQlink.html
-	                https://genome.ucsc.edu/goldenPath/help/customTrack.html#optParams
-              */}
-                <iframe
-                  title="UCSC variant view"
-                  id="ucsc"
-                  width="100%"
-                  height="4000px"
-                  src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=${encodeURIComponent(
-                    `chr${variant.chrom}:${parseInt(variant.pos, 10) - 25}-${parseInt(
-                      variant.pos,
-                      10
-                    ) + 25}`
-                  )}&highlight=${encodeURIComponent(
-                    `hg19.chr${variant.chrom}:${parseInt(variant.pos, 10)}-${parseInt(
-                      variant.pos,
-                      10
-                    )}`
-                  )}`}
-                />
+                <UCSCVariantView variant={variant} />
                 <br />
 
-                {variant.gene_name && variant.transcript_id && (
-                  <iframe
-                    title="UCSC gene view"
-                    id="ucsc-gene"
-                    width="100%"
-                    height="4000px"
-                    src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=${
-                      variant.gene_name
-                    }&singleSearch=knownCanonical&hgFind.matches=${
-                      variant.transcript_id
-                    }&highlight=${encodeURIComponent(
-                      `hg19.chr${variant.chrom}:${parseInt(variant.pos, 10)}-${parseInt(
-                        variant.pos,
-                        10
-                      )}`
-                    )}`}
-                  />
-                )}
+                <UCSCGeneView variant={variant} />
                 <br />
               </React.Fragment>
             );
