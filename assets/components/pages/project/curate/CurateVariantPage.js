@@ -12,6 +12,7 @@ import withParamsAsProps from "../../withParamsAsProps";
 import CurationForm from "./CurationForm";
 import SampleTable from "./SampleTable";
 import { UCSCVariantView, UCSCGeneView } from "./UCSC";
+import VariantData from "./VariantData";
 
 class CurateVariantPage extends React.Component {
   static propTypes = {
@@ -190,30 +191,7 @@ class CurateVariantPage extends React.Component {
                 {/**
                 Variant information
                */}
-                <List>
-                  <List.Item>
-                    <strong>Filter:</strong> {variant.qc_filter}
-                  </List.Item>
-                  <List.Item>
-                    <strong>Callset AF:</strong> {variant.AF}
-                  </List.Item>
-                  <List.Item>
-                    <strong>Callset AC:</strong> {variant.AC}
-                  </List.Item>
-                  <List.Item>
-                    <strong>Callset AN:</strong> {variant.AN}
-                  </List.Item>
-                  <List.Item>
-                    <strong>Annotations:</strong>
-                    <List>
-                      {variant.annotations.map(annotation => (
-                        <List.Item key={annotation.transcript_id}>
-                          {annotation.transcript_id}: {annotation.consequence}
-                        </List.Item>
-                      ))}
-                    </List>
-                  </List.Item>
-                </List>
+                <VariantData variant={variant} />
 
                 {/**
                 Sample list
