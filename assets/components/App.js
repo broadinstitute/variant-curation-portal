@@ -65,7 +65,7 @@ class App extends Component {
             </Container>
           </Menu>
 
-          <div style={{ paddingTop: "65px" }}>
+          <div style={{ paddingBottom: "35px", paddingTop: "65px" }}>
             <Switch>
               <Route
                 exact
