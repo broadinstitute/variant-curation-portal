@@ -31,14 +31,14 @@ https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basi
 - Apply database migrations.
 
   ```
-  docker-compose -f ./docker/nginx-basic-auth/docker-compose.yml up database
-  docker-compose -f ./docker/nginx-basic-auth/docker-compose.yml run --rm app ./manage.py migrate
+  docker-compose -f ./docker/docker-compose-base.yml -f ./docker/nginx-basic-auth/docker-compose.yml up database
+  docker-compose -f ./docker/docker-compose-base.yml -f ./docker/nginx-basic-auth/docker-compose.yml run --rm app ./manage.py migrate
   ```
 
 - Start environment.
 
   ```
-  docker-compose -f ./docker/nginx-basic-auth/docker-compose.yml up
+  docker-compose -f ./docker/docker-compose-base.yml -f ./docker/nginx-basic-auth/docker-compose.yml up
   ```
 
 - Open web browser to http://localhost:8000.

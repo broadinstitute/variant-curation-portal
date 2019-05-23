@@ -1,0 +1,25 @@
+version: "3"
+services:
+  database:
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  app:
+    build: ..
+    environment:
+      - DJANGO_SETTINGS_MODULE=curation_portal.settings.development
+      - SECRET_KEY
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_DATABASE
+      - DB_USER
+      - DB_PASSWORD
+    depends_on:
+      - database
+volumes:
+  postgres_data:
