@@ -59,6 +59,10 @@ class VariantAnnotation(models.Model):
     gene_symbol = models.CharField(max_length=16)
     transcript_id = models.CharField(max_length=16)
 
+    loftee = models.CharField(max_length=2, null=True, blank=True)
+    loftee_filter = models.CharField(max_length=200, null=True, blank=True)
+    loftee_flags = models.CharField(max_length=200, null=True, blank=True)
+
     class Meta:
         db_table = "curation_variant_annotation"
         unique_together = ("variant", "transcript_id")

@@ -113,6 +113,9 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
                         "gene_id": annotation["Gene"],
                         "gene_symbol": annotation["SYMBOL"],
                         "transcript_id": annotation["Feature"],
+                        "loftee": annotation["LoF"],
+                        "loftee_filter": annotation["LoF_filter"],
+                        "loftee_flags": annotation["LoF_flags"],
                     }
                 )
 
