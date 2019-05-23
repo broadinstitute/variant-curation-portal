@@ -35,7 +35,6 @@
     "webpack-dev-server": "^3"
   },
   "dependencies": {
-    "@babel/polyfill": "^7",
     "core-js": "^3.0.0",
     "lodash": "^4.17",
     "mousetrap": "^1.6",
