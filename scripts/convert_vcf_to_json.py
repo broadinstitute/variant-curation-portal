@@ -59,6 +59,13 @@ def get_rank(annotation):
     return min(CONSEQUENCE_TERM_RANK.get(t) for t in terms)
 
 
+def sample_sort_key(sample):
+    gq = getattr(sample.data, "GQ", 0)
+    if gq is None:
+        return 0
+    return gq
+
+
 def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
     variants = {}
 
@@ -116,7 +123,7 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
                     }
                 )
 
-            for sample in sorted(samples, key=lambda s: s["GQ"] if s["GQ"] is not None else 0):
+            for sample in sorted(samples, key=sample_sort_key):
                 if sample["GT"] not in {"0/1", "1/1"}:
                     continue
 
@@ -126,16 +133,24 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
                 ):
                     continue
 
-                ad_ref = sample["AD"][0]
-                ad_alt = sum(sample["AD"][1:])
-                allele_balance = ad_alt / float(sample["DP"]) if sample["DP"] > 0 else float("NaN")
+                ad = getattr(sample.data, "AD", None)
+                dp = getattr(sample.data, "DP", None)
+                gq = getattr(sample.data, "GQ", None)
+
+                # Skip samples without any relevant information
+                if not (dp or gq or ad):
+                    continue
+
+                ad_ref = ad[0] if ad else None
+                ad_alt = sum(ad[1:]) if ad else None
+                allele_balance = ad_alt / float(dp) if dp is not None and dp > 0 else float("NaN")
 
                 variant["samples"].append(
                     {
                         "sample_id": len(variant["samples"]),
                         "GT": sample["GT"],
-                        "DP": sample["DP"],
-                        "GQ": sample["GQ"],
+                        "DP": dp,
+                        "GQ": gq,
                         "AD_REF": ad_ref,
                         "AD_ALT": ad_alt,
                         "AB": allele_balance,
