@@ -119,7 +119,7 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
                     }
                 )
 
-            for sample in sorted(samples, key=lambda s: getattr(s, "GQ", None) or 0):
+            for sample in sorted(samples, key=lambda s: getattr(s.data, "GQ", None) or 0):
                 if sample["GT"] not in {"0/1", "1/1"}:
                     continue
 
