@@ -66,6 +66,14 @@ const VariantData = ({ variant }) => {
     <React.Fragment>
       <List>
         <List.Item>
+          <strong>Reference genome:</strong> {variant.reference_genome}
+        </List.Item>
+        {variant.liftover_variant_id && (
+          <List.Item>
+            <strong>Liftover:</strong> {variant.liftover_variant_id}
+          </List.Item>
+        )}
+        <List.Item>
           <strong>Filter:</strong> {variant.qc_filter}
         </List.Item>
         <List.Item>
@@ -97,6 +105,8 @@ VariantData.propTypes = {
     AF: PropTypes.number,
     n_homozygotes: PropTypes.number,
     annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
+    reference_genome: PropTypes.oneOf(["GRCh37", "GRCh38"]).isRequired,
+    liftover_variant_id: PropTypes.string,
   }).isRequired,
 };
 
