@@ -59,13 +59,6 @@ def get_rank(annotation):
     return min(CONSEQUENCE_TERM_RANK.get(t) for t in terms)
 
 
-def sample_sort_key(sample):
-    gq = getattr(sample.data, "GQ", 0)
-    if gq is None:
-        return 0
-    return gq
-
-
 def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
     variants = {}
 
@@ -123,7 +116,7 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
                     }
                 )
 
-            for sample in sorted(samples, key=sample_sort_key):
+            for sample in sorted(samples, key=lambda s: getattr(s, "GQ", None) or 0):
                 if sample["GT"] not in {"0/1", "1/1"}:
                     continue
 
