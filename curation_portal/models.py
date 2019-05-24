@@ -28,7 +28,11 @@ class Variant(models.Model):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="variants", related_query_name="variant"
     )
+    reference_genome = models.CharField(
+        max_length=6, choices=[("GRCh37", "GRCh37"), ("GRCh38", "GRCh38")], default="GRCh37"
+    )
     variant_id = models.CharField(max_length=1000)
+    liftover_variant_id = models.CharField(max_length=1000, null=True, blank=True)
     chrom = models.CharField(max_length=2)
     pos = models.IntegerField()
     xpos = models.IntegerField()

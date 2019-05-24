@@ -5,6 +5,7 @@
 import argparse
 import gzip
 import json
+import re
 
 from tqdm import tqdm
 import vcf
@@ -59,7 +60,9 @@ def get_rank(annotation):
     return min(CONSEQUENCE_TERM_RANK.get(t) for t in terms)
 
 
-def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
+def convert_vcf_to_json(
+    vcf_path, output_path, max_samples_per_genotype=5, reference_genome="GRCh37"
+):
     variants = {}
 
     with gzip.open(vcf_path, "rt") as vcf_file:
@@ -87,15 +90,24 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
             # Sort annotations by severity
             lof_annotations = sorted(lof_annotations, key=get_rank)
 
-            variant_id = "-".join(map(str, [row.CHROM, row.POS, row.REF, row.ALT[0]]))
+            variant_id = "-".join(
+                map(str, [re.sub(r"^chr", "", row.CHROM), row.POS, row.REF, row.ALT[0]])
+            )
 
             if not lof_annotations:
                 print(f"Skipping {variant_id}, no LoF annotations")
                 continue
 
+            liftover_field = "liftover_37" if reference_genome == "GRCh38" else "liftover_38"
+            liftover_variant_id = row.INFO.get(liftover_field, None)
+            if liftover_variant_id:
+                liftover_variant_id = liftover_variant_id.replace(":", "-")
+
             if variant_id not in variants:
                 variants[variant_id] = {
+                    "reference_genome": reference_genome,
                     "variant_id": variant_id,
+                    "liftover_variant_id": liftover_variant_id,
                     "qc_filter": (row.FILTER.join(",") if row.FILTER else "PASS"),
                     "AC": row.INFO["AC"],
                     "AN": row.INFO["AN"],
@@ -167,8 +179,12 @@ if __name__ == "__main__":
     parser.add_argument("vcf_path")
     parser.add_argument("output_path")
     parser.add_argument("--max-samples-per-genotype", type=int, default=5)
+    parser.add_argument("--reference-genome", choices=["GRCh37", "GRCh38"], default="GRCh37")
 
     args = parser.parse_args()
     convert_vcf_to_json(
-        args.vcf_path, args.output_path, max_samples_per_genotype=args.max_samples_per_genotype
+        args.vcf_path,
+        args.output_path,
+        max_samples_per_genotype=args.max_samples_per_genotype,
+        reference_genome=args.reference_genome,
     )
