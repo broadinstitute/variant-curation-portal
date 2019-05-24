@@ -78,6 +78,9 @@ const VariantData = ({ variant }) => {
           <strong>Callset AN:</strong> {variant.AN}
         </List.Item>
         <List.Item>
+          <strong>Number of homozygotes:</strong> {variant.n_homozygotes}
+        </List.Item>
+        <List.Item>
           <strong>Annotations:</strong>
           <AnnotationsList annotations={variant.annotations} />
         </List.Item>
@@ -92,6 +95,7 @@ VariantData.propTypes = {
     AC: PropTypes.number,
     AN: PropTypes.number,
     AF: PropTypes.number,
+    n_homozygotes: PropTypes.number,
     annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
   }).isRequired,
 };

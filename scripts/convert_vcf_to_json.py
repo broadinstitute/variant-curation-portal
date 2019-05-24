@@ -100,6 +100,7 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
                     "AC": row.INFO["AC"],
                     "AN": row.INFO["AN"],
                     "AF": row.INFO["AF"],
+                    "n_homozygotes": sum(1 for s in samples if s["GT"] == "1/1"),
                     "annotations": [],
                     "samples": [],
                 }
