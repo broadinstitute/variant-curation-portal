@@ -39,6 +39,7 @@ class Variant(models.Model):
     AC = models.IntegerField(null=True, blank=True)
     AN = models.IntegerField(null=True, blank=True)
     AF = models.FloatField(null=True, blank=True)
+    n_homozygotes = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "curation_variant"
