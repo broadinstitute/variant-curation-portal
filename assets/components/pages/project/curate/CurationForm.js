@@ -173,9 +173,9 @@ class CurationForm extends React.Component {
           <Header sub style={{ margin: "0.25em 0 0.5em" }}>
             Technical
           </Header>
-          {this.renderFlagInput("flag_mapping_error", "Mapping error flag", "m a")}
-          {this.renderFlagInput("flag_genotyping_error", "Genotyping error flag", "g e")}
-          {this.renderFlagInput("flag_homopolymer", "Homopolymer flag", "h o")}
+          {this.renderFlagInput("flag_mapping_error", "Mapping error", "m a")}
+          {this.renderFlagInput("flag_genotyping_error", "Genotyping error", "g e")}
+          {this.renderFlagInput("flag_homopolymer", "Homopolymer", "h o")}
           {this.renderFlagInput("flag_no_read_data", "No read data", "n r")}
           {this.renderFlagInput("flag_reference_error", "Reference error", "r e")}
           {this.renderFlagInput("flag_strand_bias", "Strand bias", "b i")}
