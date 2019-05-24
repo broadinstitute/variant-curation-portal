@@ -126,26 +126,30 @@ def convert_vcf_to_json(vcf_path, output_path, max_samples_per_genotype=5):
                 ):
                     continue
 
-                ad = getattr(sample.data, "AD", None)
-                dp = getattr(sample.data, "DP", None)
-                gq = getattr(sample.data, "GQ", None)
+                allele_depth = getattr(sample.data, "AD", None)
+                depth = getattr(sample.data, "DP", None)
+                genotype_quality = getattr(sample.data, "GQ", None)
 
                 # Skip samples without any relevant information
-                if not (dp or gq or ad):
+                if not (depth or genotype_quality or allele_depth):
                     continue
 
-                ad_ref = ad[0] if ad else None
-                ad_alt = sum(ad[1:]) if ad else None
-                allele_balance = ad_alt / float(dp) if dp is not None and dp > 0 else float("NaN")
+                ref_allele_depth = allele_depth[0] if allele_depth else None
+                alt_allele_depth = sum(allele_depth[1:]) if allele_depth else None
+                allele_balance = (
+                    alt_allele_depth / float(depth)
+                    if depth is not None and depth > 0
+                    else float("NaN")
+                )
 
                 variant["samples"].append(
                     {
                         "sample_id": len(variant["samples"]),
                         "GT": sample["GT"],
-                        "DP": dp,
-                        "GQ": gq,
-                        "AD_REF": ad_ref,
-                        "AD_ALT": ad_alt,
+                        "DP": depth,
+                        "GQ": genotype_quality,
+                        "AD_REF": ref_allele_depth,
+                        "AD_ALT": alt_allele_depth,
                         "AB": allele_balance,
                     }
                 )
