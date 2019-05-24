@@ -8,15 +8,18 @@ import React from "react";
  */
 
 export const UCSCVariantView = ({ variant }) => {
+  const assembly = variant.reference_genome === "GRCh38" ? "hg38" : "hg19";
   return (
     <iframe
       title="UCSC variant view"
       id="ucsc"
       width="100%"
       height="4000px"
-      src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=${encodeURIComponent(
+      src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${encodeURIComponent(
         `chr${variant.chrom}:${variant.pos - 25}-${variant.pos + 25}`
-      )}&highlight=${encodeURIComponent(`hg19.chr${variant.chrom}:${variant.pos}-${variant.pos}`)}`}
+      )}&highlight=${encodeURIComponent(
+        `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
+      )}`}
     />
   );
 };
@@ -25,6 +28,7 @@ UCSCVariantView.propTypes = {
   variant: PropTypes.shape({
     chrom: PropTypes.string.isRequired,
     pos: PropTypes.number.isRequired,
+    reference_genome: PropTypes.oneOf(["GRCh37", "GRCh38"]).isRequired,
   }).isRequired,
 };
 
@@ -35,17 +39,21 @@ export const UCSCGeneView = ({ variant }) => {
     return null;
   }
 
+  const assembly = variant.reference_genome === "GRCh38" ? "hg38" : "hg19";
+
   return (
     <iframe
       title="UCSC gene view"
       id="ucsc-gene"
       width="100%"
       height="4000px"
-      src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=${
+      src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${
         annotation.gene_symbol
       }&singleSearch=knownCanonical&hgFind.matches=${
         annotation.transcript_id
-      }&highlight=${encodeURIComponent(`hg19.chr${variant.chrom}:${variant.pos}-${variant.pos}`)}`}
+      }&highlight=${encodeURIComponent(
+        `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
+      )}`}
     />
   );
 };
@@ -62,5 +70,6 @@ UCSCGeneView.propTypes = {
     ).isRequired,
     chrom: PropTypes.string.isRequired,
     pos: PropTypes.number.isRequired,
+    reference_genome: PropTypes.oneOf(["GRCh37", "GRCh38"]).isRequired,
   }).isRequired,
 };
