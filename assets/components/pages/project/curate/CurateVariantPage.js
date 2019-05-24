@@ -49,6 +49,11 @@ class CurateVariantPage extends React.Component {
           {({
             data: { variant, next_variant: nextVariant, previous_variant: previousVariant, result },
           }) => {
+            const gnomadVariantId =
+              variant.reference_genome === "GRCh38"
+                ? variant.liftover_variant_id
+                : variant.variant_id;
+
             const shouldShowUCSCGeneView = !!variant.annotations.find(
               a => a.gene_symbol && a.transcript_id
             );
@@ -204,13 +209,23 @@ class CurateVariantPage extends React.Component {
                 References
                */}
 
-                <iframe
-                  title="gnomAD browser"
-                  id="gnomad"
-                  width="100%"
-                  height="3900px"
-                  src={`https://gnomad.broadinstitute.org/variant/${variant.variant_id}`}
-                />
+                {gnomadVariantId ? (
+                  <iframe
+                    title="gnomAD browser"
+                    id="gnomad"
+                    width="100%"
+                    height="3900px"
+                    src={`https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`}
+                  />
+                ) : (
+                  <Segment placeholder>
+                    <Header icon>
+                      gnomAD not available
+                      <br />
+                      No GRCh37 variant ID
+                    </Header>
+                  </Segment>
+                )}
                 <br />
 
                 <UCSCVariantView variant={variant} />
