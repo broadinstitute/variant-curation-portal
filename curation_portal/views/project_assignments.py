@@ -68,7 +68,7 @@ class ProjectAssignmentsView(APIView):
         except Project.DoesNotExist:
             raise NotFound("Project does not exist")
         else:
-            if not assignments:
+            if not assignments and not project.owners.filter(id=request.user.id).exists():
                 raise PermissionDenied("You do not have permission to view this project")
 
             project_serializer = ProjectSerializer(project)

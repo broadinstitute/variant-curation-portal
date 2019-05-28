@@ -47,7 +47,7 @@ def test_project_assignments_list_requires_authentication(db_setup):
 @pytest.mark.parametrize(
     "username,expected_status_code",
     [
-        ("user1@example.com", 403),
+        ("user1@example.com", 200),
         ("user2@example.com", 200),
         ("user3@example.com", 200),
         ("user4@example.com", 403),
@@ -65,6 +65,7 @@ def test_project_assignments_list_can_only_be_viewed_by_project_curators(
 @pytest.mark.parametrize(
     "username,expected_variants",
     [
+        ("user1@example.com", []),
         ("user2@example.com", ["1-100-A-G", "1-120-G-A", "1-150-C-G"]),
         ("user3@example.com", ["1-150-C-G", "1-200-A-T"]),
     ],
