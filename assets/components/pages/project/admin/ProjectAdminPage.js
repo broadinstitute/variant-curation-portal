@@ -1,11 +1,30 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button, Header, Item } from "semantic-ui-react";
+import { Button, Header, Item, Message } from "semantic-ui-react";
 
 import DocumentTitle from "../../../DocumentTitle";
 
-const ProjectAdminPage = ({ project }) => {
+const ProjectAdminPage = ({ project, user }) => {
+  const userIsOwner = user && (project.owners || []).includes(user.username);
+  if (!userIsOwner) {
+    return (
+      <React.Fragment>
+        <DocumentTitle title={project.name} />
+        <Header as="h1" dividing>
+          {project.name}
+        </Header>
+        <Message error>
+          <Message.Header>Error</Message.Header>
+          <p>You do not have permission to view this page</p>
+          <p>
+            <Link to={`/project/${project.id}/`}>Return to project page</Link>
+          </p>
+        </Message>
+      </React.Fragment>
+    );
+  }
+
   const curators = Object.keys(project.assignments);
   return (
     <React.Fragment>
@@ -66,6 +85,13 @@ ProjectAdminPage.propTypes = {
       curated: PropTypes.number.isRequired,
     }).isRequired,
   }).isRequired,
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+  }),
+};
+
+ProjectAdminPage.defaultProps = {
+  user: null,
 };
 
 export default ProjectAdminPage;

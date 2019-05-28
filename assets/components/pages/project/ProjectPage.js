@@ -15,17 +15,18 @@ const ProjectPage = ({ match, projectId, user }) => (
   <Container fluid>
     <Fetch url={`/api/project/${projectId}/`}>
       {({ data: project }) => {
-        const userIsOwner = user && (project.owners || []).includes(user.username);
-
         return (
           <Switch>
             <Route
               exact
               path={match.path}
-              render={props => {
-                const Page = userIsOwner ? ProjectAdminPage : ProjectAssignmentsPage;
-                return <Page {...props} project={project} />;
-              }}
+              render={props => <ProjectAssignmentsPage {...props} project={project} />}
+            />
+
+            <Route
+              exact
+              path={`${match.path}admin/`}
+              render={props => <ProjectAdminPage {...props} project={project} user={user} />}
             />
 
             <Route
