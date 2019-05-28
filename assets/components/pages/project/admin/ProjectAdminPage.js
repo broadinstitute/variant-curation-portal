@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { Button, Header, Item, Message } from "semantic-ui-react";
 
 import DocumentTitle from "../../../DocumentTitle";
+import { canEditProject } from "../permissions";
 
 const ProjectAdminPage = ({ project, user }) => {
-  const userIsOwner = user && (project.owners || []).includes(user.username);
-  if (!userIsOwner) {
+  if (!canEditProject(user, project)) {
     return (
       <React.Fragment>
         <DocumentTitle title={project.name} />
