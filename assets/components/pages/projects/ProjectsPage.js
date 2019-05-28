@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Header, Item } from "semantic-ui-react";
 
+import { can } from "../../../permissions";
 import DocumentTitle from "../../DocumentTitle";
 import BasePage from "../BasePage";
 
@@ -34,7 +35,7 @@ const ProjectsPage = ({ user }) => {
               <p>No projects.</p>
             )}
 
-            {user && user.permissions.includes("add_project") && (
+            {can(user, "add", "project") && (
               <Button as={Link} to="/projects/create">
                 Create project
               </Button>
