@@ -81,7 +81,11 @@ class App extends Component {
                 path="/projects/"
                 render={props => <ProjectsPage {...props} user={user} />}
               />
-              <Route exact path="/projects/create/" component={CreateProjectPage} />
+              <Route
+                exact
+                path="/projects/create/"
+                render={props => <CreateProjectPage {...props} user={user} />}
+              />
 
               <Route
                 path="/project/:projectId/"
