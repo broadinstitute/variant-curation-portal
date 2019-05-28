@@ -3,11 +3,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Header, Item, Message } from "semantic-ui-react";
 
+import { can } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
-import { canEditProject } from "../permissions";
 
 const ProjectAdminPage = ({ project, user }) => {
-  if (!canEditProject(user, project)) {
+  if (!can(user, "edit", "project", project)) {
     return (
       <React.Fragment>
         <DocumentTitle title={project.name} />
