@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Form, Header, Message } from "semantic-ui-react";
 
+import { PermissionRequired } from "../../../permissions";
 import getCookie from "../../../utilities/getCookie";
 import DocumentTitle from "../../DocumentTitle";
 
@@ -11,6 +12,11 @@ class CreateProjectPage extends Component {
     history: PropTypes.shape({
       push: PropTypes.func.isRequired,
     }).isRequired,
+    user: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  };
+
+  static defaultProps = {
+    user: null,
   };
 
   state = {
@@ -49,6 +55,7 @@ class CreateProjectPage extends Component {
   };
 
   render() {
+    const { user } = this.props;
     const { isSaving, lastSaveDidFail, projectName } = this.state;
 
     return (
@@ -57,7 +64,7 @@ class CreateProjectPage extends Component {
         <Header as="h1" dividing>
           Create Project
         </Header>
-        <div>
+        <PermissionRequired user={user} action="add" resourceType="project">
           <Form style={{ marginBottom: "1rem" }} onSubmit={this.onCreateProject}>
             <Form.Input
               id="project-name"
@@ -76,7 +83,7 @@ class CreateProjectPage extends Component {
           <Button as={Link} to="/projects/">
             Cancel
           </Button>
-        </div>
+        </PermissionRequired>
       </Container>
     );
   }
