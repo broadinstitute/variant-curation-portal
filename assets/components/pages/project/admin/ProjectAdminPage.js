@@ -42,6 +42,9 @@ const ProjectAdminPage = ({ project, user }) => {
         ) : (
           <p>No curators assigned</p>
         )}
+        <p>
+          <Link to={`/project/${project.id}/assign`}>Assign curators</Link>
+        </p>
         <Header as="h2">Results</Header>
         <p>
           {project.variants.curated} / {project.variants.total} variants curated
