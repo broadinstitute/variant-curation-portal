@@ -6,6 +6,7 @@ import { Container } from "semantic-ui-react";
 import Fetch from "../../Fetch";
 import PageNotFoundPage from "../PageNotFoundPage";
 import withParamsAsProps from "../withParamsAsProps";
+import AssignVariantsPage from "./admin/AssignVariantsPage";
 import ProjectAdminPage from "./admin/ProjectAdminPage";
 import UploadVariantsPage from "./admin/UploadVariantsPage";
 import ProjectAssignmentsPage from "./assignments/ProjectAssignmentsPage";
@@ -27,6 +28,12 @@ const ProjectPage = ({ match, projectId, user }) => (
               exact
               path={`${match.path}admin/`}
               render={props => <ProjectAdminPage {...props} project={project} user={user} />}
+            />
+
+            <Route
+              exact
+              path={`${match.path}assign/`}
+              render={props => <AssignVariantsPage {...props} project={project} user={user} />}
             />
 
             <Route
