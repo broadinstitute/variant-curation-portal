@@ -10,7 +10,9 @@ COPY package.json .
 COPY yarn.lock .
 RUN yarn
 
-COPY . .
+COPY babel.config.js .
+COPY webpack.config.js .
+COPY assets ./assets
 
 RUN yarn run build
 
