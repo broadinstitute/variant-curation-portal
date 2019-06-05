@@ -9,3 +9,6 @@ services:
       - 8000:80
     depends_on:
       - app
+  app:
+    environment:
+      - CURATION_PORTAL_AUTH_HEADER=HTTP_AUTHUSER
