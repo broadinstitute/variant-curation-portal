@@ -178,7 +178,17 @@ class CurateVariantPage extends React.Component {
                       />
                     </div>
 
-                    <div style={showForm ? {} : { display: "none" }}>
+                    <div
+                      style={
+                        showForm
+                          ? {
+                              maxHeight: "calc(100vh - 200px)",
+                              overflowX: "hidden",
+                              overflowY: "auto",
+                            }
+                          : { display: "none" }
+                      }
+                    >
                       <CurationForm
                         ref={this.curationForm}
                         projectId={project.id}
