@@ -35,7 +35,7 @@ class Variant(models.Model):
     liftover_variant_id = models.CharField(max_length=1000, null=True, blank=True)
     chrom = models.CharField(max_length=2)
     pos = models.IntegerField()
-    xpos = models.IntegerField()
+    xpos = models.BigIntegerField()
     ref = models.CharField(max_length=1000)
     alt = models.CharField(max_length=1000)
 
