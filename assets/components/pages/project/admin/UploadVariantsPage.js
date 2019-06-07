@@ -48,7 +48,7 @@ class UploadVariantsPage extends Component {
         return response.json();
       })
       .then(() => {
-        history.push(`/project/${project.id}/`);
+        history.push(`/project/${project.id}/admin/`);
       })
       .catch(error => {
         this.setState({ isSaving: false, saveError: error });

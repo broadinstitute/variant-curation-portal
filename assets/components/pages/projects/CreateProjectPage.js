@@ -47,7 +47,7 @@ class CreateProjectPage extends Component {
       })
       .then(project => {
         this.setState({ isSaving: false });
-        history.push(`/project/${project.id}/`);
+        history.push(`/project/${project.id}/admin/`);
       })
       .catch(() => {
         this.setState({ isSaving: false, lastSaveDidFail: true });
