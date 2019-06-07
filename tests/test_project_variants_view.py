@@ -2,7 +2,7 @@
 import pytest
 from rest_framework.test import APIClient
 
-from curation_portal.models import CurationAssignment, Project, User
+from curation_portal.models import CurationAssignment, Project, User, Variant
 
 pytestmark = pytest.mark.django_db  # pylint: disable=invalid-name
 
@@ -60,6 +60,34 @@ def test_upload_variants_saves_variants(db_setup):
     )
     assert response.status_code == 200
     assert project.variants.count() == starting_variant_count + 3
+
+
+def test_upload_variants_saves_tags(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.post(
+        "/api/project/1/variants/",
+        [
+            {
+                "variant_id": "2-200-C-G",
+                "tags": [{"label": "tag1", "value": "foo"}, {"label": "tag2", "value": "bar"}],
+            }
+        ],
+        format="json",
+    )
+    assert response.status_code == 200
+
+    variant = Variant.objects.get(project=1, variant_id="2-200-C-G")
+
+    tags = list(variant.tags.all())
+
+    assert len(tags) == 2
+
+    assert tags[0].label == "tag1"
+    assert tags[0].value == "foo"
+
+    assert tags[1].label == "tag2"
+    assert tags[1].value == "bar"
 
 
 def test_upload_variants_validates_variants(db_setup):
