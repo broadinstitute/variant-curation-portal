@@ -73,6 +73,18 @@ class VariantAnnotation(models.Model):
         unique_together = ("variant", "transcript_id")
 
 
+class VariantTag(models.Model):
+    variant = models.ForeignKey(
+        Variant, on_delete=models.CASCADE, related_name="tags", related_query_name="tag"
+    )
+
+    label = models.CharField(max_length=100)
+    value = models.CharField(max_length=1000)
+
+    class Meta:
+        db_table = "curation_variant_tag"
+
+
 class Sample(models.Model):
     variant = models.ForeignKey(
         Variant, on_delete=models.CASCADE, related_name="samples", related_query_name="sample"
