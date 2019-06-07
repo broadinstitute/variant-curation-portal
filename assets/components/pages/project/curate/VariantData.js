@@ -61,6 +61,29 @@ AnnotationsList.propTypes = {
   ).isRequired,
 };
 
+const TagsList = ({ tags }) => (
+  <List>
+    {tags.map((tag, index) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <List.Item key={index}>
+        <List.Content>
+          <List.Header>{tag.label}</List.Header>
+          <List.Description>{tag.value}</List.Description>
+        </List.Content>
+      </List.Item>
+    ))}
+  </List>
+);
+
+TagsList.propTypes = {
+  tags: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
+
 const VariantData = ({ variant }) => {
   return (
     <React.Fragment>
@@ -92,6 +115,10 @@ const VariantData = ({ variant }) => {
           <strong>Annotations:</strong>
           <AnnotationsList annotations={variant.annotations} />
         </List.Item>
+        <List.Item>
+          <strong>Tags:</strong>
+          <TagsList tags={variant.tags} />
+        </List.Item>
       </List>
     </React.Fragment>
   );
@@ -105,6 +132,7 @@ VariantData.propTypes = {
     AF: PropTypes.number,
     n_homozygotes: PropTypes.number,
     annotations: PropTypes.arrayOf(PropTypes.object).isRequired,
+    tags: PropTypes.arrayOf(PropTypes.object).isRequired,
     reference_genome: PropTypes.oneOf(["GRCh37", "GRCh38"]).isRequired,
     liftover_variant_id: PropTypes.string,
   }).isRequired,
