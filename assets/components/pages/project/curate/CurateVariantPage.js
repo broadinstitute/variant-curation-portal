@@ -211,7 +211,13 @@ class CurateVariantPage extends React.Component {
                 {/**
                 Sample list
                */}
-                <SampleTable samples={variant.samples} />
+                {variant.samples.length ? (
+                  <SampleTable samples={variant.samples} />
+                ) : (
+                  <Segment placeholder textAlign="center" style={{ minHeight: "6rem" }}>
+                    <Header>Sample data not available for this variant</Header>
+                  </Segment>
+                )}
 
                 <hr style={{ margin: "30px 0" }} />
 
@@ -228,8 +234,8 @@ class CurateVariantPage extends React.Component {
                     src={`https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`}
                   />
                 ) : (
-                  <Segment placeholder>
-                    <Header icon>
+                  <Segment placeholder textAlign="center">
+                    <Header>
                       gnomAD not available
                       <br />
                       No GRCh37 variant ID
