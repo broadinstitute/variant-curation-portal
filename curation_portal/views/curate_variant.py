@@ -14,6 +14,7 @@ from curation_portal.models import (
     Sample,
     Variant,
     VariantAnnotation,
+    VariantTag,
 )
 
 
@@ -35,8 +36,15 @@ class VariantAnnotationSerializer(ModelSerializer):
         exclude = ("id", "variant")
 
 
+class VariantTagSerializer(ModelSerializer):
+    class Meta:
+        model = VariantTag
+        fields = ("label", "value")
+
+
 class VariantSerializer(ModelSerializer):
     annotations = VariantAnnotationSerializer(many=True)
+    tags = VariantTagSerializer(many=True)
     samples = SampleSerializer(many=True)
 
     class Meta:
@@ -70,7 +78,7 @@ class CurateVariantView(APIView):
             Project.objects.get(id=project_id)
             assignment = (
                 request.user.curation_assignments.select_related("variant", "result")
-                .prefetch_related("variant__annotations", "variant__samples")
+                .prefetch_related("variant__annotations", "variant__samples", "variant__tags")
                 .get(variant=variant_id, variant__project=project_id)
             )
         except Project.DoesNotExist:
