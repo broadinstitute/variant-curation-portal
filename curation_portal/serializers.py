@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from curation_portal.models import Sample, Variant, VariantAnnotation
+from curation_portal.models import Sample, Variant, VariantAnnotation, VariantTag
 
 
 def get_xpos(chrom, pos):
@@ -35,8 +35,15 @@ class VariantAnnotationSerializer(ModelSerializer):
         exclude = ("id", "variant")
 
 
+class VariantTagSerializer(ModelSerializer):
+    class Meta:
+        model = VariantTag
+        exclude = ("id", "variant")
+
+
 class VariantSerializer(ModelSerializer):
     annotations = VariantAnnotationSerializer(many=True, required=False)
+    tags = VariantTagSerializer(many=True, required=False)
     samples = SampleSerializer(many=True, required=False)
 
     class Meta:
@@ -45,6 +52,7 @@ class VariantSerializer(ModelSerializer):
 
     def create(self, validated_data):
         annotations_data = validated_data.pop("annotations", None)
+        tags_data = validated_data.pop("tags", None)
         samples_data = validated_data.pop("samples", None)
 
         variant_id = validated_data["variant_id"]
@@ -53,6 +61,10 @@ class VariantSerializer(ModelSerializer):
         if annotations_data:
             annotations = [VariantAnnotation(**item, variant=variant) for item in annotations_data]
             VariantAnnotation.objects.bulk_create(annotations)
+
+        if tags_data:
+            tags = [VariantTag(**item, variant=variant) for item in tags_data]
+            VariantTag.objects.bulk_create(tags)
 
         if samples_data:
             samples = [Sample(**item, variant=variant) for item in samples_data]
