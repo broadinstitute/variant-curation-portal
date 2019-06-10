@@ -155,7 +155,7 @@ class AssignVariantsPage extends Component {
             </Button>
             <br />
             <br />
-            {saveError && <Message error header="Failed to upload variants" />}
+            {saveError && <Message error header="Failed to assign curators" />}
             <Button disabled={assignments.length === 0 || isSaving} primary type="submit">
               Assign curators
             </Button>
