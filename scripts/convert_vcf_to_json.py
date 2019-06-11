@@ -63,9 +63,6 @@ def get_rank(annotation):
 def convert_vcf_to_json(
     vcf_path, output_path, max_samples_per_genotype=5, reference_genome="GRCh37", tag_fields=None
 ):
-    if tag_fields is None:
-        tag_fields = {}
-
     variants = {}
 
     with gzip.open(vcf_path, "rt") as vcf_file:
@@ -136,13 +133,11 @@ def convert_vcf_to_json(
                     }
                 )
 
-            for field, label in tag_fields.items():
-                try:
-                    value = row.INFO[field]
+            if tag_fields:
+                for field, label in tag_fields.items():
+                    value = row.INFO.get(field, None)
                     if value is not None:
                         variant["tags"].append({"label": label, "value": value})
-                except KeyError:
-                    pass
 
             for sample in sorted(samples, key=lambda s: getattr(s.data, "GQ", None) or 0):
                 if sample["GT"] not in {"0/1", "1/1"}:
@@ -192,7 +187,7 @@ def main():
     parser.add_argument("output_path")
     parser.add_argument("--max-samples-per-genotype", type=int, default=5)
     parser.add_argument("--reference-genome", choices=["GRCh37", "GRCh38"], default="GRCh37")
-    parser.add_argument("--tag-field", action="append")
+    parser.add_argument("--tag-field", action="append", default=[])
 
     args = parser.parse_args()
 
