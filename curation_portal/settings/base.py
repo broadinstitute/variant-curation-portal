@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "rest_framework",
+    "rules.apps.AutodiscoverRulesConfig",
     "webpack_loader",
     "curation_portal",
 ]
@@ -94,7 +95,10 @@ DATABASES = {
 
 AUTH_USER_MODEL = "curation_portal.User"
 
-AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.RemoteUserBackend"]
+AUTHENTICATION_BACKENDS = [
+    "rules.permissions.ObjectPermissionBackend",
+    "django.contrib.auth.backends.RemoteUserBackend",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

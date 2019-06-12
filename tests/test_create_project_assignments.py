@@ -36,7 +36,7 @@ def test_creating_project_assignments_requires_authentication(db_setup):
 
 
 @pytest.mark.parametrize(
-    "username,expected_status_code", [("user1@example.com", 200), ("user2@example.com", 403)]
+    "username,expected_status_code", [("user1@example.com", 200), ("user2@example.com", 404)]
 )
 def test_project_assignments_can_only_be_set_by_project_owners(
     db_setup, username, expected_status_code
