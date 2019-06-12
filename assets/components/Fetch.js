@@ -86,13 +86,13 @@ class BaseFetch extends Component {
 
   render() {
     const { children } = this.props;
-    return children(this.state);
+    return children({ ...this.state, refresh: this.loadData.bind(this) });
   }
 }
 
 const Fetch = ({ children, url }) => (
   <BaseFetch url={url}>
-    {({ data, error, isFetching }) => {
+    {({ data, error, isFetching, refresh }) => {
       if (isFetching) {
         return (
           <Dimmer active inverted>
@@ -113,7 +113,7 @@ const Fetch = ({ children, url }) => (
         );
       }
 
-      return children({ data });
+      return children({ data, refresh });
     }}
   </BaseFetch>
 );

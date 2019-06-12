@@ -16,6 +16,7 @@ class AssignVariantsPage extends Component {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }).isRequired,
+    refreshProject: PropTypes.func.isRequired,
     user: PropTypes.shape({
       username: PropTypes.string.isRequired,
     }),
@@ -38,7 +39,7 @@ class AssignVariantsPage extends Component {
   form = React.createRef();
 
   onSubmit = () => {
-    const { history, project } = this.props;
+    const { history, project, refreshProject } = this.props;
     const { assignments } = this.state;
 
     this.setState({ isSaving: true, saveError: null });
@@ -58,6 +59,7 @@ class AssignVariantsPage extends Component {
         return response.json();
       })
       .then(() => {
+        refreshProject();
         history.push(`/project/${project.id}/admin/`);
       })
       .catch(error => {
