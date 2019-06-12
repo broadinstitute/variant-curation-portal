@@ -15,6 +15,7 @@ class UploadVariantsPage extends Component {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }).isRequired,
+    refreshProject: PropTypes.func.isRequired,
   };
 
   variantData = null;
@@ -29,7 +30,7 @@ class UploadVariantsPage extends Component {
   };
 
   onSubmit = () => {
-    const { history, project } = this.props;
+    const { history, project, refreshProject } = this.props;
 
     this.setState({ isSaving: true, saveError: null });
     fetch(`/api/project/${project.id}/variants/`, {
@@ -48,6 +49,7 @@ class UploadVariantsPage extends Component {
         return response.json();
       })
       .then(() => {
+        refreshProject();
         history.push(`/project/${project.id}/admin/`);
       })
       .catch(error => {

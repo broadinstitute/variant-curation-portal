@@ -15,7 +15,7 @@ import CurateVariantPage from "./curate/CurateVariantPage";
 const ProjectPage = ({ match, projectId, user }) => (
   <Container fluid>
     <Fetch url={`/api/project/${projectId}/`}>
-      {({ data: project }) => {
+      {({ data: project, refresh }) => {
         return (
           <Switch>
             <Route
@@ -33,13 +33,22 @@ const ProjectPage = ({ match, projectId, user }) => (
             <Route
               exact
               path={`${match.path}assign/`}
-              render={props => <AssignVariantsPage {...props} project={project} user={user} />}
+              render={props => (
+                <AssignVariantsPage
+                  {...props}
+                  project={project}
+                  user={user}
+                  refreshProject={refresh}
+                />
+              )}
             />
 
             <Route
               exact
               path={`${match.path}variants/`}
-              render={props => <UploadVariantsPage {...props} project={project} />}
+              render={props => (
+                <UploadVariantsPage {...props} project={project} refreshProject={refresh} />
+              )}
             />
 
             <Route
