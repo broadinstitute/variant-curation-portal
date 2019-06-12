@@ -2,6 +2,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Prefetch
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -82,57 +83,52 @@ class ProjectSerializer(serializers.ModelSerializer):
 class ProjectAssignmentsView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, *args, **kwargs):
-        project_id = kwargs["project_id"]
-        try:
-            project = Project.objects.get(id=project_id)
-            assignments = list(
-                request.user.curation_assignments.filter(variant__project=project_id)
-                .select_related("result", "variant")
-                .prefetch_related(
-                    Prefetch(
-                        "variant__annotations",
-                        queryset=VariantAnnotation.objects.only("gene_symbol", "variant_id", "id"),
-                    )
-                )
-                .order_by("variant__xpos", "variant__ref", "variant__alt")
-                .all()
-            )
-        except Project.DoesNotExist:
-            raise NotFound("Project does not exist")
-        else:
-            if not assignments and not project.owners.filter(id=request.user.id).exists():
-                raise PermissionDenied("You do not have permission to view this project")
+    def get_project(self):
+        project = get_object_or_404(Project, id=self.kwargs["project_id"])
+        if not self.request.user.has_perm("curation_portal.view_project", project):
+            raise NotFound
 
-            project_serializer = ProjectSerializer(project)
-            assignments_serializer = AssignmentSerializer(assignments, many=True)
-            return Response(
-                {"project": project_serializer.data, "assignments": assignments_serializer.data}
+        return project
+
+    def get(self, request, *args, **kwargs):
+        project = self.get_project()
+
+        assignments = list(
+            request.user.curation_assignments.filter(variant__project=project)
+            .select_related("result", "variant")
+            .prefetch_related(
+                Prefetch(
+                    "variant__annotations",
+                    queryset=VariantAnnotation.objects.only("gene_symbol", "variant_id", "id"),
+                )
             )
+            .order_by("variant__xpos", "variant__ref", "variant__alt")
+            .all()
+        )
+
+        project_serializer = ProjectSerializer(project)
+        assignments_serializer = AssignmentSerializer(assignments, many=True)
+        return Response(
+            {"project": project_serializer.data, "assignments": assignments_serializer.data}
+        )
 
     def post(self, request, *args, **kwargs):
-        project_id = kwargs["project_id"]
+        project = self.get_project()
+
+        if not request.user.has_perm("curation_portal.change_project", project):
+            raise PermissionDenied
+
+        serializer = NewAssignmentSerializer(
+            data=request.data["assignments"], context={"project": project}, many=True
+        )
+        if not serializer.is_valid():
+            raise ValidationError(serializer.errors)
+
         try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            raise NotFound("Project does not exist")
-        else:
-            if not project.owners.filter(id=request.user.id).exists():
-                raise PermissionDenied("You do not have permission to perform this action")
+            with transaction.atomic():
+                serializer.save()
+                project.save()
 
-            print(request.data)
-            serializer = NewAssignmentSerializer(
-                data=request.data["assignments"], context={"project": project}, many=True
-            )
-            if not serializer.is_valid():
-                print(serializer.errors)
-                raise ValidationError(serializer.errors)
-
-            try:
-                with transaction.atomic():
-                    serializer.save()
-                    project.save()
-
-                return Response({})
-            except IntegrityError:
-                raise ValidationError("Integrity error")
+            return Response({})
+        except IntegrityError:
+            raise ValidationError("Integrity error")

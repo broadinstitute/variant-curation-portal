@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.views import View
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -39,69 +40,75 @@ class CreateProjectView(APIView):
 class ProjectVariantsView(APIView):
     permission_classes = (IsAuthenticated,)
 
+    def get_project(self):
+        project = get_object_or_404(Project, id=self.kwargs["project_id"])
+        if not self.request.user.has_perm("curation_portal.change_project", project):
+            if not self.request.user.has_perm("curation_portal.view_project", project):
+                raise NotFound
+
+            raise PermissionDenied
+
+        return project
+
     def post(self, request, *args, **kwargs):
-        project_id = kwargs["project_id"]
+        project = self.get_project()
+
+        serializer = VariantSerializer(data=request.data, many=True)
+        if not serializer.is_valid():
+            raise ValidationError(serializer.errors)
+
         try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            raise NotFound("Project does not exist")
-        else:
-            if not project.owners.filter(id=request.user.id).exists():
-                raise PermissionDenied("You do not have permission to view this page")
+            with transaction.atomic():
+                serializer.save(project=project)
+                project.updated_at = timezone.now()
+                project.save()
 
-            serializer = VariantSerializer(data=request.data, many=True)
-            if not serializer.is_valid():
-                raise ValidationError(serializer.errors)
-
-            try:
-                with transaction.atomic():
-                    serializer.save(project=project)
-                    project.updated_at = timezone.now()
-                    project.save()
-
-                return Response({})
-            except IntegrityError:
-                raise ValidationError("Integrity error")
+            return Response({})
+        except IntegrityError:
+            raise ValidationError("Integrity error")
 
 
 class DownloadProjectResultsView(LoginRequiredMixin, View):
+    def get_project(self):
+        project = get_object_or_404(Project, id=self.kwargs["project_id"])
+        if not self.request.user.has_perm("curation_portal.change_project", project):
+            if not self.request.user.has_perm("curation_portal.view_project", project):
+                raise NotFound
+
+            raise PermissionDenied
+
+        return project
+
     def get(self, request, *args, **kwargs):
-        project_id = kwargs["project_id"]
-        try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            raise NotFound("Project does not exist")
-        else:
-            if not project.owners.filter(id=request.user.id).exists():
-                raise PermissionDenied("You do not have permission to view this page")
+        project = self.get_project()
 
-            result_flag_fields = [
-                f.name for f in CurationResult._meta.get_fields() if f.name.startswith("flag")
-            ]
-            result_fields = ["notes", "should_revisit", "verdict"] + result_flag_fields
+        result_flag_fields = [
+            f.name for f in CurationResult._meta.get_fields() if f.name.startswith("flag")
+        ]
+        result_fields = ["notes", "should_revisit", "verdict"] + result_flag_fields
 
-            completed_assignments = (
-                CurationAssignment.objects.filter(
-                    variant__project=project, result__verdict__isnull=False
-                )
-                .select_related("curator", "variant")
-                .all()
+        completed_assignments = (
+            CurationAssignment.objects.filter(
+                variant__project=project, result__verdict__isnull=False
             )
+            .select_related("curator", "variant")
+            .all()
+        )
 
-            response = HttpResponse(content_type="text/csv")
-            response["Content-Disposition"] = f'attachment; filename="{project.name}_results.csv"'
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = f'attachment; filename="{project.name}_results.csv"'
 
-            writer = csv.writer(response)
+        writer = csv.writer(response)
 
-            header_row = ["Variant ID", "Curator"] + [
-                " ".join(word.capitalize() for word in f.split("_")) for f in result_fields
+        header_row = ["Variant ID", "Curator"] + [
+            " ".join(word.capitalize() for word in f.split("_")) for f in result_fields
+        ]
+        writer.writerow(header_row)
+
+        for assignment in completed_assignments:
+            row = [assignment.variant.variant_id, assignment.curator.username] + [
+                getattr(assignment.result, f) for f in result_fields
             ]
-            writer.writerow(header_row)
+            writer.writerow(row)
 
-            for assignment in completed_assignments:
-                row = [assignment.variant.variant_id, assignment.curator.username] + [
-                    getattr(assignment.result, f) for f in result_fields
-                ]
-                writer.writerow(row)
-
-            return response
+        return response

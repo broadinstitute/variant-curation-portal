@@ -39,7 +39,7 @@ def test_upload_variants_requires_authentication(db_setup):
 
 @pytest.mark.parametrize(
     "username,expected_status_code",
-    [("user1@example.com", 200), ("user2@example.com", 403), ("user3@example.com", 403)],
+    [("user1@example.com", 200), ("user2@example.com", 403), ("user3@example.com", 404)],
 )
 def test_variants_can_only_be_uploaded_by_project_owners(db_setup, username, expected_status_code):
     client = APIClient()

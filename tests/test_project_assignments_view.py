@@ -50,7 +50,7 @@ def test_project_assignments_list_requires_authentication(db_setup):
         ("user1@example.com", 200),
         ("user2@example.com", 200),
         ("user3@example.com", 200),
-        ("user4@example.com", 403),
+        ("user4@example.com", 404),
     ],
 )
 def test_project_assignments_list_can_only_be_viewed_by_project_curators(

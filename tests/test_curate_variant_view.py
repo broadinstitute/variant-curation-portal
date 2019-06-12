@@ -46,10 +46,10 @@ def test_curate_variant_view_requires_authentication(db_setup):
 @pytest.mark.parametrize(
     "username,expected_status_code",
     [
-        ("user1@example.com", 403),
+        ("user1@example.com", 404),
         ("user2@example.com", 200),
-        ("user3@example.com", 403),
-        ("user4@example.com", 403),
+        ("user3@example.com", 404),
+        ("user4@example.com", 404),
     ],
 )
 def test_curate_variant_view_can_only_be_viewed_by_variant_curators(
