@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button, Form, Header, Icon, List, Message, Segment } from "semantic-ui-react";
 
+import api from "../../../../api";
 import { PermissionRequired } from "../../../../permissions";
-import getCookie from "../../../../utilities/getCookie";
 import DocumentTitle from "../../../DocumentTitle";
 
 class AssignVariantsPage extends Component {
@@ -43,21 +43,8 @@ class AssignVariantsPage extends Component {
     const { assignments } = this.state;
 
     this.setState({ isSaving: true, saveError: null });
-    fetch(`/api/project/${project.id}/assignments/`, {
-      body: JSON.stringify({ assignments }),
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-      method: "POST",
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
-      })
+    api
+      .post(`/project/${project.id}/assignments/`, { assignments })
       .then(() => {
         refreshProject();
         history.push(`/project/${project.id}/admin/`);

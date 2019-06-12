@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button, Form, Header, Icon, Message } from "semantic-ui-react";
 
-import getCookie from "../../../../utilities/getCookie";
+import api from "../../../../api";
 import DocumentTitle from "../../../DocumentTitle";
 
 class UploadVariantsPage extends Component {
@@ -33,21 +33,8 @@ class UploadVariantsPage extends Component {
     const { history, project, refreshProject } = this.props;
 
     this.setState({ isSaving: true, saveError: null });
-    fetch(`/api/project/${project.id}/variants/`, {
-      body: JSON.stringify(this.variantData),
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-      method: "POST",
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
-      })
+    api
+      .post(`/project/${project.id}/variants/`, this.variantData)
       .then(() => {
         refreshProject();
         history.push(`/project/${project.id}/admin/`);

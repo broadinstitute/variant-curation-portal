@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Form, Header, Message } from "semantic-ui-react";
 
+import api from "../../../api";
 import { PermissionRequired } from "../../../permissions";
-import getCookie from "../../../utilities/getCookie";
 import DocumentTitle from "../../DocumentTitle";
 
 class CreateProjectPage extends Component {
@@ -30,21 +30,8 @@ class CreateProjectPage extends Component {
     const { projectName } = this.state;
 
     this.setState({ isSaving: true, lastSaveDidFail: false });
-    fetch("/api/projects/create/", {
-      body: JSON.stringify({ name: projectName }),
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-      method: "POST",
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
-      })
+    api
+      .post("/projects/create/", { name: projectName })
       .then(project => {
         this.setState({ isSaving: false });
         history.push(`/project/${project.id}/admin/`);
