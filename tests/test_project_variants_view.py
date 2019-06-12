@@ -62,6 +62,63 @@ def test_upload_variants_saves_variants(db_setup):
     assert project.variants.count() == starting_variant_count + 3
 
 
+def test_upload_variants_saves_annotations(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.post(
+        "/api/project/1/variants/",
+        [
+            {
+                "variant_id": "2-100-A-T",
+                "annotations": [
+                    {
+                        "consequence": "frameshift_variant",
+                        "gene_id": "GENE_1",
+                        "gene_symbol": "SOMEGENE",
+                        "transcript_id": "TRANSCRIPT_1",
+                        "loftee": "HC",
+                        "loftee_filter": "some_filter",
+                        "loftee_flags": "some_flags",
+                    },
+                    {
+                        "consequence": "synonymous_variant",
+                        "gene_id": "GENE_2",
+                        "gene_symbol": "SOMEOTHERGENE",
+                        "transcript_id": "TRANSCRIPT_2",
+                        "loftee": "",
+                        "loftee_filter": "",
+                        "loftee_flags": "",
+                    },
+                ],
+            }
+        ],
+        format="json",
+    )
+    assert response.status_code == 200
+
+    variant = Variant.objects.get(project=1, variant_id="2-100-A-T")
+
+    annotations = list(variant.annotations.all())
+
+    assert len(annotations) == 2
+
+    assert annotations[0].consequence == "frameshift_variant"
+    assert annotations[0].gene_id == "GENE_1"
+    assert annotations[0].gene_symbol == "SOMEGENE"
+    assert annotations[0].transcript_id == "TRANSCRIPT_1"
+    assert annotations[0].loftee == "HC"
+    assert annotations[0].loftee_filter == "some_filter"
+    assert annotations[0].loftee_flags == "some_flags"
+
+    assert annotations[1].consequence == "synonymous_variant"
+    assert annotations[1].gene_id == "GENE_2"
+    assert annotations[1].gene_symbol == "SOMEOTHERGENE"
+    assert annotations[1].transcript_id == "TRANSCRIPT_2"
+    assert annotations[1].loftee == ""
+    assert annotations[1].loftee_filter == ""
+    assert annotations[1].loftee_flags == ""
+
+
 def test_upload_variants_saves_tags(db_setup):
     client = APIClient()
     client.force_authenticate(User.objects.get(username="user1@example.com"))
