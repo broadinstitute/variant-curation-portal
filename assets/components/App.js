@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Link, Redirect, Route, Switch } from "react-ro
 import "semantic-ui-css/semantic.css";
 import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 
+import api from "../api";
 import HomePage from "./pages/HomePage";
 import PageNotFoundPage from "./pages/PageNotFoundPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
@@ -19,13 +20,8 @@ class App extends Component {
   };
 
   componentDidMount() {
-    fetch(`/api/profile/`, { credentials: "same-origin" })
-      .then(response => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
-      })
+    api
+      .get(`/profile/`)
       .then(data => {
         this.setState({ user: data.user });
       })

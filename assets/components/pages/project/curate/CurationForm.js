@@ -13,8 +13,8 @@ import {
   TextArea,
 } from "semantic-ui-react";
 
+import api from "../../../../api";
 import verdicts, { verdictLabels } from "../../../../constants/verdicts";
-import getCookie from "../../../../utilities/getCookie";
 import { CurationResultPropType } from "../../../propTypes";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
 
@@ -65,21 +65,8 @@ class CurationForm extends React.Component {
     }
 
     return new Promise((resolve, reject) => {
-      fetch(`/api/project/${projectId}/variant/${variantId}/curate/`, {
-        body: JSON.stringify(result),
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-        method: "POST",
-      })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw response;
-        })
+      api
+        .post(`/project/${projectId}/variant/${variantId}/curate/`, result)
         .then(() => {
           this.setState(
             { isSaving: false, lastSaveDidFail: false, lastSaveStatusMessage: "Saved" },
