@@ -1,6 +1,45 @@
-from rest_framework.serializers import ModelSerializer
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.validators import MaxLengthValidator
+from rest_framework.serializers import ModelSerializer, RelatedField, ValidationError
 
-from curation_portal.models import Sample, Variant, VariantAnnotation, VariantTag
+from curation_portal.models import Project, Sample, User, Variant, VariantAnnotation, VariantTag
+
+
+class ProjectOwnerField(RelatedField):
+    default_error_messages = {"invalid": "Invalid username."}
+
+    queryset = User.objects.all()
+
+    def to_internal_value(self, data):
+        # These match the validators applied to Django's default User model's username field.
+        for validator in [
+            MaxLengthValidator(150, "Ensure this field has no more than 150 characters."),
+            UnicodeUsernameValidator(),
+        ]:
+            validator(data)
+
+        try:
+            user, _ = self.get_queryset().get_or_create(username=data)
+            return user
+        except (TypeError, ValueError):
+            self.fail("invalid")
+
+    def to_representation(self, value):
+        return value.username
+
+
+class ProjectSerializer(ModelSerializer):
+    owners = ProjectOwnerField(many=True, allow_empty=False)
+
+    class Meta:
+        model = Project
+        fields = ("id", "name", "owners")
+
+    def validate_owners(self, value):
+        if self.context["request"].user not in value:
+            raise ValidationError("You may not remove yourself as a project owner.")
+
+        return value
 
 
 def get_xpos(chrom, pos):

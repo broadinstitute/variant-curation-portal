@@ -1,5 +1,5 @@
 from django.db.models import Count
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,6 +7,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
 
 from curation_portal.models import CurationAssignment, Project
+from curation_portal.serializers import ProjectSerializer as EditProjectSerializer
 
 
 class ProjectSerializer(ModelSerializer):
@@ -68,3 +69,17 @@ class ProjectView(APIView):
             response["variants"] = {"total": total_variants, "curated": num_curated_variants}
 
         return Response(response)
+
+    def patch(self, request, *args, **kwargs):
+        project = self.get_project()
+
+        if not request.user.has_perm("curation_portal.change_project", project):
+            raise PermissionDenied
+
+        serializer = EditProjectSerializer(
+            project, data=request.data, context={"request": request}, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
