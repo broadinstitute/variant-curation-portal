@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button, Header, Item } from "semantic-ui-react";
+import { Button, Header, Item, List } from "semantic-ui-react";
 
 import { PermissionRequired } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
@@ -18,6 +18,15 @@ const ProjectAdminPage = ({ project, user }) => {
         <div>
           <Link to="/projects/">Return to all projects</Link>
         </div>
+        <Header as="h2">Owners</Header>
+        <List bulleted>
+          {project.owners.map(username => (
+            <List.Item key={username}>{username}</List.Item>
+          ))}
+        </List>
+        <p>
+          <Link to={`/project/${project.id}/owners/`}>Edit project owners</Link>
+        </p>
         <Header as="h2">Manage</Header>
         <p>
           <Link to={`/project/${project.id}/variants`}>Upload variants</Link>
