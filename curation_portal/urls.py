@@ -52,6 +52,11 @@ urlpatterns = [
         name="project-admin",
     ),
     path(
+        "project/<int:project_id>/owners/",
+        TemplateView.as_view(template_name="default.template.html"),
+        name="project-owners",
+    ),
+    path(
         "project/<int:project_id>/assign/",
         TemplateView.as_view(template_name="default.template.html"),
         name="project-admin",

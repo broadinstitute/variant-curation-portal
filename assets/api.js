@@ -15,6 +15,17 @@ class ApiClient {
     return this.request(path, {});
   }
 
+  patch(path, data) {
+    return this.request(path, {
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      method: "PATCH",
+    });
+  }
+
   post(path, data) {
     return this.request(path, {
       body: JSON.stringify(data),

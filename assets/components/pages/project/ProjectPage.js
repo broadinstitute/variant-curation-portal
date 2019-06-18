@@ -7,6 +7,7 @@ import Fetch from "../../Fetch";
 import PageNotFoundPage from "../PageNotFoundPage";
 import withParamsAsProps from "../withParamsAsProps";
 import AssignVariantsPage from "./admin/AssignVariantsPage";
+import EditProjectOwnersPage from "./admin/EditProjectOwnersPage";
 import ProjectAdminPage from "./admin/ProjectAdminPage";
 import UploadVariantsPage from "./admin/UploadVariantsPage";
 import ProjectAssignmentsPage from "./assignments/ProjectAssignmentsPage";
@@ -28,6 +29,19 @@ const ProjectPage = ({ match, projectId, user }) => (
               exact
               path={`${match.path}admin/`}
               render={props => <ProjectAdminPage {...props} project={project} user={user} />}
+            />
+
+            <Route
+              exact
+              path={`${match.path}owners/`}
+              render={props => (
+                <EditProjectOwnersPage
+                  {...props}
+                  project={project}
+                  refreshProject={refresh}
+                  user={user}
+                />
+              )}
             />
 
             <Route
