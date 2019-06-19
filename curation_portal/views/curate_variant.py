@@ -85,7 +85,7 @@ class CurateVariantView(APIView):
     def get(self, request, *args, **kwargs):
         assignment = self.get_assignment()
 
-        previous_site_variant = (
+        previous_site_variants = (
             request.user.curation_assignments.filter(
                 variant__project=assignment.variant.project,
                 variant__xpos__lt=assignment.variant.xpos,
@@ -93,8 +93,9 @@ class CurateVariantView(APIView):
             .order_by("variant__xpos", "variant__ref", "variant__alt")
             .reverse()
             .values("variant", "variant__variant_id")
-            .first()
         )
+        num_previous_site_variants = previous_site_variants.count()
+        previous_site_variant = previous_site_variants.first()
 
         colocated_variants = (
             request.user.curation_assignments.filter(
@@ -122,8 +123,11 @@ class CurateVariantView(APIView):
         previous_variant = surrounding_variants[index_in_surrounding_variants - 1]
         next_variant = surrounding_variants[index_in_surrounding_variants + 1]
 
+        index = num_previous_site_variants + index_in_surrounding_variants - 1
+
         return Response(
             {
+                "index": index,
                 "variant": VariantSerializer(assignment.variant).data,
                 "next_variant": serialize_adjacent_variant(next_variant),
                 "previous_variant": serialize_adjacent_variant(previous_variant),

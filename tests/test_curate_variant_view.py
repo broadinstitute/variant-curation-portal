@@ -85,15 +85,22 @@ def test_curate_variant_orders_multiallelic_variants(db_setup):
     assert assigned_variants == ["1-100-A-AC", "1-100-A-AT", "1-100-A-C", "1-100-A-G"]
 
     variants = [
-        ("1-100-A-AC", None, "1-100-A-AT"),
-        ("1-100-A-AT", "1-100-A-AC", "1-100-A-C"),
-        ("1-100-A-C", "1-100-A-AT", "1-100-A-G"),
-        ("1-100-A-G", "1-100-A-C", None),
+        ("1-100-A-AC", 0, None, "1-100-A-AT"),
+        ("1-100-A-AT", 1, "1-100-A-AC", "1-100-A-C"),
+        ("1-100-A-C", 2, "1-100-A-AT", "1-100-A-G"),
+        ("1-100-A-G", 3, "1-100-A-C", None),
     ]
 
-    for (variant_id, expected_previous_variant_id, expected_next_variant_id) in variants:
+    for (
+        variant_id,
+        expected_index,
+        expected_previous_variant_id,
+        expected_next_variant_id,
+    ) in variants:
         variant = Variant.objects.get(variant_id=variant_id, project__id=1)
         response = client.get(f"/api/project/1/variant/{variant.id}/curate/").json()
+
+        assert response["index"] == expected_index
 
         if expected_previous_variant_id:
             assert response["previous_variant"]["variant_id"] == expected_previous_variant_id

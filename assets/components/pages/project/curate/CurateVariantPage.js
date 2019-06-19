@@ -47,7 +47,13 @@ class CurateVariantPage extends React.Component {
       <React.Fragment>
         <Fetch url={`/api/project/${project.id}/variant/${variantId}/curate/`}>
           {({
-            data: { variant, next_variant: nextVariant, previous_variant: previousVariant, result },
+            data: {
+              index,
+              variant,
+              next_variant: nextVariant,
+              previous_variant: previousVariant,
+              result,
+            },
           }) => {
             const gnomadVariantId =
               variant.reference_genome === "GRCh38"
@@ -81,7 +87,7 @@ class CurateVariantPage extends React.Component {
                       }}
                     >
                       <span>
-                        {project.name} | <VariantId variantId={variant.variant_id} />
+                        {project.name} | {index + 1}: <VariantId variantId={variant.variant_id} />
                       </span>
                       <List horizontal>
                         <List.Item>
