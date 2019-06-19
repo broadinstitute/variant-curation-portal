@@ -20,55 +20,24 @@ from curation_portal.views.project_admin import (
 )
 from curation_portal.views.user import ProfileView
 
+DEFAULT_TEMPLATE_VIEW = TemplateView.as_view(template_name="default.template.html")
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="default.template.html"), name="home"),
+    path("", DEFAULT_TEMPLATE_VIEW, name="home"),
     path("signin/", SigninView.as_view(), name="signin"),
-    path(
-        "privacy/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="privacy-policy",
-    ),
-    path("terms/", TemplateView.as_view(template_name="default.template.html"), name="terms"),
-    path(
-        "assignments/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="assignments",
-    ),
-    path("projects/", TemplateView.as_view(template_name="default.template.html"), name="projects"),
-    path(
-        "projects/create/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="create-project",
-    ),
-    path(
-        "project/<int:project_id>/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="project",
-    ),
-    path(
-        "project/<int:project_id>/admin/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="project-admin",
-    ),
-    path(
-        "project/<int:project_id>/owners/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="project-owners",
-    ),
-    path(
-        "project/<int:project_id>/assign/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="project-admin",
-    ),
-    path(
-        "project/<int:project_id>/variants/",
-        TemplateView.as_view(template_name="default.template.html"),
-        name="project-variants",
-    ),
+    path("privacy/", DEFAULT_TEMPLATE_VIEW, name="privacy-policy"),
+    path("terms/", DEFAULT_TEMPLATE_VIEW, name="terms"),
+    path("assignments/", DEFAULT_TEMPLATE_VIEW, name="assignments"),
+    path("projects/", DEFAULT_TEMPLATE_VIEW, name="projects"),
+    path("projects/create/", DEFAULT_TEMPLATE_VIEW, name="create-project"),
+    path("project/<int:project_id>/", DEFAULT_TEMPLATE_VIEW, name="project"),
+    path("project/<int:project_id>/admin/", DEFAULT_TEMPLATE_VIEW, name="project-admin"),
+    path("project/<int:project_id>/owners/", DEFAULT_TEMPLATE_VIEW, name="project-owners"),
+    path("project/<int:project_id>/assign/", DEFAULT_TEMPLATE_VIEW, name="project-admin"),
+    path("project/<int:project_id>/variants/", DEFAULT_TEMPLATE_VIEW, name="project-variants"),
     path(
         "project/<int:project_id>/variant/<int:variant_id>/curate/",
-        TemplateView.as_view(template_name="default.template.html"),
+        DEFAULT_TEMPLATE_VIEW,
         name="curate-variant",
     ),
     path("api/assignments/", AssignedProjectsView.as_view(), name="api-assignments"),
