@@ -85,28 +85,42 @@ class CurateVariantView(APIView):
     def get(self, request, *args, **kwargs):
         assignment = self.get_assignment()
 
-        previous_variant = (
+        previous_site_variant = (
             request.user.curation_assignments.filter(
                 variant__project=assignment.variant.project,
-                variant__xpos__lte=assignment.variant.xpos,
+                variant__xpos__lt=assignment.variant.xpos,
             )
-            .exclude(variant=assignment.variant)
             .order_by("variant__xpos", "variant__ref", "variant__alt")
             .reverse()
             .values("variant", "variant__variant_id")
             .first()
         )
 
-        next_variant = (
+        colocated_variants = (
+            request.user.curation_assignments.filter(
+                variant__project=assignment.variant.project, variant__xpos=assignment.variant.xpos
+            )
+            .order_by("variant__xpos", "variant__ref", "variant__alt")
+            .values("variant", "variant__variant_id")
+        )
+
+        next_site_variant = (
             request.user.curation_assignments.filter(
                 variant__project=assignment.variant.project,
-                variant__xpos__gte=assignment.variant.xpos,
+                variant__xpos__gt=assignment.variant.xpos,
             )
-            .exclude(variant=assignment.variant)
             .order_by("variant__xpos", "variant__ref", "variant__alt")
             .values("variant", "variant__variant_id")
             .first()
         )
+
+        surrounding_variants = [previous_site_variant, *colocated_variants, next_site_variant]
+        index_in_surrounding_variants = [
+            v["variant__variant_id"] if v is not None else None for v in surrounding_variants
+        ].index(assignment.variant.variant_id)
+
+        previous_variant = surrounding_variants[index_in_surrounding_variants - 1]
+        next_variant = surrounding_variants[index_in_surrounding_variants + 1]
 
         return Response(
             {
