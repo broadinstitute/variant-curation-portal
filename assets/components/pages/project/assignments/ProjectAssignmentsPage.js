@@ -16,7 +16,7 @@ const ProjectAssignmentsPage = ({ project }) => {
         {project.name}
       </Header>
       <div>
-        <Link to="/projects/">All projects</Link>
+        <Link to="/assignments/">All assigned projects</Link>
       </div>
 
       <Fetch url={`/api/project/${project.id}/assignments/`}>
