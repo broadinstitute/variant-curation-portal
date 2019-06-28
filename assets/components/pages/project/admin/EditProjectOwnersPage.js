@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Button, Form, Header, List, Message, Segment } from "semantic-ui-react";
+import { Button, Form, Header, Label, List, Message, Segment } from "semantic-ui-react";
 
 import api from "../../../../api";
 import { PermissionRequired } from "../../../../permissions";
@@ -35,14 +35,17 @@ class EditProjectOwnersPage extends Component {
     this.state = {
       inputUsername: "",
       isSaving: false,
-      owners: props.project.owners,
+      currentOwners: props.project.owners,
+      newOwners: [],
+      removedOwners: [],
       saveError: null,
     };
   }
 
   onSubmit = () => {
     const { history, project, refreshProject } = this.props;
-    const { owners } = this.state;
+    const { currentOwners, newOwners, removedOwners } = this.state;
+    const owners = currentOwners.filter(u => !removedOwners.includes(u)).concat(newOwners);
 
     this.setState({ isSaving: true, saveError: null });
     api
@@ -58,7 +61,23 @@ class EditProjectOwnersPage extends Component {
 
   render() {
     const { project, user } = this.props;
-    const { inputUsername, isSaving, owners, saveError } = this.state;
+    const {
+      inputUsername,
+      isSaving,
+      currentOwners,
+      newOwners,
+      removedOwners,
+      saveError,
+    } = this.state;
+
+    const allOwners = [
+      ...currentOwners.map(username => ({
+        username,
+        isNew: false,
+        isRemoved: removedOwners.includes(username),
+      })),
+      ...newOwners.map(username => ({ username, isNew: true, isRemoved: false })),
+    ].sort((owner1, owner2) => owner1.username.localeCompare(owner2.username));
 
     return (
       <React.Fragment>
@@ -81,23 +100,41 @@ class EditProjectOwnersPage extends Component {
             <Segment attached>
               <Header as="h4">Project owners</Header>
               <List bulleted divided selection>
-                {owners.map(ownerUsername => (
-                  <List.Item key={ownerUsername}>
+                {allOwners.map(owner => (
+                  <List.Item key={owner.username}>
                     <List.Content floated="left">
-                      <List.Header>{ownerUsername}</List.Header>
+                      <List.Header>
+                        {owner.username}
+                        {owner.isNew && (
+                          <Label color="green" size="mini" style={{ marginLeft: "1em" }}>
+                            New
+                          </Label>
+                        )}
+                        {owner.isRemoved && (
+                          <Label color="red" size="mini" style={{ marginLeft: "1em" }}>
+                            Removed
+                          </Label>
+                        )}
+                      </List.Header>
                     </List.Content>
                     <List.Content floated="right">
                       <Button
                         compact
-                        disabled={ownerUsername === user.username}
+                        disabled={owner.username === user.username || owner.isRemoved}
                         floated="right"
                         icon="times"
                         size="mini"
                         type="button"
                         onClick={() => {
-                          this.setState(state => ({
-                            owners: state.owners.filter(u => u !== ownerUsername),
-                          }));
+                          if (owner.isNew) {
+                            this.setState(state => ({
+                              newOwners: state.newOwners.filter(u => u !== owner.username),
+                            }));
+                          } else {
+                            this.setState(state => ({
+                              removedOwners: [...state.removedOwners, owner.username],
+                            }));
+                          }
                         }}
                       />
                     </List.Content>
@@ -110,10 +147,18 @@ class EditProjectOwnersPage extends Component {
                     disabled={!inputUsername}
                     type="button"
                     onClick={() => {
-                      this.setState(state => ({
-                        owners: [...state.owners, inputUsername],
-                        inputUsername: "",
-                      }));
+                      this.setState(state => {
+                        if (state.removedOwners.includes(inputUsername)) {
+                          return {
+                            inputUsername: "",
+                            removedOwners: state.removedOwners.filter(u => u !== inputUsername),
+                          };
+                        }
+                        return {
+                          inputUsername: "",
+                          newOwners: [...state.newOwners, inputUsername],
+                        };
+                      });
                     }}
                   >
                     Add
@@ -128,7 +173,11 @@ class EditProjectOwnersPage extends Component {
               />
             </Segment>
             <Segment attached>
-              <Button disabled={owners.length === 0 || isSaving} primary type="submit">
+              <Button
+                disabled={(newOwners.length === 0 && removedOwners.length === 0) || isSaving}
+                primary
+                type="submit"
+              >
                 Save
               </Button>
               {saveError && <Message error header="Failed to update project owners" />}
