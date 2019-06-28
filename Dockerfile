@@ -8,7 +8,7 @@ WORKDIR /app
 # Install dependencies
 COPY package.json .
 COPY yarn.lock .
-RUN yarn
+RUN yarn install --frozen-lockfile
 
 COPY babel.config.js .
 COPY webpack.config.js .
