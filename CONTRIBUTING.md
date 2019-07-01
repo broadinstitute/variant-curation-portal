@@ -61,3 +61,13 @@ Check formatting of JS code with `yarn run prettier --check 'assets/**'`.
 - [WhiteNoise](https://pypi.org/project/whitenoise/)
 - [React](https://reactjs.org/)
 - [Semantic UI React](https://react.semantic-ui.com/)
+
+### Python
+
+requirements.txt is generated from requirements.in using [pip-tools](https://github.com/jazzband/pip-tools).
+To upgrade dependencies, use [pip-compile](https://github.com/jazzband/pip-tools#updating-requirements).
+
+### JavaScript
+
+To upgrade JS dependencies, use [yarn upgrade](https://yarnpkg.com/en/docs/cli/upgrade) or
+[yarn upgrade-interactive](https://yarnpkg.com/en/docs/cli/upgrade-interactive).
