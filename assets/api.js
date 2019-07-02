@@ -4,10 +4,21 @@ class ApiClient {
   // eslint-disable-next-line class-methods-use-this
   request(path, options) {
     return fetch(`/api${path}`, options).then(response => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
+      const isOk = response.ok;
+      return response.json().then(
+        data => {
+          if (isOk) {
+            return data;
+          }
+
+          const error = new Error(data.detail || "Unknown error");
+          error.data = data;
+          throw error;
+        },
+        () => {
+          throw new Error("Unable to parse response");
+        }
+      );
     });
   }
 
