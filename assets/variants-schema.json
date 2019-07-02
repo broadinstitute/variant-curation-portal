@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "reference_genome": {
+        "enum": ["GRCh37", "GRCh38"]
+      },
+      "variant_id": {
+        "type": "string",
+        "pattern": "^(\\d+|x|X|y|Y)[-:]([0-9]+)[-:]([aAcCgGtT]+)[-:]([aAcCgGtT]+)$"
+      },
+      "liftover_variant_id": {
+        "type": ["string", "null"],
+        "pattern": "^?\\d+|x|X|y|Y)[-:]([0-9]+)[-:]([aAcCgGtT]+)[-:]([aAcCgGtT]+)$"
+      },
+      "qc_filter": {
+        "type": ["string", "null"]
+      },
+      "AC": {
+        "type": ["integer", "null"],
+        "minimum": 0
+      },
+      "AN": {
+        "type": ["integer", "null"],
+        "minimum": 0
+      },
+      "AF": {
+        "type": ["number", "null"],
+        "minimum": 0
+      },
+      "n_homozygotes": {
+        "type": ["integer", "null"],
+        "minimum": 0
+      },
+      "annotations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "consequence": {
+              "type": "string"
+            },
+            "gene_id": {
+              "type": "string",
+              "pattern": "^ENSG\\d+$"
+            },
+            "gene_symbol": {
+              "type": "string"
+            },
+            "transcript_id": {
+              "type": "string",
+              "pattern": "^ENST\\d+$"
+            },
+            "loftee": {
+              "type": ["string", "null"]
+            },
+            "loftee_filter": {
+              "type": ["string", "null"]
+            },
+            "loftee_flags": {
+              "type": ["string", "null"]
+            }
+          },
+          "required": ["consequence", "gene_id", "gene_symbol", "transcript_id"]
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": ["label", "value"]
+        }
+      },
+      "samples": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "sample_id": {
+              "type": ["string", "integer"]
+            },
+            "GT": {
+              "enum": ["0/1", "1/1"]
+            },
+            "GQ": {
+              "type": ["integer", "null"]
+            },
+            "DP": {
+              "type": ["integer", "null"]
+            },
+            "AD_REF": {
+              "type": ["integer", "null"]
+            },
+            "AD_ALT": {
+              "type": ["integer", "null"]
+            },
+            "AB": {
+              "type": ["number", "null"]
+            }
+          },
+          "required": ["sample_id"]
+        }
+      }
+    },
+    "required": ["variant_id"]
+  }
+}

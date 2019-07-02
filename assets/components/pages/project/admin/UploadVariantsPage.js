@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Button, Form, Header, Icon, Message } from "semantic-ui-react";
+import { Button, Form, Header, Icon, List, Message, Modal, Segment } from "semantic-ui-react";
 
 import api from "../../../../api";
+import variantSchemaContent from "../../../../variants-schema.json";
 import DocumentTitle from "../../../DocumentTitle";
 
 class UploadVariantsPage extends Component {
@@ -25,6 +26,7 @@ class UploadVariantsPage extends Component {
     fileReadError: null,
     hasFileData: false,
     isReadingFile: false,
+    isSchemaModalOpen: false,
     isSaving: false,
     saveError: null,
   };
@@ -79,7 +81,15 @@ class UploadVariantsPage extends Component {
 
   render() {
     const { project } = this.props;
-    const { fileName, fileReadError, hasFileData, isReadingFile, isSaving, saveError } = this.state;
+    const {
+      fileName,
+      fileReadError,
+      hasFileData,
+      isReadingFile,
+      isSaving,
+      isSchemaModalOpen,
+      saveError,
+    } = this.state;
 
     return (
       <React.Fragment>
@@ -88,11 +98,13 @@ class UploadVariantsPage extends Component {
           {project.name}
         </Header>
         <div>
-          <Form
-            error={Boolean(fileReadError || saveError)}
-            style={{ marginBottom: "1rem" }}
-            onSubmit={this.onSubmit}
-          >
+          <Link to={`/project/${project.id}/admin/`}>Return to project</Link>
+        </div>
+        <br />
+
+        <Segment attached>
+          <Header as="h4">Upload variants from file</Header>
+          <Form error={Boolean(fileReadError || saveError)} onSubmit={this.onSubmit}>
             <Button as="label" htmlFor="variant-file">
               <Icon name="upload" />
               {fileName || "Select variant file"}
@@ -110,10 +122,56 @@ class UploadVariantsPage extends Component {
               Upload
             </Button>
           </Form>
-          <Button as={Link} to={`/project/${project.id}/`}>
-            Cancel
-          </Button>
-        </div>
+        </Segment>
+        <Message attached size="mini">
+          <p>
+            This should be a JSON file matching the following{" "}
+            <a href="https://json-schema.org" target="_blank" rel="noopener noreferrer">
+              schema
+            </a>
+            :
+          </p>
+          <List bulleted>
+            <List.Item>
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a
+                href="#"
+                onClick={e => {
+                  this.setState({ isSchemaModalOpen: true });
+                  e.preventDefault();
+                }}
+              >
+                View schema
+              </a>
+            </List.Item>
+            <List.Item>
+              <a download href="/static/bundles/variants-schema.json">
+                Download schema
+              </a>
+            </List.Item>
+          </List>
+        </Message>
+
+        <Modal
+          open={isSchemaModalOpen}
+          onClose={() => {
+            this.setState({ isSchemaModalOpen: false });
+          }}
+        >
+          <Header>Variants Schema</Header>
+          <Modal.Content>
+            <pre>{JSON.stringify(variantSchemaContent, null, 2)}</pre>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button
+              onClick={() => {
+                this.setState({ isSchemaModalOpen: false });
+              }}
+            >
+              Ok
+            </Button>
+          </Modal.Actions>
+        </Modal>
       </React.Fragment>
     );
   }
