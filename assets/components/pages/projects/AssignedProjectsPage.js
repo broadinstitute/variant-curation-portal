@@ -7,7 +7,7 @@ import BasePage from "../BasePage";
 
 const AssignedProjectsPage = () => {
   return (
-    <BasePage dataURL="/api/assignments/">
+    <BasePage dataPath="/assignments/">
       {({ data }) => {
         return (
           <React.Fragment>

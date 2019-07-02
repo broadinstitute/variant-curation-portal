@@ -9,7 +9,7 @@ import BasePage from "../BasePage";
 
 const ProjectsPage = ({ user }) => {
   return (
-    <BasePage dataURL="/api/projects/">
+    <BasePage dataPath="/projects/">
       {({ data }) => {
         return (
           <React.Fragment>

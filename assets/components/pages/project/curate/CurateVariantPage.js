@@ -45,7 +45,7 @@ class CurateVariantPage extends React.Component {
 
     return (
       <React.Fragment>
-        <Fetch url={`/api/project/${project.id}/variant/${variantId}/curate/`}>
+        <Fetch path={`/project/${project.id}/variant/${variantId}/curate/`}>
           {({
             data: {
               index,
