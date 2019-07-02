@@ -24,8 +24,10 @@
 
 - Start Django and webpack development servers
 
+  Set REMOTE_USER to simulate an authenticated user
+
   ```
-  ./start.sh
+  REMOTE_USER=someuser ./start.sh
   ```
 
 - Open browser to http://localhost:3000
