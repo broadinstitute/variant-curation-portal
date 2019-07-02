@@ -5,61 +5,77 @@
     "type": "object",
     "properties": {
       "reference_genome": {
+        "description": "The variant's reference genome",
         "enum": ["GRCh37", "GRCh38"]
       },
       "variant_id": {
+        "description": "Variant ID in the format chrom-pos-ref-alt",
         "type": "string",
         "pattern": "^(\\d+|x|X|y|Y)[-:]([0-9]+)[-:]([aAcCgGtT]+)[-:]([aAcCgGtT]+)$"
       },
       "liftover_variant_id": {
+        "description": "Variant ID lifted over to the other reference genome",
         "type": ["string", "null"],
         "pattern": "^?\\d+|x|X|y|Y)[-:]([0-9]+)[-:]([aAcCgGtT]+)[-:]([aAcCgGtT]+)$"
       },
       "qc_filter": {
+        "description": "Quality control filters which the variant failed or \"PASS\"",
         "type": ["string", "null"]
       },
       "AC": {
+        "description": "Allele count",
         "type": ["integer", "null"],
         "minimum": 0
       },
       "AN": {
+        "description": "Allele number",
         "type": ["integer", "null"],
         "minimum": 0
       },
       "AF": {
+        "description": "Allele frequency",
         "type": ["number", "null"],
         "minimum": 0
       },
       "n_homozygotes": {
+        "description": "Number of homozygotes",
         "type": ["integer", "null"],
         "minimum": 0
       },
       "annotations": {
+        "description": "VEP annotations",
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
             "consequence": {
+              "description": "VEP consequence term",
               "type": "string"
             },
             "gene_id": {
+              "description": "Ensembl gene ID",
               "type": "string",
               "pattern": "^ENSG\\d+$"
             },
             "gene_symbol": {
+              "description": "Gene symbol",
               "type": "string"
             },
             "transcript_id": {
+              "description": "Ensembl transcript ID",
               "type": "string",
               "pattern": "^ENST\\d+$"
             },
             "loftee": {
+              "description": "LOFTEE annotation",
               "type": ["string", "null"]
             },
             "loftee_filter": {
+              "description": "LOFTEE filters",
               "type": ["string", "null"]
             },
             "loftee_flags": {
+              "description": "LOFTEE flags",
               "type": ["string", "null"]
             }
           },
@@ -67,14 +83,17 @@
         }
       },
       "tags": {
+        "description": "Arbitrary variant-level information",
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
             "label": {
+              "description": "Tag label",
               "type": "string"
             },
             "value": {
+              "description": "Tag value",
               "type": "string"
             }
           },
@@ -82,29 +101,37 @@
         }
       },
       "samples": {
+        "description": "Sample information",
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
             "sample_id": {
+              "description": "Sample ID",
               "type": ["string", "integer"]
             },
             "GT": {
+              "description": "Genotype",
               "enum": ["0/1", "1/1"]
             },
             "GQ": {
+              "description": "Genotype quality",
               "type": ["integer", "null"]
             },
             "DP": {
+              "description": "Depth",
               "type": ["integer", "null"]
             },
             "AD_REF": {
+              "description": "Allele depth for reference allele",
               "type": ["integer", "null"]
             },
             "AD_ALT": {
+              "description": "Allele depth for alt allele",
               "type": ["integer", "null"]
             },
             "AB": {
+              "description": "Allele balance",
               "type": ["number", "null"]
             }
           },
