@@ -145,9 +145,9 @@ class AssignVariantsPage extends Component {
                 />
               </Button>
             </Segment>
-            <Message attached size="mini">
-              <Icon name="help" /> This should be a CSV file with two columns: curator&apos;s
-              username and variant ID (chrom-pos-ref-alt). It should not have a header row.
+            <Message attached>
+              This should be a CSV file with two columns: curator&apos;s username and variant ID
+              (chrom-pos-ref-alt). It should not have a header row.
             </Message>
             <br />
 
