@@ -2,6 +2,7 @@ const path = require("path");
 
 const BundleTracker = require("webpack-bundle-tracker");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 
@@ -53,6 +54,7 @@ const config = {
     new webpack.EnvironmentPlugin({ NODE_ENV: "production" }),
     new BundleTracker({ filename: "./webpack-stats.json" }),
     new CleanWebpackPlugin(),
+    new CopyPlugin(["assets/variants-schema.json"]),
     new MiniCssExtractPlugin({
       filename: isDev ? "[name].css" : "[name]-[hash].css",
       chunkFilename: isDev ? "[id].css" : "[id]-[hash].css",
