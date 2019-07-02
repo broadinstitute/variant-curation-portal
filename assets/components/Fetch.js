@@ -3,12 +3,13 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Dimmer, Loader, Message } from "semantic-ui-react";
 
+import api from "../api";
 import makeCancelable from "../utilities/makeCancelable";
 
 class BaseFetch extends Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
-    url: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
   };
 
   state = {
@@ -22,8 +23,8 @@ class BaseFetch extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { url } = this.props;
-    if (url !== prevProps.url) {
+    const { path } = this.props;
+    if (path !== prevProps.path) {
       this.loadData();
     }
   }
@@ -35,7 +36,7 @@ class BaseFetch extends Component {
   }
 
   loadData() {
-    const { url } = this.props;
+    const { path } = this.props;
 
     this.setState({
       isFetching: true,
@@ -46,42 +47,23 @@ class BaseFetch extends Component {
       this.currentRequest.cancel();
     }
 
-    this.currentRequest = makeCancelable(fetch(url));
-    this.currentRequest
-      .then(
-        response => {
-          if (!response.ok) {
-            return response.json().then(data => {
-              this.setState({
-                data,
-                error: response,
-                isFetching: false,
-              });
-            });
-          }
-          return response.json().then(data => {
-            this.setState({
-              data,
-              error: null,
-              isFetching: false,
-            });
-          });
-        },
-        error => {
-          this.setState({
-            data: null,
-            error,
-            isFetching: false,
-          });
-        }
-      )
-      .then(null, error => {
+    this.currentRequest = makeCancelable(api.get(path));
+    this.currentRequest.then(
+      data => {
+        this.setState({
+          data,
+          error: null,
+          isFetching: false,
+        });
+      },
+      error => {
         this.setState({
           data: null,
           error,
           isFetching: false,
         });
-      });
+      }
+    );
   }
 
   render() {
@@ -90,8 +72,8 @@ class BaseFetch extends Component {
   }
 }
 
-const Fetch = ({ children, url }) => (
-  <BaseFetch url={url}>
+const Fetch = ({ path, children }) => (
+  <BaseFetch path={path}>
     {({ data, error, isFetching, refresh }) => {
       if (isFetching) {
         return (
@@ -105,7 +87,7 @@ const Fetch = ({ children, url }) => (
         return (
           <Message error>
             <Message.Header>Error</Message.Header>
-            <p>{(data && data.detail) || "Unknown error"}</p>
+            <p>{error.message}</p>
             <p>
               <Link to="/">Return to home page</Link>
             </p>
@@ -120,7 +102,7 @@ const Fetch = ({ children, url }) => (
 
 Fetch.propTypes = {
   children: PropTypes.func.isRequired,
-  url: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
 };
 
 export default Fetch;

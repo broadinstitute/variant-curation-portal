@@ -19,7 +19,7 @@ const ProjectAssignmentsPage = ({ project }) => {
         <Link to="/assignments/">All assigned projects</Link>
       </div>
 
-      <Fetch url={`/api/project/${project.id}/assignments/`}>
+      <Fetch path={`/project/${project.id}/assignments/`}>
         {({ data: { assignments } }) => {
           const numAssignments = assignments.length;
           const numCompleted = assignments.filter(

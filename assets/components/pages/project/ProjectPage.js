@@ -15,7 +15,7 @@ import CurateVariantPage from "./curate/CurateVariantPage";
 
 const ProjectPage = ({ match, projectId, user }) => (
   <Container fluid>
-    <Fetch url={`/api/project/${projectId}/`}>
+    <Fetch path={`/project/${projectId}/`}>
       {({ data: project, refresh }) => {
         return (
           <Switch>

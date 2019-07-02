@@ -4,15 +4,15 @@ import { Container } from "semantic-ui-react";
 
 import Fetch from "../Fetch";
 
-const BasePage = ({ children, dataURL }) => (
+const BasePage = ({ children, dataPath }) => (
   <Container fluid>
-    <Fetch url={dataURL}>{children}</Fetch>
+    <Fetch path={dataPath}>{children}</Fetch>
   </Container>
 );
 
 BasePage.propTypes = {
   children: PropTypes.func.isRequired,
-  dataURL: PropTypes.string.isRequired,
+  dataPath: PropTypes.string.isRequired,
 };
 
 export default BasePage;
