@@ -113,11 +113,19 @@ const VariantData = ({ variant }) => {
         </List.Item>
         <List.Item>
           <strong>Annotations:</strong>
-          <AnnotationsList annotations={variant.annotations} />
+          {variant.annotations.length > 0 ? (
+            <AnnotationsList annotations={variant.annotations} />
+          ) : (
+            <p>No annotations available for this variant</p>
+          )}
         </List.Item>
         <List.Item>
           <strong>Tags:</strong>
-          <TagsList tags={variant.tags} />
+          {variant.tags.length > 0 ? (
+            <TagsList tags={variant.tags} />
+          ) : (
+            <p>No tags available for this variant</p>
+          )}
         </List.Item>
       </List>
     </React.Fragment>
