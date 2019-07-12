@@ -164,7 +164,12 @@ class AssignVariantsPage extends Component {
                   </List>
                 </Segment>
                 <Segment attached>
-                  <Button disabled={assignments.length === 0 || isSaving} primary type="submit">
+                  <Button
+                    disabled={assignments.length === 0 || isSaving}
+                    loading={isSaving}
+                    primary
+                    type="submit"
+                  >
                     Assign curators
                   </Button>
                   {saveError && <Message error header="Failed to assign curators" />}

@@ -106,7 +106,12 @@ class UploadVariantsPage extends Component {
         <Segment attached>
           <Header as="h4">Upload variants from file</Header>
           <Form error={Boolean(fileReadError || saveError)} onSubmit={this.onSubmit}>
-            <Button as="label" htmlFor="variant-file">
+            <Button
+              as="label"
+              disabled={isReadingFile}
+              loading={isReadingFile}
+              htmlFor="variant-file"
+            >
               <Icon name="upload" />
               {fileName || "Select variant file"}
               <input
@@ -119,7 +124,7 @@ class UploadVariantsPage extends Component {
             </Button>
             {fileReadError && <Message error header="Failed to read file" />}
             {saveError && <Message error header="Failed to upload variants" />}
-            <Button disabled={!hasFileData || isSaving} primary type="submit">
+            <Button disabled={!hasFileData || isSaving} loading={isSaving} primary type="submit">
               Upload
             </Button>
           </Form>
