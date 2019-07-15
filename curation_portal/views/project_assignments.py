@@ -74,12 +74,6 @@ class NewAssignmentSerializer(serializers.Serializer):
         raise NotImplementedError
 
 
-class ProjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = ("id", "name")
-
-
 class ProjectAssignmentsView(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -106,11 +100,8 @@ class ProjectAssignmentsView(APIView):
             .all()
         )
 
-        project_serializer = ProjectSerializer(project)
         assignments_serializer = AssignmentSerializer(assignments, many=True)
-        return Response(
-            {"project": project_serializer.data, "assignments": assignments_serializer.data}
-        )
+        return Response({"assignments": assignments_serializer.data})
 
     def post(self, request, *args, **kwargs):
         project = self.get_project()
