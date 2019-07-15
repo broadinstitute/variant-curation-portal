@@ -91,7 +91,7 @@ class DownloadProjectResultsView(LoginRequiredMixin, View):
             CurationAssignment.objects.filter(
                 variant__project=project, result__verdict__isnull=False
             )
-            .select_related("curator", "variant")
+            .select_related("curator", "variant", "result")
             .all()
         )
 
