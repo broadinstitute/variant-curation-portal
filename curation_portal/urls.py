@@ -61,9 +61,9 @@ urlpatterns = [
         name="api-curate-variant",
     ),
     path(
-        "api/project/<int:project_id>/results/",
+        "api/project/<int:project_id>/results/export/",
         DownloadProjectResultsView.as_view(),
-        name="api-project-results",
+        name="api-project-results-export",
     ),
     path("api/profile/", ProfileView.as_view(), name="api-profile"),
 ]
