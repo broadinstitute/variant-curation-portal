@@ -5,7 +5,7 @@ from rest_framework.serializers import ModelSerializer, RelatedField, Validation
 from curation_portal.models import Project, Sample, User, Variant, VariantAnnotation, VariantTag
 
 
-class ProjectOwnerField(RelatedField):
+class UserField(RelatedField):
     default_error_messages = {"invalid": "Invalid username."}
 
     queryset = User.objects.all()
@@ -29,7 +29,7 @@ class ProjectOwnerField(RelatedField):
 
 
 class ProjectSerializer(ModelSerializer):
-    owners = ProjectOwnerField(many=True, allow_empty=False)
+    owners = UserField(many=True, allow_empty=False)
 
     class Meta:
         model = Project
