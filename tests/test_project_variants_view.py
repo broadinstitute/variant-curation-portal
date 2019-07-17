@@ -159,16 +159,37 @@ def test_upload_variants_validates_variants(db_setup):
     assert response.status_code == 400
 
 
-def test_upload_variants_creates_no_variants_on_integrity_error(db_setup):
+def test_upload_variants_rejects_variants_that_already_exist(db_setup):
     client = APIClient()
     client.force_authenticate(User.objects.get(username="user1@example.com"))
-    response = client.post("/api/project/1/variants/", [{"variant_id": "1-800-C-A"}], format="json")
-    assert response.status_code == 200
+    response = client.post("/api/project/1/variants/", [{"variant_id": "1-100-A-G"}], format="json")
+
+    assert response.status_code == 400
+    assert Variant.objects.filter(variant_id="1-100-A-G", project=1).count() == 1
+
+
+def test_upload_variants_rejects_duplicate_variants(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.post(
+        "/api/project/1/variants/",
+        [{"variant_id": "1-1000-A-G"}, {"variant_id": "1-1000-A-G"}],
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert not Variant.objects.filter(variant_id="1-1000-A-G", project=1).exists()
+
+
+def test_upload_variants_creates_no_variants_on_validation_error(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
     project = Project.objects.get(id=1)
     starting_variant_count = project.variants.count()
     response = client.post(
         "/api/project/1/variants/",
-        [{"variant_id": "1-900-T-G"}, {"variant_id": "1-1000-A-G"}, {"variant_id": "1-800-C-A"}],
+        # Validation error is caused by an invalid variant ID
+        [{"variant_id": "1-900-T-G"}, {"variant_id": "1-1000-A-G"}, {"variant_id": "foo"}],
         format="json",
     )
 
