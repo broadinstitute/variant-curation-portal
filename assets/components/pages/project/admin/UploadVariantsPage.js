@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import { Button, Form, Header, Icon, Message, Modal, Segment } from "semantic-ui-react";
 
 import api from "../../../../api";
-import variantSchemaContent from "../../../../variants-schema.json";
+import variantsSchema from "../../../../variants-schema.json";
 import DocumentTitle from "../../../DocumentTitle";
-import VariantsSchemaDescription from "./VariantsSchemaDescription";
+import SchemaDescription from "../../../SchemaDescription";
 
 class UploadVariantsPage extends Component {
   static propTypes = {
@@ -150,7 +150,7 @@ class UploadVariantsPage extends Component {
           <Button as="a" download href="/static/bundles/variants-schema.json">
             Download JSON Schema
           </Button>
-          <VariantsSchemaDescription />
+          <SchemaDescription schema={variantsSchema} />
         </Message>
 
         <Modal
@@ -161,7 +161,7 @@ class UploadVariantsPage extends Component {
         >
           <Header>Variants Schema</Header>
           <Modal.Content>
-            <pre>{JSON.stringify(variantSchemaContent, null, 2)}</pre>
+            <pre>{JSON.stringify(variantsSchema, null, 2)}</pre>
           </Modal.Content>
           <Modal.Actions>
             <Button
