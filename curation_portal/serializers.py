@@ -2,6 +2,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxLengthValidator
 from rest_framework.serializers import (
     ChoiceField,
+    ListSerializer,
     ModelSerializer,
     RegexField,
     RelatedField,
@@ -98,6 +99,20 @@ class VariantTagSerializer(ModelSerializer):
         exclude = ("id", "variant")
 
 
+class VariantListSerializer(ListSerializer):  # pylint: disable=abstract-method
+    def validate(self, attrs):
+        # Check that all variant IDs in the list are unique
+        seen_variant_ids = set()
+        for variant_data in attrs:
+            variant_id = variant_data["variant_id"]
+            if variant_id in seen_variant_ids:
+                raise ValidationError("Variant is already present in list")
+
+            seen_variant_ids.add(variant_id)
+
+        return attrs
+
+
 class VariantSerializer(ModelSerializer):
     variant_id = RegexField(VARIANT_ID_REGEX, required=True)
 
@@ -108,6 +123,15 @@ class VariantSerializer(ModelSerializer):
     class Meta:
         model = Variant
         exclude = ("project", "chrom", "pos", "xpos", "ref", "alt")
+        list_serializer_class = VariantListSerializer
+
+    def validate(self, attrs):
+        variant_id = attrs["variant_id"]
+
+        if Variant.objects.filter(variant_id=variant_id, project=self.context["project"]).exists():
+            raise ValidationError("Variant already exists in project")
+
+        return attrs
 
     def create(self, validated_data):
         annotations_data = validated_data.pop("annotations", None)

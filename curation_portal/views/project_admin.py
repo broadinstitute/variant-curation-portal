@@ -1,7 +1,7 @@
 import csv
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.http import HttpResponse
 from django.views import View
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
@@ -56,14 +56,11 @@ class ProjectVariantsView(APIView):
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
 
-        try:
-            with transaction.atomic():
-                serializer.save()
-                project.save()  # Save project to set updated_at timestamp
+        with transaction.atomic():
+            serializer.save()
+            project.save()  # Save project to set updated_at timestamp
 
-            return Response({})
-        except IntegrityError:
-            raise ValidationError("Integrity error")
+        return Response({})
 
 
 class DownloadProjectResultsView(LoginRequiredMixin, View):
