@@ -58,6 +58,9 @@ const ProjectAdminPage = ({ project, user }) => {
         <p>
           {project.variants.curated} / {project.variants.total} variants curated
         </p>
+        <p>
+          <Link to={`/project/${project.id}/results/import/`}>Import curation results</Link>
+        </p>
         <Button as="a" download href={`/api/project/${project.id}/results/export/`}>
           Download
         </Button>

@@ -37,6 +37,11 @@ urlpatterns = [
     path("project/<int:project_id>/assign/", DEFAULT_TEMPLATE_VIEW, name="project-admin"),
     path("project/<int:project_id>/variants/", DEFAULT_TEMPLATE_VIEW, name="project-variants"),
     path(
+        "project/<int:project_id>/results/import/",
+        DEFAULT_TEMPLATE_VIEW,
+        name="project-import-results",
+    ),
+    path(
         "project/<int:project_id>/variant/<int:variant_id>/curate/",
         DEFAULT_TEMPLATE_VIEW,
         name="curate-variant",
