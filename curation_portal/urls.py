@@ -18,6 +18,7 @@ from curation_portal.views.project_admin import (
     ProjectVariantsView,
     DownloadProjectResultsView,
 )
+from curation_portal.views.results import ProjectResultsView
 from curation_portal.views.user import ProfileView
 
 DEFAULT_TEMPLATE_VIEW = TemplateView.as_view(template_name="default.template.html")
@@ -59,6 +60,11 @@ urlpatterns = [
         "api/project/<int:project_id>/variant/<int:variant_id>/curate/",
         CurateVariantView.as_view(),
         name="api-curate-variant",
+    ),
+    path(
+        "api/project/<int:project_id>/results/",
+        ProjectResultsView.as_view(),
+        name="api-project-results",
     ),
     path(
         "api/project/<int:project_id>/results/export/",
