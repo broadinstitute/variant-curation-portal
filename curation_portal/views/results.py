@@ -1,5 +1,4 @@
 from django.db import IntegrityError, transaction
-from django.utils import timezone
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -35,8 +34,7 @@ class ProjectResultsView(APIView):
         try:
             with transaction.atomic():
                 serializer.save()
-                project.updated_at = timezone.now()
-                project.save()
+                project.save()  # Save project to set updated_at timestamp
 
             return Response({})
         except IntegrityError:

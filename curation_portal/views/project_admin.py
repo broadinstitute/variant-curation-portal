@@ -3,7 +3,6 @@ import csv
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse
-from django.utils import timezone
 from django.views import View
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.generics import get_object_or_404
@@ -60,8 +59,7 @@ class ProjectVariantsView(APIView):
         try:
             with transaction.atomic():
                 serializer.save(project=project)
-                project.updated_at = timezone.now()
-                project.save()
+                project.save()  # Save project to set updated_at timestamp
 
             return Response({})
         except IntegrityError:
