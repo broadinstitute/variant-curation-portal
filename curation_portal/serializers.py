@@ -20,6 +20,9 @@ from curation_portal.models import (
 )
 
 
+VARIANT_ID_REGEX = r"^(\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)$"
+
+
 class UserField(RelatedField):
     default_error_messages = {"invalid": "Invalid username."}
 
@@ -96,6 +99,8 @@ class VariantTagSerializer(ModelSerializer):
 
 
 class VariantSerializer(ModelSerializer):
+    variant_id = RegexField(VARIANT_ID_REGEX, required=True)
+
     annotations = VariantAnnotationSerializer(many=True, required=False)
     tags = VariantTagSerializer(many=True, required=False)
     samples = SampleSerializer(many=True, required=False)
@@ -131,7 +136,7 @@ class VariantSerializer(ModelSerializer):
 
 class ImportedResultSerializer(ModelSerializer):
     curator = UserField(required=True)
-    variant_id = RegexField(r"^(\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)$", required=True)
+    variant_id = RegexField(VARIANT_ID_REGEX, required=True)
 
     verdict = ChoiceField(
         ["lof", "likely_lof", "uncertain", "likely_not_lof", "not_lof"],

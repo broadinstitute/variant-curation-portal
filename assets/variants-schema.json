@@ -11,12 +11,12 @@
       "variant_id": {
         "description": "Variant ID in the format chrom-pos-ref-alt",
         "type": "string",
-        "pattern": "^(\\d+|x|X|y|Y)[-:]([0-9]+)[-:]([aAcCgGtT]+)[-:]([aAcCgGtT]+)$"
+        "pattern": "^(\\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)$"
       },
       "liftover_variant_id": {
         "description": "Variant ID lifted over to the other reference genome",
         "type": ["string", "null"],
-        "pattern": "^?\\d+|x|X|y|Y)[-:]([0-9]+)[-:]([aAcCgGtT]+)[-:]([aAcCgGtT]+)$"
+        "pattern": "^(\\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)$"
       },
       "qc_filter": {
         "description": "Quality control filters which the variant failed or \"PASS\"",
