@@ -115,28 +115,6 @@ def test_upload_results_creates_no_results_on_validation_errors(db_setup):
     assert result_count == starting_result_count
 
 
-def test_upload_results_creates_no_results_on_integrity_errors(db_setup):
-    client = APIClient()
-    client.force_authenticate(User.objects.get(username="user1@example.com"))
-
-    starting_result_count = CurationResult.objects.filter(assignment__variant__project=1).count()
-
-    response = client.post(
-        "/api/project/1/results/",
-        [
-            {"curator": "user3@example.com", "variant_id": "1-200-G-A"},
-            # Integrity error caused by including two results for the same curator/variant
-            {"curator": "user3@example.com", "variant_id": "1-200-G-A"},
-            {"curator": "user3@example.com", "variant_id": "1-300-T-C"},
-        ],
-        format="json",
-    )
-
-    assert response.status_code == 400
-    result_count = CurationResult.objects.filter(assignment__variant__project=1).count()
-    assert result_count == starting_result_count
-
-
 def test_upload_results_rejects_results_for_variants_that_do_not_exist(db_setup):
     client = APIClient()
     client.force_authenticate(User.objects.get(username="user1@example.com"))
@@ -149,3 +127,43 @@ def test_upload_results_rejects_results_for_variants_that_do_not_exist(db_setup)
 
     assert response.status_code == 400
     assert not CurationResult.objects.filter(assignment__variant__variant_id="1-400-A-C").exists()
+
+
+def test_upload_results_rejects_results_for_assignments_that_already_exist(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.post(
+        "/api/project/1/results/",
+        [{"curator": "user2@example.com", "variant_id": "1-100-A-G"}],
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert (
+        CurationAssignment.objects.filter(
+            variant__project=1,
+            variant__variant_id="1-100-A-G",
+            curator__username="user2@example.com",
+        ).count()
+        == 1
+    )
+
+
+def test_upload_results_rejects_duplicate_assignments(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.post(
+        "/api/project/1/results/",
+        [
+            {"curator": "user3@example.com", "variant_id": "1-300-T-C"},
+            {"curator": "user3@example.com", "variant_id": "1-300-T-C"},
+        ],
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert not CurationResult.objects.filter(
+        assignment__variant__project=1,
+        assignment__variant__variant_id="1-300-T-C",
+        assignment__curator__username="user3@example.com",
+    ).exists()

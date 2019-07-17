@@ -1,4 +1,4 @@
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -31,11 +31,8 @@ class ProjectResultsView(APIView):
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
 
-        try:
-            with transaction.atomic():
-                serializer.save()
-                project.save()  # Save project to set updated_at timestamp
+        with transaction.atomic():
+            serializer.save()
+            project.save()  # Save project to set updated_at timestamp
 
-            return Response({})
-        except IntegrityError:
-            raise ValidationError("Integrity error")
+        return Response({})
