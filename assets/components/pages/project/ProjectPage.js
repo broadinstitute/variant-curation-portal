@@ -8,6 +8,7 @@ import PageNotFoundPage from "../PageNotFoundPage";
 import withParamsAsProps from "../withParamsAsProps";
 import AssignVariantsPage from "./admin/AssignVariantsPage";
 import EditProjectOwnersPage from "./admin/EditProjectOwnersPage";
+import ImportResultsPage from "./admin/ImportResultsPage";
 import ProjectAdminPage from "./admin/ProjectAdminPage";
 import UploadVariantsPage from "./admin/UploadVariantsPage";
 import ProjectAssignmentsPage from "./assignments/ProjectAssignmentsPage";
@@ -62,6 +63,14 @@ const ProjectPage = ({ match, projectId, user }) => (
               path={`${match.path}variants/`}
               render={props => (
                 <UploadVariantsPage {...props} project={project} refreshProject={refresh} />
+              )}
+            />
+
+            <Route
+              exact
+              path={`${match.path}results/import/`}
+              render={props => (
+                <ImportResultsPage {...props} project={project} refreshProject={refresh} />
               )}
             />
 
