@@ -158,6 +158,20 @@ class VariantSerializer(ModelSerializer):
         return variant
 
 
+class ImportedResultListSerializer(ListSerializer):  # pylint: disable=abstract-method
+    def validate(self, attrs):
+        # Check that all curator/variant ID pairs in the list are unique
+        seen_results = set()
+        for variant_data in attrs:
+            result = (variant_data["variant_id"], variant_data["curator"])
+            if result in seen_results:
+                raise ValidationError("Result is already present in list")
+
+            seen_results.add(result)
+
+        return attrs
+
+
 class ImportedResultSerializer(ModelSerializer):
     curator = UserField(required=True)
     variant_id = RegexField(VARIANT_ID_REGEX, required=True)
@@ -171,6 +185,7 @@ class ImportedResultSerializer(ModelSerializer):
     class Meta:
         model = CurationResult
         exclude = ("id",)
+        list_serializer_class = ImportedResultListSerializer
 
     def validate_variant_id(self, value):
         if not Variant.objects.filter(project=self.context["project"], variant_id=value).exists():
