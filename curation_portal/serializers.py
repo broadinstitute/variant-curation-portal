@@ -1,8 +1,23 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxLengthValidator
-from rest_framework.serializers import ModelSerializer, RelatedField, ValidationError
+from rest_framework.serializers import (
+    ChoiceField,
+    ModelSerializer,
+    RegexField,
+    RelatedField,
+    ValidationError,
+)
 
-from curation_portal.models import Project, Sample, User, Variant, VariantAnnotation, VariantTag
+from curation_portal.models import (
+    CurationAssignment,
+    CurationResult,
+    Project,
+    Sample,
+    User,
+    Variant,
+    VariantAnnotation,
+    VariantTag,
+)
 
 
 class UserField(RelatedField):
@@ -110,3 +125,59 @@ class VariantSerializer(ModelSerializer):
             Sample.objects.bulk_create(samples)
 
         return variant
+
+
+class ImportedResultSerializer(ModelSerializer):
+    curator = UserField(required=True)
+    variant_id = RegexField(r"^(\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)$", required=True)
+
+    verdict = ChoiceField(
+        ["lof", "likely_lof", "uncertain", "likely_not_lof", "not_lof"],
+        required=False,
+        allow_blank=True,
+    )
+
+    class Meta:
+        model = CurationResult
+        exclude = ("id",)
+
+    def validate_variant_id(self, value):
+        if not Variant.objects.filter(project=self.context["project"], variant_id=value).exists():
+            raise ValidationError("Variant does not exist")
+
+        return value
+
+    def validate(self, attrs):
+        if CurationAssignment.objects.filter(
+            variant__project=self.context["project"],
+            variant__variant_id=attrs["variant_id"],
+            curator__username=attrs["curator"],
+        ).exists():
+            raise ValidationError("Duplicate assignment")
+
+        return attrs
+
+    def create(self, validated_data):
+        curator = validated_data.pop("curator", None)
+        variant_id = validated_data.pop("variant_id", None)
+
+        variant = Variant.objects.get(project=self.context["project"], variant_id=variant_id)
+
+        assignment = CurationAssignment.objects.create(curator=curator, variant=variant)
+
+        result = CurationResult(**validated_data)
+
+        # If a created/updated timestamp is specified, override the auto_now settings on CurationResult
+        for field in result._meta.local_fields:
+            if field.name in ["created_at", "updated_at"] and field.name in validated_data:
+                field.auto_now = False
+                field.auto_now_add = False
+
+        result.save()
+        assignment.result = result
+        assignment.save()
+
+        return result
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError
