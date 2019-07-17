@@ -2,8 +2,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Label, List } from "semantic-ui-react";
 
-import variantsSchema from "../../../../variants-schema.json";
-
 const renderType = schema => {
   if (schema.type === "array") {
     return `array (${renderType(schema.items)})`;
@@ -63,6 +61,4 @@ SchemaDescription.propTypes = {
   schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const VariantsSchemaDescription = () => <SchemaDescription schema={variantsSchema} />;
-
-export default VariantsSchemaDescription;
+export default SchemaDescription;
