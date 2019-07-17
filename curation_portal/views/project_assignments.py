@@ -1,4 +1,4 @@
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import Prefetch
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
@@ -43,9 +43,26 @@ class AssignmentSerializer(serializers.ModelSerializer):
         fields = ("variant", "result")
 
 
+class NewAssignmentListSerializer(serializers.ListSerializer):  # pylint: disable=abstract-method
+    def validate(self, attrs):
+        # Check that all curator/variant ID pairs in the list are unique
+        seen_results = set()
+        for variant_data in attrs:
+            result = (variant_data["variant_id"], variant_data["curator"])
+            if result in seen_results:
+                raise ValidationError("Assignment is already present in list")
+
+            seen_results.add(result)
+
+        return attrs
+
+
 class NewAssignmentSerializer(serializers.Serializer):
     curator = serializers.CharField(max_length=150)
     variant_id = serializers.CharField(max_length=1000)
+
+    class Meta:
+        list_serializer_class = NewAssignmentListSerializer
 
     def validate_variant_id(self, value):
         if not Variant.objects.filter(project=self.context["project"], variant_id=value).exists():
@@ -115,11 +132,8 @@ class ProjectAssignmentsView(APIView):
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
 
-        try:
-            with transaction.atomic():
-                serializer.save()
-                project.save()
+        with transaction.atomic():
+            serializer.save()
+            project.save()
 
-            return Response({})
-        except IntegrityError:
-            raise ValidationError("Integrity error")
+        return Response({})
