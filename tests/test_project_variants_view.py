@@ -155,6 +155,9 @@ def test_upload_variants_validates_variants(db_setup):
     )
     assert response.status_code == 400
 
+    response = client.post("/api/project/1/variants/", [{"variant_id": "rs123"}], format="json")
+    assert response.status_code == 400
+
 
 def test_upload_variants_creates_no_variants_on_integrity_error(db_setup):
     client = APIClient()
