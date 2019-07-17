@@ -118,8 +118,8 @@ def test_create_project_assignments_creates_user_if_necessary(db_setup):
     User.objects.filter(username="user3@example.com").delete()
 
 
-def test_create_project_assignments_prevents_duplicate_assignments(db_setup):
-    CurationAssignment.objects.create(
+def test_create_project_assignments_rejects_assignments_that_already_exist(db_setup):
+    assignment = CurationAssignment.objects.create(
         curator=User.objects.get(username="user2@example.com"),
         variant=Variant.objects.get(project=1, variant_id="1-120-G-A"),
     )
@@ -140,4 +140,24 @@ def test_create_project_assignments_prevents_duplicate_assignments(db_setup):
 
     assert CurationAssignment.objects.filter(variant__project=1).count() == 1
 
-    CurationAssignment.objects.filter(variant__project=1).delete()
+    assignment.delete()
+
+
+def test_create_project_assignments_rejects_duplicate_assignments(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.post(
+        "/api/project/1/assignments/",
+        {
+            "assignments": [
+                {"curator": "user2@example.com", "variant_id": "1-120-G-A"},
+                {"curator": "user2@example.com", "variant_id": "1-120-G-A"},
+            ]
+        },
+        format="json",
+    )
+    assert response.status_code == 400
+
+    assert not CurationAssignment.objects.filter(
+        curator__username="user2@example.com", variant__variant_id="1-120-G-A"
+    ).exists()
