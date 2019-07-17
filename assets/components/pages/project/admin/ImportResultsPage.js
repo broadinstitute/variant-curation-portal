@@ -1,10 +1,12 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Button, Form, Header, Icon, Message, Segment } from "semantic-ui-react";
+import { Button, Form, Header, Icon, Message, Modal, Segment } from "semantic-ui-react";
 
 import api from "../../../../api";
+import resultsSchema from "../../../../results-schema.json";
 import DocumentTitle from "../../../DocumentTitle";
+import SchemaDescription from "../../../SchemaDescription";
 
 class ImportResultsPage extends Component {
   static propTypes = {
@@ -25,6 +27,7 @@ class ImportResultsPage extends Component {
     fileReadError: null,
     hasFileData: false,
     isReadingFile: false,
+    isSchemaModalOpen: false,
     isSaving: false,
     saveError: null,
   };
@@ -79,7 +82,15 @@ class ImportResultsPage extends Component {
 
   render() {
     const { project } = this.props;
-    const { fileName, fileReadError, hasFileData, isReadingFile, isSaving, saveError } = this.state;
+    const {
+      fileName,
+      fileReadError,
+      hasFileData,
+      isReadingFile,
+      isSaving,
+      isSchemaModalOpen,
+      saveError,
+    } = this.state;
 
     return (
       <React.Fragment>
@@ -118,6 +129,51 @@ class ImportResultsPage extends Component {
             </Button>
           </Form>
         </Segment>
+
+        <Message attached>
+          <p>
+            This should be a JSON file containing an array of objects with the following format. The
+            expected file format is also available as a{" "}
+            <a href="https://json-schema.org" target="_blank" rel="noopener noreferrer">
+              JSON schema
+            </a>
+            .
+          </p>
+          <Button
+            type="button"
+            onClick={e => {
+              this.setState({ isSchemaModalOpen: true });
+              e.preventDefault();
+            }}
+          >
+            View JSON Schema
+          </Button>
+          <Button as="a" download href="/static/bundles/results-schema.json">
+            Download JSON Schema
+          </Button>
+          <SchemaDescription schema={resultsSchema} />
+        </Message>
+
+        <Modal
+          open={isSchemaModalOpen}
+          onClose={() => {
+            this.setState({ isSchemaModalOpen: false });
+          }}
+        >
+          <Header>Results Schema</Header>
+          <Modal.Content>
+            <pre>{JSON.stringify(resultsSchema, null, 2)}</pre>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button
+              onClick={() => {
+                this.setState({ isSchemaModalOpen: false });
+              }}
+            >
+              Ok
+            </Button>
+          </Modal.Actions>
+        </Modal>
       </React.Fragment>
     );
   }

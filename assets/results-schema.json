@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "curator": {
+        "description": "Curator's username",
+        "type": "string"
+      },
+      "variant_id": {
+        "description": "Variant ID in the format chrom-pos-ref-alt",
+        "type": "string",
+        "pattern": "^(\\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)$"
+      },
+      "verdict": {
+        "description": "Curation verdict",
+        "enum": ["lof", "likely_lof", "uncertain", "likely_not_lof", "not_lof"]
+      },
+      "notes": {
+        "description": "Notes from curation",
+        "type": ["string", "null"]
+      },
+      "should_revisit": {
+        "description": "Should the variant be looked at again",
+        "type": ["boolean", "null"]
+      },
+      "flag_mapping_error": {
+        "description": "Mapping error",
+        "type": ["boolean", "null"]
+      },
+      "flag_genotyping_error": {
+        "description": "Genotyping error",
+        "type": ["boolean", "null"]
+      },
+      "flag_homopolymer": {
+        "description": "Homopolymer",
+        "type": ["boolean", "null"]
+      },
+      "flag_no_read_data": {
+        "description": "No read data",
+        "type": ["boolean", "null"]
+      },
+      "flag_reference_error": {
+        "description": "Reference error",
+        "type": ["boolean", "null"]
+      },
+      "flag_strand_bias": {
+        "description": "Strand bias",
+        "type": ["boolean", "null"]
+      },
+      "flag_mnp": {
+        "description": "Multi-nucleotide variant",
+        "type": ["boolean", "null"]
+      },
+      "flag_essential_splice_rescue": {
+        "description": "Essential splice rescue",
+        "type": ["boolean", "null"]
+      },
+      "flag_minority_of_transcripts": {
+        "description": "Minority of transcripts",
+        "type": ["boolean", "null"]
+      },
+      "flag_weak_exon_conservation": {
+        "description": "Weak exon conservation",
+        "type": ["boolean", "null"]
+      },
+      "flag_last_exon": {
+        "description": "Last exon",
+        "type": ["boolean", "null"]
+      },
+      "flag_other_transcript_error": {
+        "description": "Other transcript error",
+        "type": ["boolean", "null"]
+      },
+      "created_at": {
+        "description": "Date and time the variant was first curated",
+        "type": ["string", "null"]
+      },
+      "updated_at": {
+        "description": "Date and time the curation result was last updated",
+        "type": ["string", "null"]
+      }
+    },
+    "required": ["curator", "variant_id"]
+  }
+}
