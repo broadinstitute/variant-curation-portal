@@ -110,7 +110,9 @@ class VariantSerializer(ModelSerializer):
         samples_data = validated_data.pop("samples", None)
 
         variant_id = validated_data["variant_id"]
-        variant = Variant.objects.create(**validated_data, **variant_id_parts(variant_id))
+        variant = Variant.objects.create(
+            **validated_data, **variant_id_parts(variant_id), project=self.context["project"]
+        )
 
         if annotations_data:
             annotations = [VariantAnnotation(**item, variant=variant) for item in annotations_data]

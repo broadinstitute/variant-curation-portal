@@ -52,13 +52,13 @@ class ProjectVariantsView(APIView):
     def post(self, request, *args, **kwargs):
         project = self.get_project()
 
-        serializer = VariantSerializer(data=request.data, many=True)
+        serializer = VariantSerializer(data=request.data, context={"project": project}, many=True)
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
 
         try:
             with transaction.atomic():
-                serializer.save(project=project)
+                serializer.save()
                 project.save()  # Save project to set updated_at timestamp
 
             return Response({})
