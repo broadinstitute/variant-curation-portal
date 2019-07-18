@@ -173,12 +173,24 @@ def test_upload_variants_rejects_duplicate_variants(db_setup):
     client.force_authenticate(User.objects.get(username="user1@example.com"))
     response = client.post(
         "/api/project/1/variants/",
-        [{"variant_id": "1-1000-A-G"}, {"variant_id": "1-1000-A-G"}],
+        [
+            {"variant_id": "1-1000-A-G"},
+            {"variant_id": "1-1000-A-G"},
+            {"variant_id": "1-1000-A-T"},
+            {"variant_id": "1-1000-A-T"},
+        ],
         format="json",
     )
 
     assert response.status_code == 400
+
+    # Validation message should contain duplicate variant IDs
+    response = response.json()
+    assert "non_field_errors" in response
+    assert "Duplicate variants with IDs 1-1000-A-G, 1-1000-A-T" in response["non_field_errors"]
+
     assert not Variant.objects.filter(variant_id="1-1000-A-G", project=1).exists()
+    assert not Variant.objects.filter(variant_id="1-1000-A-T", project=1).exists()
 
 
 def test_upload_variants_creates_no_variants_on_validation_error(db_setup):

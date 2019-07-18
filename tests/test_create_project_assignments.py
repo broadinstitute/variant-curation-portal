@@ -150,6 +150,8 @@ def test_create_project_assignments_rejects_duplicate_assignments(db_setup):
         "/api/project/1/assignments/",
         {
             "assignments": [
+                {"curator": "user1@example.com", "variant_id": "1-100-A-G"},
+                {"curator": "user1@example.com", "variant_id": "1-100-A-G"},
                 {"curator": "user2@example.com", "variant_id": "1-120-G-A"},
                 {"curator": "user2@example.com", "variant_id": "1-120-G-A"},
             ]
@@ -158,6 +160,16 @@ def test_create_project_assignments_rejects_duplicate_assignments(db_setup):
     )
     assert response.status_code == 400
 
+    response = response.json()
+    assert "non_field_errors" in response
+    assert (
+        "Duplicate assignments for user1@example.com (variants 1-100-A-G), user2@example.com (variants 1-120-G-A)"
+        in response["non_field_errors"]
+    )
+
+    assert not CurationAssignment.objects.filter(
+        curator__username="user1@example.com", variant__variant_id="1-100-A-G"
+    ).exists()
     assert not CurationAssignment.objects.filter(
         curator__username="user2@example.com", variant__variant_id="1-120-G-A"
     ).exists()
