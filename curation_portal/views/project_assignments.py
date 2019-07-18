@@ -1,3 +1,5 @@
+from collections import Counter, defaultdict
+
 from django.db import transaction
 from django.db.models import Prefetch
 from rest_framework import serializers
@@ -46,13 +48,22 @@ class AssignmentSerializer(serializers.ModelSerializer):
 class NewAssignmentListSerializer(serializers.ListSerializer):  # pylint: disable=abstract-method
     def validate(self, attrs):
         # Check that all curator/variant ID pairs in the list are unique
-        seen_results = set()
-        for variant_data in attrs:
-            result = (variant_data["variant_id"], variant_data["curator"])
-            if result in seen_results:
-                raise ValidationError("Assignment is already present in list")
+        assignment_counts = Counter(
+            (variant_data["curator"], variant_data["variant_id"]) for variant_data in attrs
+        )
+        duplicate_assignments = [k for k, v in assignment_counts.items() if v > 1]
+        if duplicate_assignments:
+            duplicates_by_curator = defaultdict(list)
+            for curator, variant_id in duplicate_assignments:
+                duplicates_by_curator[curator].append(variant_id)
 
-            seen_results.add(result)
+            raise ValidationError(
+                "Duplicate assignments for "
+                + ", ".join(
+                    f"{curator} (variants {', '.join(variants)})"
+                    for curator, variants in duplicates_by_curator.items()
+                )
+            )
 
         return attrs
 

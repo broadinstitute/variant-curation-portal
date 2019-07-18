@@ -1,3 +1,5 @@
+from collections import Counter, defaultdict
+
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import MaxLengthValidator
 from rest_framework.serializers import (
@@ -102,13 +104,10 @@ class VariantTagSerializer(ModelSerializer):
 class VariantListSerializer(ListSerializer):  # pylint: disable=abstract-method
     def validate(self, attrs):
         # Check that all variant IDs in the list are unique
-        seen_variant_ids = set()
-        for variant_data in attrs:
-            variant_id = variant_data["variant_id"]
-            if variant_id in seen_variant_ids:
-                raise ValidationError("Variant is already present in list")
-
-            seen_variant_ids.add(variant_id)
+        variant_id_counts = Counter(variant_data["variant_id"] for variant_data in attrs)
+        duplicate_variant_ids = [k for k, v in variant_id_counts.items() if v > 1]
+        if duplicate_variant_ids:
+            raise ValidationError(f"Duplicate variants with IDs {', '.join(duplicate_variant_ids)}")
 
         return attrs
 
@@ -161,13 +160,22 @@ class VariantSerializer(ModelSerializer):
 class ImportedResultListSerializer(ListSerializer):  # pylint: disable=abstract-method
     def validate(self, attrs):
         # Check that all curator/variant ID pairs in the list are unique
-        seen_results = set()
-        for variant_data in attrs:
-            result = (variant_data["variant_id"], variant_data["curator"])
-            if result in seen_results:
-                raise ValidationError("Result is already present in list")
+        assignment_counts = Counter(
+            (variant_data["curator"], variant_data["variant_id"]) for variant_data in attrs
+        )
+        duplicate_assignments = [k for k, v in assignment_counts.items() if v > 1]
+        if duplicate_assignments:
+            duplicates_by_curator = defaultdict(list)
+            for curator, variant_id in duplicate_assignments:
+                duplicates_by_curator[curator].append(variant_id)
 
-            seen_results.add(result)
+            raise ValidationError(
+                "Duplicate results for "
+                + ", ".join(
+                    f"{curator} (variants {', '.join(variants)})"
+                    for curator, variants in duplicates_by_curator.items()
+                )
+            )
 
         return attrs
 

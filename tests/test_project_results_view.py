@@ -155,6 +155,8 @@ def test_upload_results_rejects_duplicate_assignments(db_setup):
     response = client.post(
         "/api/project/1/results/",
         [
+            {"curator": "user2@example.com", "variant_id": "1-200-G-A"},
+            {"curator": "user2@example.com", "variant_id": "1-200-G-A"},
             {"curator": "user3@example.com", "variant_id": "1-300-T-C"},
             {"curator": "user3@example.com", "variant_id": "1-300-T-C"},
         ],
@@ -162,6 +164,18 @@ def test_upload_results_rejects_duplicate_assignments(db_setup):
     )
 
     assert response.status_code == 400
+    response = response.json()
+    assert "non_field_errors" in response
+    assert (
+        "Duplicate results for user2@example.com (variants 1-200-G-A), user3@example.com (variants 1-300-T-C)"
+        in response["non_field_errors"]
+    )
+
+    assert not CurationResult.objects.filter(
+        assignment__variant__project=1,
+        assignment__variant__variant_id="1-200-G-A",
+        assignment__curator__username="user2@example.com",
+    ).exists()
     assert not CurationResult.objects.filter(
         assignment__variant__project=1,
         assignment__variant__variant_id="1-300-T-C",
