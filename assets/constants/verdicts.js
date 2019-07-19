@@ -11,7 +11,7 @@ export const verdictColors = {
 export const verdictLabels = {
   lof: "LoF",
   likely_lof: "Likely LoF",
-  uncertain_lof: "¯\\_(ツ)_/¯",
+  uncertain: "¯\\_(ツ)_/¯",
   likely_not_lof: "Likely not loF",
   not_lof: "Not LoF",
 };
