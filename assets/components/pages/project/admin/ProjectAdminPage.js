@@ -19,6 +19,10 @@ const ProjectAdminPage = ({ project, user }) => {
         <div>
           <Link to="/projects/">Return to all projects</Link>
         </div>
+        <Header as="h2">Manage</Header>
+        <p>
+          <Link to={`/project/${project.id}/edit`}>Edit project</Link>
+        </p>
         <Header as="h2">Owners</Header>
         <List bulleted>
           {project.owners.map(username => (
@@ -28,7 +32,7 @@ const ProjectAdminPage = ({ project, user }) => {
         <p>
           <Link to={`/project/${project.id}/owners/`}>Edit project owners</Link>
         </p>
-        <Header as="h2">Manage</Header>
+        <Header as="h2">Variants</Header>
         <p>
           <Link to={`/project/${project.id}/variants`}>Upload variants</Link>
         </p>

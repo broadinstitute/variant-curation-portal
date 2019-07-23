@@ -30,8 +30,9 @@ urlpatterns = [
     path("projects/create/", DEFAULT_TEMPLATE_VIEW, name="create-project"),
     path("project/<int:project_id>/", DEFAULT_TEMPLATE_VIEW, name="project"),
     path("project/<int:project_id>/admin/", DEFAULT_TEMPLATE_VIEW, name="project-admin"),
+    path("project/<int:project_id>/edit/", DEFAULT_TEMPLATE_VIEW, name="project-edit"),
     path("project/<int:project_id>/owners/", DEFAULT_TEMPLATE_VIEW, name="project-owners"),
-    path("project/<int:project_id>/assign/", DEFAULT_TEMPLATE_VIEW, name="project-admin"),
+    path("project/<int:project_id>/assign/", DEFAULT_TEMPLATE_VIEW, name="project-assign"),
     path("project/<int:project_id>/variants/", DEFAULT_TEMPLATE_VIEW, name="project-variants"),
     path(
         "project/<int:project_id>/results/import/",
