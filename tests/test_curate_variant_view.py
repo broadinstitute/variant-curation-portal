@@ -2,7 +2,7 @@
 import pytest
 from rest_framework.test import APIClient
 
-from curation_portal.models import CurationAssignment, Project, User, Variant
+from curation_portal.models import CurationAssignment, CurationResult, Project, User, Variant
 
 pytestmark = pytest.mark.django_db  # pylint: disable=invalid-name
 
@@ -72,6 +72,49 @@ def test_curate_variant_view_can_only_be_viewed_by_variant_curators(
 
     response = client.post(f"/api/project/1/variant/{variant1.id}/curate/", {}, format="json")
     assert response.status_code == expected_status_code
+
+
+def test_curate_variant_stores_result(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user2@example.com"))
+
+    variant1 = Variant.objects.get(variant_id="1-100-A-G", project__id=1)
+
+    assert not CurationResult.objects.filter(
+        assignment__curator__username="user2@example.com",
+        assignment__variant__project=1,
+        assignment__variant__variant_id="1-100-A-G",
+    ).exists()
+
+    response = client.post(
+        f"/api/project/1/variant/{variant1.id}/curate/",
+        {"verdict": "lof", "notes": "LoF for sure"},
+        format="json",
+    )
+
+    assert response.status_code == 200
+
+    assignment = CurationAssignment.objects.get(
+        curator__username="user2@example.com", variant__project=1, variant__variant_id="1-100-A-G"
+    )
+
+    assert assignment.result
+    assert assignment.result.verdict == "lof"
+    assert assignment.result.notes == "LoF for sure"
+
+
+def test_curate_variant_validates_verdict(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user2@example.com"))
+
+    variant1 = Variant.objects.get(variant_id="1-100-A-G", project__id=1)
+
+    response = client.post(
+        f"/api/project/1/variant/{variant1.id}/curate/",
+        {"verdict": "some_invalid_verdict"},
+        format="json",
+    )
+    assert response.status_code == 400
 
 
 def test_curate_variant_orders_multiallelic_variants(db_setup):

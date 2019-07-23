@@ -1,10 +1,9 @@
-from django.forms import ModelForm
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ChoiceField, ModelSerializer
 from rest_framework.views import APIView
 
 from curation_portal.models import (
@@ -51,12 +50,32 @@ class VariantSerializer(ModelSerializer):
         exclude = ("project",)
 
 
-class CurationForm(ModelForm):
+class CurationResultSerializer(ModelSerializer):
+    verdict = ChoiceField(
+        ["lof", "likely_lof", "uncertain", "likely_not_lof", "not_lof"],
+        required=False,
+        allow_blank=True,
+    )
+
     class Meta:
         model = CurationResult
-        fields = ["notes", "should_revisit", "verdict"] + [
-            f.name for f in CurationResult._meta.get_fields() if f.name.startswith("flag")
-        ]
+        fields = (
+            "flag_mapping_error",
+            "flag_genotyping_error",
+            "flag_homopolymer",
+            "flag_no_read_data",
+            "flag_reference_error",
+            "flag_strand_bias",
+            "flag_mnp",
+            "flag_essential_splice_rescue",
+            "flag_minority_of_transcripts",
+            "flag_weak_exon_conservation",
+            "flag_last_exon",
+            "flag_other_transcript_error",
+            "notes",
+            "should_revisit",
+            "verdict",
+        )
 
 
 def serialize_adjacent_variant(variant_values):
@@ -143,13 +162,10 @@ class CurateVariantView(APIView):
         else:
             result = CurationResult()
 
-        form = CurationForm(request.data, instance=result)
-        try:
-            form.save()
-            assignment.result = result
-            assignment.save()
-        except ValueError:
-            errors = form.errors.as_json()
-            raise ValidationError(errors)
-        else:
-            return Response({})
+        serializer = CurationResultSerializer(result, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        assignment.result = result
+        assignment.save()
+
+        return Response({})
