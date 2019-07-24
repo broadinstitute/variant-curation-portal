@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { Header, Segment } from "semantic-ui-react";
 
 /**
  * Documentation for linking to the UCSC browser:
@@ -33,13 +34,22 @@ UCSCVariantView.propTypes = {
 };
 
 export const UCSCGeneView = ({ variant }) => {
-  const annotation = variant.annotations.find(a => a.gene_symbol && a.transcript_id);
+  const hasAnnotations = variant.annotations.length > 0;
 
-  if (!annotation) {
-    return null;
+  if (!hasAnnotations) {
+    return (
+      <Segment placeholder textAlign="center">
+        <Header>
+          UCSC gene view unavailable for this variant
+          <br />
+          No annotations
+        </Header>
+      </Segment>
+    );
   }
 
   const assembly = variant.reference_genome === "GRCh38" ? "hg38" : "hg19";
+  const annotation = variant.annotations[0];
 
   return (
     <iframe
