@@ -60,9 +60,7 @@ class CurateVariantPage extends React.Component {
                 ? variant.liftover_variant_id
                 : variant.variant_id;
 
-            const shouldShowUCSCGeneView = !!variant.annotations.find(
-              a => a.gene_symbol && a.transcript_id
-            );
+            const hasAnnotations = variant.annotations.length > 0;
 
             return (
               <React.Fragment>
@@ -158,11 +156,7 @@ class CurateVariantPage extends React.Component {
                             <a href="#ucsc">UCSC (variant)</a>
                           </List.Item>
                           <List.Item>
-                            {shouldShowUCSCGeneView ? (
-                              <a href="#ucsc-gene">UCSC (gene)</a>
-                            ) : (
-                              "UCSC (gene)"
-                            )}
+                            {hasAnnotations ? <a href="#ucsc-gene">UCSC (gene)</a> : "UCSC (gene)"}
                           </List.Item>
                         </List>
                       </span>
