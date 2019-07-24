@@ -39,6 +39,16 @@
 Backend tests are written using [pytest](https://docs.pytest.org/).
 Run tests with either `pytest` or `tox -e py36`.
 
+#### Coverage
+
+[pytest-cov](https://pytest-cov.readthedocs.io) is used to generate coverage reports.
+
+To generate and view an HTML coverage report, use:
+```
+pytest --cov-report=html
+python3 -m http.server --directory htmlcov
+```
+
 ## Conventions
 
 ### Python
