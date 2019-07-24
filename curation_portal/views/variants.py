@@ -3,10 +3,17 @@ from rest_framework.exceptions import NotFound, PermissionDenied, ValidationErro
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import ModelSerializer
 from rest_framework.views import APIView
 
-from curation_portal.models import Project
-from curation_portal.serializers import VariantSerializer
+from curation_portal.models import Project, Variant
+from curation_portal.serializers import VariantSerializer as UploadedVariantSerializer
+
+
+class VariantSerializer(ModelSerializer):
+    class Meta:
+        model = Variant
+        fields = ("variant_id",)
 
 
 class ProjectVariantsView(APIView):
@@ -22,10 +29,20 @@ class ProjectVariantsView(APIView):
 
         return project
 
+    def get(self, request, *args, **kwargs):
+        project = self.get_project()
+
+        variants = project.variants.all()
+
+        serializer = VariantSerializer(variants, many=True)
+        return Response({"variants": serializer.data})
+
     def post(self, request, *args, **kwargs):
         project = self.get_project()
 
-        serializer = VariantSerializer(data=request.data, context={"project": project}, many=True)
+        serializer = UploadedVariantSerializer(
+            data=request.data, context={"project": project}, many=True
+        )
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
 
