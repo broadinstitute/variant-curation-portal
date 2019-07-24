@@ -10,6 +10,8 @@ node_modules
 __pycache__
 static/bundles
 webpack-stats.json
+.coverage
+htmlcov
 .tox
 
 # dotenv for Docker Compose
