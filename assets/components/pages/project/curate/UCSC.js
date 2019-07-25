@@ -14,13 +14,12 @@ export const UCSCVariantView = ({ variant }) => {
     <iframe
       title="UCSC variant view"
       id="ucsc"
-      width="100%"
-      height="4000px"
       src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${encodeURIComponent(
         `chr${variant.chrom}:${variant.pos - 25}-${variant.pos + 25}`
       )}&highlight=${encodeURIComponent(
         `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
       )}`}
+      style={{ width: "100%", height: "4000px" }}
     />
   );
 };
@@ -55,8 +54,6 @@ export const UCSCGeneView = ({ variant }) => {
     <iframe
       title="UCSC gene view"
       id="ucsc-gene"
-      width="100%"
-      height="4000px"
       src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${
         annotation.gene_symbol
       }&singleSearch=knownCanonical&hgFind.matches=${
@@ -64,6 +61,7 @@ export const UCSCGeneView = ({ variant }) => {
       }&highlight=${encodeURIComponent(
         `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
       )}`}
+      style={{ width: "100%", height: "4000px" }}
     />
   );
 };
