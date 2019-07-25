@@ -25,9 +25,8 @@ export const GnomadVariantView = ({ variant }) => {
     <iframe
       title="gnomAD variant page"
       id="gnomad-variant"
-      width="100%"
-      height="3900px"
       src={`https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`}
+      style={{ width: "100%", height: "3900px" }}
     />
   );
 };
@@ -59,9 +58,8 @@ export const GnomadGeneView = ({ variant }) => {
     <iframe
       title="gnomAD gene page"
       id="gnomad-gene"
-      width="100%"
-      height="2000px"
       src={`https://gnomad.broadinstitute.org/gene/${variant.annotations[0].gene_id}`}
+      style={{ width: "100%", height: "2000px" }}
     />
   );
 };
