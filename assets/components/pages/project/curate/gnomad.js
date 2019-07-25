@@ -2,10 +2,13 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Header, Segment } from "semantic-ui-react";
 
-// eslint-disable-next-line import/prefer-default-export
+// gnomAD is based on GRCh37. So if a variant's coordinates are based on GRCh38,
+// then we need lifted over coordinates to look it up in gnomAD.
+export const getGnomadVariantId = variant =>
+  variant.reference_genome === "GRCh38" ? variant.liftover_variant_id : variant.variant_id;
+
 export const GnomadVariantView = ({ variant }) => {
-  const gnomadVariantId =
-    variant.reference_genome === "GRCh38" ? variant.liftover_variant_id : variant.variant_id;
+  const gnomadVariantId = getGnomadVariantId(variant);
 
   if (!gnomadVariantId) {
     return (
