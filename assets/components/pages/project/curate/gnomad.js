@@ -14,7 +14,7 @@ export const GnomadVariantView = ({ variant }) => {
     return (
       <Segment placeholder textAlign="center">
         <Header>
-          gnomAD not available
+          gnomAD variant page not available
           <br />
           No GRCh37 variant ID
         </Header>
@@ -23,8 +23,8 @@ export const GnomadVariantView = ({ variant }) => {
   }
   return (
     <iframe
-      title="gnomAD browser"
-      id="gnomad"
+      title="gnomAD variant page"
+      id="gnomad-variant"
       width="100%"
       height="3900px"
       src={`https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`}
@@ -37,5 +37,44 @@ GnomadVariantView.propTypes = {
     reference_genome: PropTypes.oneOf(["GRCh37", "GRCh38"]).isRequired,
     variant_id: PropTypes.string.isRequired,
     liftover_variant_id: PropTypes.string,
+  }).isRequired,
+};
+
+export const GnomadGeneView = ({ variant }) => {
+  const hasAnnotations = variant.annotations.length > 0;
+
+  if (!hasAnnotations) {
+    return (
+      <Segment placeholder textAlign="center">
+        <Header>
+          gnomAD gene page unavailable for this variant
+          <br />
+          No annotations
+        </Header>
+      </Segment>
+    );
+  }
+
+  return (
+    <iframe
+      title="gnomAD gene page"
+      id="gnomad-gene"
+      width="100%"
+      height="2000px"
+      src={`https://gnomad.broadinstitute.org/gene/${variant.annotations[0].gene_id}`}
+    />
+  );
+};
+
+GnomadGeneView.propTypes = {
+  variant: PropTypes.shape({
+    annotations: PropTypes.arrayOf(
+      PropTypes.shape({
+        consequence: PropTypes.string.isRequired,
+        gene_id: PropTypes.string.isRequired,
+        gene_symbol: PropTypes.string.isRequired,
+        transcript_id: PropTypes.string.isRequired,
+      })
+    ).isRequired,
   }).isRequired,
 };
