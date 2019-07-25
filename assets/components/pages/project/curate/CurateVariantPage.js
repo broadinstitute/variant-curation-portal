@@ -10,6 +10,7 @@ import VariantId from "../../../VariantId";
 import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
+import { GnomadVariantView } from "./gnomad";
 import SampleTable from "./SampleTable";
 import { UCSCVariantView, UCSCGeneView } from "./UCSC";
 import VariantData from "./VariantData";
@@ -55,11 +56,6 @@ class CurateVariantPage extends React.Component {
               result,
             },
           }) => {
-            const gnomadVariantId =
-              variant.reference_genome === "GRCh38"
-                ? variant.liftover_variant_id
-                : variant.variant_id;
-
             const hasAnnotations = variant.annotations.length > 0;
 
             return (
@@ -225,23 +221,7 @@ class CurateVariantPage extends React.Component {
                 References
                */}
 
-                {gnomadVariantId ? (
-                  <iframe
-                    title="gnomAD browser"
-                    id="gnomad"
-                    width="100%"
-                    height="3900px"
-                    src={`https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`}
-                  />
-                ) : (
-                  <Segment placeholder textAlign="center">
-                    <Header>
-                      gnomAD not available
-                      <br />
-                      No GRCh37 variant ID
-                    </Header>
-                  </Segment>
-                )}
+                <GnomadVariantView variant={variant} />
                 <br />
 
                 <UCSCVariantView variant={variant} />
