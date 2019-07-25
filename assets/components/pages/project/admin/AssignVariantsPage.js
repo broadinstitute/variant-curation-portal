@@ -7,6 +7,26 @@ import api from "../../../../api";
 import { PermissionRequired } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
 
+const downloadTemplateCSV = project => {
+  return api.get(`/project/${project.id}/variants/`).then(response => {
+    const templateData = response.variants.map(variant => ["CURATOR", variant.variant_id]);
+    const csv = `${templateData.map(row => row.join(",")).join("\r\n")}\r\n`;
+    const filename = `${project.name}_assignments_template.csv`;
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.onClick = () => {
+      URL.revokeObjectURL(url);
+      link.remove();
+    };
+    document.body.appendChild(link);
+    link.click();
+  });
+};
+
 class AssignVariantsPage extends Component {
   static propTypes = {
     history: PropTypes.shape({
@@ -143,6 +163,15 @@ class AssignVariantsPage extends Component {
                   type="file"
                   onChange={e => this.onSelectFile(e.target.files[0])}
                 />
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => {
+                  downloadTemplateCSV(project);
+                }}
+              >
+                Download template
               </Button>
             </Segment>
             <Message attached>
