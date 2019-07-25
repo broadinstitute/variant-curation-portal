@@ -75,6 +75,11 @@ def convert_vcf_to_json(
         )
 
         for row in tqdm(reader, unit=" rows"):
+            if len(row.ALT) > 1:
+                raise Exception(
+                    "VCF contains multiallelic rows, which are not supported by this script"
+                )
+
             samples = list(row.samples)
 
             # Parse CSQ field
