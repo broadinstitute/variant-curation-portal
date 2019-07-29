@@ -43,7 +43,7 @@ class App extends Component {
 
     return (
       <Router>
-        <div style={{ padding: "0 1.5rem" }}>
+        <div style={{ height: "100%", padding: "45px 0 35px" }}>
           <Menu fixed="top">
             <Container fluid>
               <Menu.Item header>
@@ -61,7 +61,7 @@ class App extends Component {
             </Container>
           </Menu>
 
-          <div style={{ paddingBottom: "35px", paddingTop: "65px" }}>
+          <div style={{ height: "100%", overflow: "auto" }}>
             <Switch>
               <Route
                 exact

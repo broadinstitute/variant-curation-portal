@@ -7,6 +7,7 @@ import api from "../../../../api";
 import variantsSchema from "../../../../variants-schema.json";
 import DocumentTitle from "../../../DocumentTitle";
 import SchemaDescription from "../../../SchemaDescription";
+import Page from "../../Page";
 
 class UploadVariantsPage extends Component {
   static propTypes = {
@@ -93,7 +94,7 @@ class UploadVariantsPage extends Component {
     } = this.state;
 
     return (
-      <React.Fragment>
+      <Page>
         <DocumentTitle title={project.name} />
         <Header as="h1" dividing>
           {project.name}
@@ -173,7 +174,7 @@ class UploadVariantsPage extends Component {
             </Button>
           </Modal.Actions>
         </Modal>
-      </React.Fragment>
+      </Page>
     );
   }
 }

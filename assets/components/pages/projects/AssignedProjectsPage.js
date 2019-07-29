@@ -4,13 +4,14 @@ import { Header, Item } from "semantic-ui-react";
 
 import DocumentTitle from "../../DocumentTitle";
 import BasePage from "../BasePage";
+import Page from "../Page";
 
 const AssignedProjectsPage = () => {
   return (
     <BasePage dataPath="/assignments/">
       {({ data }) => {
         return (
-          <React.Fragment>
+          <Page>
             <Header as="h1" dividing>
               Assignments
             </Header>
@@ -33,7 +34,7 @@ const AssignedProjectsPage = () => {
             ) : (
               <p>No assignments.</p>
             )}
-          </React.Fragment>
+          </Page>
         );
       }}
     </BasePage>

@@ -6,6 +6,7 @@ import { Button, Form, Header, Label, List, Message, Segment } from "semantic-ui
 import api from "../../../../api";
 import { PermissionRequired } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
+import Page from "../../Page";
 
 class EditProjectOwnersPage extends Component {
   static propTypes = {
@@ -80,7 +81,7 @@ class EditProjectOwnersPage extends Component {
     ].sort((owner1, owner2) => owner1.username.localeCompare(owner2.username));
 
     return (
-      <React.Fragment>
+      <Page>
         <DocumentTitle title={project.name} />
         <Header as="h1" dividing>
           {project.name}
@@ -184,7 +185,7 @@ class EditProjectOwnersPage extends Component {
             </Segment>
           </Form>
         </PermissionRequired>
-      </React.Fragment>
+      </Page>
     );
   }
 }

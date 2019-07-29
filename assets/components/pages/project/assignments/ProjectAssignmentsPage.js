@@ -5,12 +5,13 @@ import { Header, Item, Segment } from "semantic-ui-react";
 
 import DocumentTitle from "../../../DocumentTitle";
 import Fetch from "../../../Fetch";
+import Page from "../../Page";
 import AssignmentListItem from "./AssignmentListItem";
 import Legend from "./Legend";
 
 const ProjectAssignmentsPage = ({ project }) => {
   return (
-    <React.Fragment>
+    <Page>
       <DocumentTitle title={project.name} />
       <Header as="h1" dividing>
         {project.name}
@@ -60,7 +61,7 @@ const ProjectAssignmentsPage = ({ project }) => {
           );
         }}
       </Fetch>
-    </React.Fragment>
+    </Page>
   );
 };
 

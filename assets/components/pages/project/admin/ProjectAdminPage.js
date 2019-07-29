@@ -5,11 +5,12 @@ import { Button, Header, Item, List } from "semantic-ui-react";
 
 import { PermissionRequired } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
+import Page from "../../Page";
 
 const ProjectAdminPage = ({ project, user }) => {
   const curators = Object.keys(project.assignments);
   return (
-    <React.Fragment>
+    <Page>
       <DocumentTitle title={project.name} />
       <Header as="h1" dividing>
         {project.name}
@@ -65,7 +66,7 @@ const ProjectAdminPage = ({ project, user }) => {
           Download
         </Button>
       </PermissionRequired>
-    </React.Fragment>
+    </Page>
   );
 };
 

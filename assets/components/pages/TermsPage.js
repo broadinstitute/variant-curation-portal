@@ -1,16 +1,17 @@
 import React from "react";
-import { Container, Header } from "semantic-ui-react";
+import { Header } from "semantic-ui-react";
 
 import DocumentTitle from "../DocumentTitle";
+import Page from "./Page";
 
 const TermsPage = () => {
   return (
-    <Container fluid>
+    <Page>
       <DocumentTitle title="Terms of Service" />
       <Header as="h1" dividing>
         Terms of Service
       </Header>
-    </Container>
+    </Page>
   );
 };
 

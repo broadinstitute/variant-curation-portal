@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Container, Header, Message } from "semantic-ui-react";
+import { Header, Message } from "semantic-ui-react";
 
 import DocumentTitle from "../DocumentTitle";
+import Page from "./Page";
 
 const PageNotFoundPage = () => {
   return (
-    <Container fluid>
+    <Page>
       <DocumentTitle title="Page not found" />
       <Header as="h1" dividing>
         Page Not Found
@@ -17,7 +18,7 @@ const PageNotFoundPage = () => {
           <Link to="/">Return to home page</Link>
         </p>
       </Message>
-    </Container>
+    </Page>
   );
 };
 

@@ -7,6 +7,7 @@ import DocumentTitle from "../../../DocumentTitle";
 import Fetch from "../../../Fetch";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
 import VariantId from "../../../VariantId";
+import Page from "../../Page";
 import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
@@ -60,7 +61,7 @@ class CurateVariantPage extends React.Component {
             const hasAnnotations = variant.annotations.length > 0;
 
             return (
-              <React.Fragment>
+              <Page>
                 <DocumentTitle title={`${project.name} | ${variant.variant_id}`} />
                 <Header as="h1" dividing id="top">
                   {project.name} | <VariantId variantId={variant.variant_id} />
@@ -244,7 +245,7 @@ class CurateVariantPage extends React.Component {
 
                 <UCSCGeneView variant={variant} />
                 <br />
-              </React.Fragment>
+              </Page>
             );
           }}
         </Fetch>

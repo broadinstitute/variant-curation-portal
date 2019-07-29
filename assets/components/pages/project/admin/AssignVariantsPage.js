@@ -6,6 +6,7 @@ import { Button, Form, Header, Icon, List, Message, Segment } from "semantic-ui-
 import api from "../../../../api";
 import { PermissionRequired } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
+import Page from "../../Page";
 
 const downloadTemplateCSV = project => {
   return api.get(`/project/${project.id}/variants/`).then(response => {
@@ -96,7 +97,7 @@ class AssignVariantsPage extends Component {
     const { assignments, isSaving, assignmentCurator, assignmentVariant, saveError } = this.state;
 
     return (
-      <React.Fragment>
+      <Page>
         <DocumentTitle title={project.name} />
         <Header as="h1" dividing>
           {project.name}
@@ -207,7 +208,7 @@ class AssignVariantsPage extends Component {
             )}
           </Form>
         </PermissionRequired>
-      </React.Fragment>
+      </Page>
     );
   }
 }

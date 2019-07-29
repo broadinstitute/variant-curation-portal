@@ -1,16 +1,17 @@
 import React from "react";
-import { Container, Header } from "semantic-ui-react";
+import { Header } from "semantic-ui-react";
 
 import DocumentTitle from "../DocumentTitle";
+import Page from "./Page";
 
 const HomePage = () => {
   return (
-    <Container fluid>
+    <Page>
       <DocumentTitle title="Variant Curation" />
       <Header as="h1" dividing>
         Variant Curation
       </Header>
-    </Container>
+    </Page>
   );
 };
 
