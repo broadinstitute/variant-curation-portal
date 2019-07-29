@@ -7,6 +7,7 @@ import api from "../../../../api";
 import resultsSchema from "../../../../results-schema.json";
 import DocumentTitle from "../../../DocumentTitle";
 import SchemaDescription from "../../../SchemaDescription";
+import Page from "../../Page";
 
 class ImportResultsPage extends Component {
   static propTypes = {
@@ -93,7 +94,7 @@ class ImportResultsPage extends Component {
     } = this.state;
 
     return (
-      <React.Fragment>
+      <Page>
         <DocumentTitle title={project.name} />
         <Header as="h1" dividing>
           {project.name}
@@ -174,7 +175,7 @@ class ImportResultsPage extends Component {
             </Button>
           </Modal.Actions>
         </Modal>
-      </React.Fragment>
+      </Page>
     );
   }
 }

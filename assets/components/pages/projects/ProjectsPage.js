@@ -6,13 +6,14 @@ import { Button, Header, Item } from "semantic-ui-react";
 import { can } from "../../../permissions";
 import DocumentTitle from "../../DocumentTitle";
 import BasePage from "../BasePage";
+import Page from "../Page";
 
 const ProjectsPage = ({ user }) => {
   return (
     <BasePage dataPath="/projects/">
       {({ data }) => {
         return (
-          <React.Fragment>
+          <Page>
             <Header as="h1" dividing>
               Projects
             </Header>
@@ -40,7 +41,7 @@ const ProjectsPage = ({ user }) => {
                 Create project
               </Button>
             )}
-          </React.Fragment>
+          </Page>
         );
       }}
     </BasePage>

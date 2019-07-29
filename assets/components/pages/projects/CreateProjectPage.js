@@ -1,11 +1,12 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Button, Container, Form, Header, Message } from "semantic-ui-react";
+import { Button, Form, Header, Message } from "semantic-ui-react";
 
 import api from "../../../api";
 import { PermissionRequired } from "../../../permissions";
 import DocumentTitle from "../../DocumentTitle";
+import Page from "../Page";
 
 class CreateProjectPage extends Component {
   static propTypes = {
@@ -46,7 +47,7 @@ class CreateProjectPage extends Component {
     const { isSaving, lastSaveDidFail, projectName } = this.state;
 
     return (
-      <Container>
+      <Page>
         <DocumentTitle title="Create Project" />
         <Header as="h1" dividing>
           Create Project
@@ -71,7 +72,7 @@ class CreateProjectPage extends Component {
             Cancel
           </Button>
         </PermissionRequired>
-      </Container>
+      </Page>
     );
   }
 }

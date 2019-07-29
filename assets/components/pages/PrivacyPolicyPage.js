@@ -1,16 +1,17 @@
 import React from "react";
-import { Container, Header } from "semantic-ui-react";
+import { Header } from "semantic-ui-react";
 
 import DocumentTitle from "../DocumentTitle";
+import Page from "./Page";
 
 const PrivacyPolicyPage = () => {
   return (
-    <Container fluid>
+    <Page>
       <DocumentTitle title="Privacy Policy" />
       <Header as="h1" dividing>
         Privacy Policy
       </Header>
-    </Container>
+    </Page>
   );
 };
 
