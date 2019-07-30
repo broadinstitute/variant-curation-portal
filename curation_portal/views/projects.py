@@ -9,7 +9,8 @@ class AssignedProjectsView(APIView):
 
     def get(self, request):
         assigned_projects = list(
-            request.user.curation_assignments.values("variant__project", "variant__project__name")
+            request.user.curation_assignments.order_by("-variant__project__created_at")
+            .values("variant__project", "variant__project__name")
             .annotate(num_assignments=Count("variant_id"))
             .all()
         )
@@ -24,17 +25,21 @@ class AssignedProjectsView(APIView):
 
         return Response(
             {
-                "projects": [
-                    {
-                        "id": project["variant__project"],
-                        "name": project["variant__project__name"],
-                        "variants_assigned": project["num_assignments"],
-                        "variants_curated": completed_assignments_by_project.get(
-                            project["variant__project"], 0
-                        ),
-                    }
-                    for project in assigned_projects
-                ]
+                "projects": sorted(
+                    [
+                        {
+                            "id": project["variant__project"],
+                            "name": project["variant__project__name"],
+                            "variants_assigned": project["num_assignments"],
+                            "variants_curated": completed_assignments_by_project.get(
+                                project["variant__project"], 0
+                            ),
+                        }
+                        for project in assigned_projects
+                    ],
+                    key=lambda p: p["variants_assigned"] - p["variants_curated"],
+                    reverse=True,
+                )
             }
         )
 
