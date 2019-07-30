@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import { Container } from "semantic-ui-react";
 
 import Fetch from "../../Fetch";
 import PageNotFoundPage from "../PageNotFoundPage";
@@ -15,77 +14,75 @@ import ProjectAssignmentsPage from "./assignments/ProjectAssignmentsPage";
 import CurateVariantPage from "./curate/CurateVariantPage";
 
 const ProjectPage = ({ match, projectId, user }) => (
-  <Container fluid>
-    <Fetch path={`/project/${projectId}/`}>
-      {({ data: project, refresh }) => {
-        return (
-          <Switch>
-            <Route
-              exact
-              path={match.path}
-              render={props => <ProjectAssignmentsPage {...props} project={project} />}
-            />
+  <Fetch path={`/project/${projectId}/`}>
+    {({ data: project, refresh }) => {
+      return (
+        <Switch>
+          <Route
+            exact
+            path={match.path}
+            render={props => <ProjectAssignmentsPage {...props} project={project} />}
+          />
 
-            <Route
-              exact
-              path={`${match.path}admin/`}
-              render={props => <ProjectAdminPage {...props} project={project} user={user} />}
-            />
+          <Route
+            exact
+            path={`${match.path}admin/`}
+            render={props => <ProjectAdminPage {...props} project={project} user={user} />}
+          />
 
-            <Route
-              exact
-              path={`${match.path}owners/`}
-              render={props => (
-                <EditProjectOwnersPage
-                  {...props}
-                  project={project}
-                  refreshProject={refresh}
-                  user={user}
-                />
-              )}
-            />
+          <Route
+            exact
+            path={`${match.path}owners/`}
+            render={props => (
+              <EditProjectOwnersPage
+                {...props}
+                project={project}
+                refreshProject={refresh}
+                user={user}
+              />
+            )}
+          />
 
-            <Route
-              exact
-              path={`${match.path}assign/`}
-              render={props => (
-                <AssignVariantsPage
-                  {...props}
-                  project={project}
-                  user={user}
-                  refreshProject={refresh}
-                />
-              )}
-            />
+          <Route
+            exact
+            path={`${match.path}assign/`}
+            render={props => (
+              <AssignVariantsPage
+                {...props}
+                project={project}
+                user={user}
+                refreshProject={refresh}
+              />
+            )}
+          />
 
-            <Route
-              exact
-              path={`${match.path}variants/`}
-              render={props => (
-                <UploadVariantsPage {...props} project={project} refreshProject={refresh} />
-              )}
-            />
+          <Route
+            exact
+            path={`${match.path}variants/`}
+            render={props => (
+              <UploadVariantsPage {...props} project={project} refreshProject={refresh} />
+            )}
+          />
 
-            <Route
-              exact
-              path={`${match.path}results/import/`}
-              render={props => (
-                <ImportResultsPage {...props} project={project} refreshProject={refresh} />
-              )}
-            />
+          <Route
+            exact
+            path={`${match.path}results/import/`}
+            render={props => (
+              <ImportResultsPage {...props} project={project} refreshProject={refresh} />
+            )}
+          />
 
-            <Route
-              exact
-              path={`${match.path}variant/:variantId/curate/`}
-              render={props => <CurateVariantPage {...props} project={project} />}
-            />
+          <Route
+            exact
+            path={`${match.path}variant/:variantId/curate/`}
+            render={props => <CurateVariantPage {...props} project={project} />}
+          />
 
-            <Route component={PageNotFoundPage} />
-          </Switch>
-        );
-      }}
-    </Fetch>
-  </Container>
+          <Route component={PageNotFoundPage} />
+        </Switch>
+      );
+    }}
+  </Fetch>
 );
 
 ProjectPage.propTypes = {
