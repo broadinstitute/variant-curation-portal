@@ -57,7 +57,15 @@ def test_projects_list_includes_owned_projects(db_setup, username, expected_proj
     client.force_authenticate(User.objects.get(username=username))
     response = client.get("/api/projects/").json()
     owned_projects = [project["name"] for project in response["projects"]]
-    assert owned_projects == expected_projects
+    assert set(owned_projects) == set(expected_projects)
+
+
+def test_projects_list_is_sorted_by_creation_time(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user1@example.com"))
+    response = client.get("/api/projects/").json()
+    projects = [project["name"] for project in response["projects"]]
+    assert projects == ["Project #2", "Project #1"]
 
 
 def test_assigned_projects_list_requires_authentication(db_setup):

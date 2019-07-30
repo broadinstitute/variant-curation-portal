@@ -43,6 +43,8 @@ class OwnedProjectsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        owned_projects = list(request.user.owned_projects.values("id", "name").all())
+        owned_projects = list(
+            request.user.owned_projects.order_by("-created_at").values("id", "name").all()
+        )
 
         return Response({"projects": owned_projects})
