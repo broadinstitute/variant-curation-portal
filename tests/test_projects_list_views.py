@@ -112,6 +112,27 @@ def test_assigned_projects_list_includes_assigned_projects(db_setup, username, e
     assert set(assigned_projects) == set(expected_projects)
 
 
+@pytest.mark.parametrize(
+    "username,expected_assignments",
+    [
+        ("user2@example.com", {"Project #1": (1, 0), "Project #2": (2, 0), "Project #3": (3, 2)}),
+        ("user3@example.com", {"Project #2": (1, 0)}),
+    ],
+)
+def test_assigned_projects_list_includes_number_of_assigned_variants(
+    db_setup, username, expected_assignments
+):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username=username))
+    response = client.get("/api/assignments/").json()
+    assignments_by_project = {
+        project["name"]: (project["variants_assigned"], project["variants_curated"])
+        for project in response["projects"]
+    }
+
+    assert assignments_by_project == expected_assignments
+
+
 def test_assigned_projects_list_is_sorted_by_number_of_incomplete_assignments(db_setup):
     client = APIClient()
     client.force_authenticate(User.objects.get(username="user2@example.com"))
