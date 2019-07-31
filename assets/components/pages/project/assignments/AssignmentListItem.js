@@ -53,6 +53,7 @@ const AssignmentListItem = ({ assignment, projectId }) => {
           </List>
         </Item.Meta>
         <Item.Description>
+          {!(result || {}).verdict && <span>No verdict</span>}
           {result && (
             <React.Fragment>
               {result.verdict && (
