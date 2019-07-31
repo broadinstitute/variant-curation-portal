@@ -3,9 +3,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Item, List } from "semantic-ui-react";
 
-import { verdictColors, verdictSymbols } from "../../../../constants/verdicts";
+import verdicts, { verdictColors, verdictSymbols } from "../../../../constants/verdicts";
 import { CurationAssignmentPropType, CurationResultPropType } from "../../../propTypes";
 import VariantId from "../../../VariantId";
+
+const Verdict = ({ verdict }) => (
+  <span
+    style={{
+      color: verdictColors[verdict],
+    }}
+  >
+    {verdictSymbols[verdict]}
+  </span>
+);
+
+Verdict.propTypes = {
+  verdict: PropTypes.oneOf(verdicts).isRequired,
+};
 
 const Flags = ({ result }) => (
   <span style={{ fontFamily: "monospace" }}>
@@ -28,8 +42,30 @@ Flags.propTypes = {
   result: CurationResultPropType.isRequired,
 };
 
+const CurationResult = ({ result }) => (
+  <React.Fragment>
+    {result.verdict && <Verdict verdict={result.verdict} />} <Flags result={result} />{" "}
+    {result.notes && (
+      <span>
+        <strong>note:</strong> {result.notes}
+      </span>
+    )}
+    {result.should_revisit && <div style={{ color: "red" }}>Revisit this variant</div>}
+  </React.Fragment>
+);
+
+CurationResult.propTypes = {
+  result: CurationResultPropType.isRequired,
+};
+
 const AssignmentListItem = ({ assignment, projectId }) => {
   const { result, variant } = assignment;
+
+  // Verdict is currently a required field in the curation form.
+  // However, it was not in earlier versions of the portal.
+  // Thus we have to account for the possibility of a result without a verdict.
+  const hasVerdict = Boolean((result || {}).verdict);
+
   return (
     <Item key={variant.variant_id}>
       <Item.Content>
@@ -53,27 +89,8 @@ const AssignmentListItem = ({ assignment, projectId }) => {
           </List>
         </Item.Meta>
         <Item.Description>
-          {!(result || {}).verdict && <span>No verdict</span>}
-          {result && (
-            <React.Fragment>
-              {result.verdict && (
-                <span
-                  style={{
-                    color: verdictColors[result.verdict],
-                  }}
-                >
-                  {verdictSymbols[result.verdict]}
-                </span>
-              )}{" "}
-              <Flags result={result} />{" "}
-              {result.notes && (
-                <span>
-                  <strong>note:</strong> {result.notes}
-                </span>
-              )}
-              {result.should_revisit && <div style={{ color: "red" }}>Revisit this variant</div>}
-            </React.Fragment>
-          )}
+          {!hasVerdict && <span>No verdict</span>}
+          {result && <CurationResult result={result} />}
         </Item.Description>
       </Item.Content>
     </Item>
