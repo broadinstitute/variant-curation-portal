@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, F, Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,38 +8,28 @@ class AssignedProjectsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        assigned_projects = list(
-            request.user.curation_assignments.order_by("-variant__project__created_at")
-            .values("variant__project", "variant__project__name")
-            .annotate(num_assignments=Count("variant_id"))
-            .all()
+        assigned_projects = (
+            request.user.curation_assignments.values(
+                project_id=F("variant__project"), project_name=F("variant__project__name")
+            )
+            .annotate(
+                assigned=Count("variant_id"),
+                remaining=Count("variant_id", filter=Q(result__verdict__isnull=True)),
+            )
+            .order_by("-remaining", "-variant__project__created_at")
         )
-
-        completed_assignments_by_project = {
-            result["variant__project"]: result["count"]
-            for result in request.user.curation_assignments.filter(result__verdict__isnull=False)
-            .values("variant__project", "variant__project__name")
-            .annotate(count=Count("variant_id"))
-            .all()
-        }
 
         return Response(
             {
-                "projects": sorted(
-                    [
-                        {
-                            "id": project["variant__project"],
-                            "name": project["variant__project__name"],
-                            "variants_assigned": project["num_assignments"],
-                            "variants_curated": completed_assignments_by_project.get(
-                                project["variant__project"], 0
-                            ),
-                        }
-                        for project in assigned_projects
-                    ],
-                    key=lambda p: p["variants_assigned"] - p["variants_curated"],
-                    reverse=True,
-                )
+                "projects": [
+                    {
+                        "id": project["project_id"],
+                        "name": project["project_name"],
+                        "variants_assigned": project["assigned"],
+                        "variants_curated": project["assigned"] - project["remaining"],
+                    }
+                    for project in assigned_projects
+                ]
             }
         )
 
