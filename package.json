@@ -26,6 +26,7 @@
     "eslint-plugin-prettier": "^3",
     "eslint-plugin-react": "^7",
     "file-loader": "^3",
+    "jest": "^24.8.0",
     "mini-css-extract-plugin": "^0.5",
     "prettier": "^1",
     "style-loader": "^0.23",
