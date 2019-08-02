@@ -49,6 +49,11 @@ pytest --cov-report=html
 python3 -m http.server --directory htmlcov
 ```
 
+### JavaScript
+
+Frontend tests use [jest](https://jestjs.io/).
+Run tests with either `jest` or `yarn test`.
+
 ## Conventions
 
 ### Python
