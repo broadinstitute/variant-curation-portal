@@ -15,6 +15,7 @@ import {
 
 import api from "../../../../api";
 import verdicts, { verdictLabels } from "../../../../constants/verdicts";
+import { showNotification } from "../../../Notifications";
 import { CurationResultPropType } from "../../../propTypes";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
 
@@ -32,9 +33,8 @@ class CurationForm extends React.Component {
 
     this.state = {
       isSaving: false,
-      lastSaveStatusMessage: null,
-      lastSaveDidFail: false,
       result: cloneDeep(props.initialResult),
+      saveError: null,
     };
   }
 
@@ -59,32 +59,19 @@ class CurationForm extends React.Component {
     const { projectId, variantId } = this.props;
     const { result } = this.state;
 
-    this.setState({ isSaving: true, lastSaveStatusMessage: null });
-    if (this.clearLastSaveStatusTimeout) {
-      clearTimeout(this.clearLastSaveStatusTimeout);
-    }
+    this.setState({ isSaving: true, saveError: null });
 
     return new Promise((resolve, reject) => {
-      api
-        .post(`/project/${projectId}/variant/${variantId}/curate/`, result)
-        .then(() => {
-          this.setState(
-            { isSaving: false, lastSaveDidFail: false, lastSaveStatusMessage: "Saved" },
-            resolve
-          );
-          this.clearLastSaveStatusTimeout = setTimeout(() => {
-            this.setState({ lastSaveStatusMessage: null });
-          }, 3000);
-        })
-        .catch(() => {
-          this.setState(
-            { isSaving: false, lastSaveDidFail: true, lastSaveStatusMessage: "Failed" },
-            reject
-          );
-          this.clearLastSaveStatusTimeout = setTimeout(() => {
-            this.setState({ lastSaveStatusMessage: null });
-          }, 3000);
-        });
+      api.post(`/project/${projectId}/variant/${variantId}/curate/`, result).then(
+        () => {
+          showNotification({ title: "Success", message: "Curation saved", status: "success" });
+          this.setState({ isSaving: false }, resolve);
+        },
+        err => {
+          showNotification({ title: "Error", message: "Unable to save curation", status: "error" });
+          this.setState({ isSaving: false, saveError: err }, reject);
+        }
+      );
     });
   }
 
@@ -121,7 +108,7 @@ class CurationForm extends React.Component {
   }
 
   render() {
-    const { isSaving, lastSaveDidFail, lastSaveStatusMessage, result } = this.state;
+    const { isSaving, result, saveError } = this.state;
 
     return (
       <Ref innerRef={this.formElement}>
@@ -131,8 +118,7 @@ class CurationForm extends React.Component {
             e.preventDefault();
             this.saveResult();
           }}
-          error={lastSaveStatusMessage ? lastSaveDidFail : undefined}
-          success={lastSaveStatusMessage ? !lastSaveDidFail : undefined}
+          error={Boolean(saveError)}
         >
           <Form.Field
             control={TextArea}
@@ -208,6 +194,9 @@ class CurationForm extends React.Component {
               </React.Fragment>
             ))}
           </Form.Group>
+          {saveError && saveError.data && saveError.data.verdict && (
+            <Message error>{saveError.data.verdict}</Message>
+          )}
           <Divider />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>
@@ -230,12 +219,6 @@ class CurationForm extends React.Component {
 
             {this.renderFlagInput("should_revisit", "Revisit this variant", "r v")}
           </div>
-
-          <Message
-            error={lastSaveDidFail}
-            header={lastSaveStatusMessage}
-            success={!lastSaveDidFail}
-          />
         </Form>
       </Ref>
     );
