@@ -157,34 +157,28 @@ class CurationForm extends React.Component {
               e.preventDefault(); // Prevent shortcut from being typed into textarea
             }}
           />
-          <Header sub style={{ margin: "0.25em 0 0.5em" }}>
-            Technical
-          </Header>
-          {this.renderFlagInput("flag_mapping_error", "Mapping error", "m a")}
-          {this.renderFlagInput("flag_genotyping_error", "Genotyping error", "g e")}
-          {this.renderFlagInput("flag_homopolymer", "Homopolymer", "h o")}
-          {this.renderFlagInput("flag_no_read_data", "No read data", "n r")}
-          {this.renderFlagInput("flag_reference_error", "Reference error", "r e")}
-          {this.renderFlagInput("flag_strand_bias", "Strand bias", "b i")}
-          <Header sub style={{ margin: "0.25em 0 0.5em" }}>
-            Rescue
-          </Header>
-          {this.renderFlagInput("flag_mnp", "In-phase MNV or frame-restoring indel", "i n")}
-          {this.renderFlagInput(
-            "flag_essential_splice_rescue",
-            "Essential splice site rescue",
-            "e s"
-          )}
-          <Header sub style={{ margin: "0.25em 0 0.5em" }}>
-            Impact
-          </Header>
-          {this.renderFlagInput("flag_minority_of_transcripts", "Minority of transcripts", "m i")}
-          {this.renderFlagInput("flag_weak_exon_conservation", "Weak exon conservation", "w e")}
-          {this.renderFlagInput("flag_last_exon", "Last exon", "l e")}
-          {this.renderFlagInput("flag_other_transcript_error", "Other transcript error", "o t")}
-          <Header sub style={{ margin: "0.25em 0 0.5em" }}>
-            Verdict
-          </Header>
+          <div style={{ columns: 2 }}>
+            <Header sub>Technical</Header>
+            {this.renderFlagInput("flag_mapping_error", "Mapping error", "m a")}
+            {this.renderFlagInput("flag_genotyping_error", "Genotyping error", "g e")}
+            {this.renderFlagInput("flag_homopolymer", "Homopolymer", "h o")}
+            {this.renderFlagInput("flag_no_read_data", "No read data", "n r")}
+            {this.renderFlagInput("flag_reference_error", "Reference error", "r e")}
+            {this.renderFlagInput("flag_strand_bias", "Strand bias", "b i")}
+            <Header sub>Rescue</Header>
+            {this.renderFlagInput("flag_mnp", "In-phase MNV or frame-restoring indel", "i n")}
+            {this.renderFlagInput(
+              "flag_essential_splice_rescue",
+              "Essential splice site rescue",
+              "e s"
+            )}
+            <Header sub>Impact</Header>
+            {this.renderFlagInput("flag_minority_of_transcripts", "Minority of transcripts", "m i")}
+            {this.renderFlagInput("flag_weak_exon_conservation", "Weak exon conservation", "w e")}
+            {this.renderFlagInput("flag_last_exon", "Last exon", "l e")}
+            {this.renderFlagInput("flag_other_transcript_error", "Other transcript error", "o t")}
+          </div>
+          <Header sub>Verdict</Header>
           <Form.Group>
             {verdicts.map((verdict, i) => (
               <React.Fragment key={verdict}>
