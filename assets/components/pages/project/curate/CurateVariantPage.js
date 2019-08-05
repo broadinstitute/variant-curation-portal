@@ -63,6 +63,7 @@ class CurateVariantPage extends React.Component {
               <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
                 <div
                   style={{
+                    position: "relative",
                     padding: "1.5rem 1.5rem 1rem",
                     border: "1px solid rgba(34, 36, 38, 0.15)",
                     boxShadow: "0px 1px 2px 0 rgba(34, 36, 38, 0.15)",
@@ -121,6 +122,47 @@ class CurateVariantPage extends React.Component {
                             "next variant"
                           )}
                         </List.Item>
+                      </List>
+                    </div>
+                  </div>
+                  <Divider style={{ margin: "0 0 1rem" }} />
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div>
+                      <div>
+                        <Link to={`/project/${project.id}/`}>All variants in this project</Link>
+                      </div>
+
+                      <div>
+                        Jump to:
+                        <List horizontal style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
+                          <List.Item>
+                            <a href="#top">top</a>
+                          </List.Item>
+                          <List.Item>
+                            {gnomadVariantId ? (
+                              <a href="#gnomad-variant">gnomAD (variant)</a>
+                            ) : (
+                              "gnomAD (variant)"
+                            )}
+                          </List.Item>
+                          <List.Item>
+                            {hasAnnotations ? (
+                              <a href="#gnomad-gene">gnomAD (gene)</a>
+                            ) : (
+                              "gnomAD (gene)"
+                            )}
+                          </List.Item>
+                          <List.Item>
+                            <a href="#ucsc">UCSC (variant)</a>
+                          </List.Item>
+                          <List.Item>
+                            {hasAnnotations ? <a href="#ucsc-gene">UCSC (gene)</a> : "UCSC (gene)"}
+                          </List.Item>
+                        </List>
+                      </div>
+                    </div>
+                    <div>
+                      <List horizontal>
                         <List.Item>
                           <Button
                             basic
@@ -142,62 +184,35 @@ class CurateVariantPage extends React.Component {
                       </List>
                     </div>
                   </div>
-                  <Divider style={{ margin: "0 0 1rem" }} />
-                  <div>
-                    <Link to={`/project/${project.id}/`}>All variants in this project</Link>
-                  </div>
-                  <div>
-                    Jump to:
-                    <List horizontal style={{ marginLeft: "0.5rem", marginRight: "3rem" }}>
-                      <List.Item>
-                        <a href="#top">top</a>
-                      </List.Item>
-                      <List.Item>
-                        {gnomadVariantId ? (
-                          <a href="#gnomad-variant">gnomAD (variant)</a>
-                        ) : (
-                          "gnomAD (variant)"
-                        )}
-                      </List.Item>
-                      <List.Item>
-                        {hasAnnotations ? (
-                          <a href="#gnomad-gene">gnomAD (gene)</a>
-                        ) : (
-                          "gnomAD (gene)"
-                        )}
-                      </List.Item>
-                      <List.Item>
-                        <a href="#ucsc">UCSC (variant)</a>
-                      </List.Item>
-                      <List.Item>
-                        {hasAnnotations ? <a href="#ucsc-gene">UCSC (gene)</a> : "UCSC (gene)"}
-                      </List.Item>
-                    </List>
-                  </div>
 
                   <div
                     style={
                       showForm
                         ? {
-                            position: "fixed",
+                            position: "absolute",
                             right: "1.5rem",
-                            top: "110px",
+                            top: "100%",
                             zIndex: 1,
-                            maxHeight: "calc(100vh - 145px)",
+                            maxHeight: "calc(100vh - 220px)",
                             overflowX: "hidden",
                             overflowY: "auto",
+                            padding: "1rem",
+                            borderColor: "rgba(34, 36, 38, 0.15)",
+                            borderStyle: "solid",
+                            borderWidth: "0 1px 1px",
+                            borderRadius: "0 0 0.28571429rem 0.28571429rem",
+                            background: "#fff",
+                            boxShadow: "0px 1px 2px 0 rgba(34, 36, 38, 0.15)",
                           }
                         : { display: "none" }
                     }
                   >
-                    <Segment raised>
-                      <CurationForm
-                        ref={this.curationForm}
-                        projectId={project.id}
-                        variantId={variantId}
-                        initialResult={result || {}}
-                      />
-                    </Segment>
+                    <CurationForm
+                      ref={this.curationForm}
+                      projectId={project.id}
+                      variantId={variantId}
+                      initialResult={result || {}}
+                    />
                   </div>
                 </div>
 
