@@ -4,6 +4,7 @@ import "semantic-ui-css/semantic.css";
 import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
 
 import api from "../api";
+import Notifications from "./Notifications";
 import HomePage from "./pages/HomePage";
 import PageNotFoundPage from "./pages/PageNotFoundPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
@@ -60,6 +61,8 @@ class App extends Component {
               </Menu.Item>
             </Container>
           </Menu>
+
+          <Notifications />
 
           <div style={{ height: "100%", overflow: "auto" }}>
             <Switch>
