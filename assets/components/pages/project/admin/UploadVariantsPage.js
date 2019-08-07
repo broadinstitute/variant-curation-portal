@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button, Form, Header, Icon, Message, Modal, Segment } from "semantic-ui-react";
 
 import api from "../../../../api";
+import { PermissionRequired } from "../../../../permissions";
 import variantsSchema from "../../../../variants-schema.json";
 import DocumentTitle from "../../../DocumentTitle";
 import SchemaDescription from "../../../SchemaDescription";
@@ -19,6 +20,13 @@ class UploadVariantsPage extends Component {
       name: PropTypes.string.isRequired,
     }).isRequired,
     refreshProject: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+    }),
+  };
+
+  static defaultProps = {
+    user: null,
   };
 
   variantData = null;
@@ -82,7 +90,7 @@ class UploadVariantsPage extends Component {
   };
 
   render() {
-    const { project } = this.props;
+    const { project, user } = this.props;
     const {
       fileName,
       fileReadError,
@@ -104,76 +112,78 @@ class UploadVariantsPage extends Component {
         </div>
         <br />
 
-        <Segment attached>
-          <Header as="h4">Upload variants from file</Header>
-          <Form error={Boolean(fileReadError || saveError)} onSubmit={this.onSubmit}>
-            <Button
-              as="label"
-              disabled={isReadingFile}
-              loading={isReadingFile}
-              htmlFor="variant-file"
-            >
-              <Icon name="upload" />
-              {fileName || "Select variant file"}
-              <input
+        <PermissionRequired user={user} action="edit" resourceType="project" resource={project}>
+          <Segment attached>
+            <Header as="h4">Upload variants from file</Header>
+            <Form error={Boolean(fileReadError || saveError)} onSubmit={this.onSubmit}>
+              <Button
+                as="label"
                 disabled={isReadingFile}
-                hidden
-                id="variant-file"
-                type="file"
-                onChange={e => this.onSelectFile(e.target.files[0])}
-              />
-            </Button>
-            {fileReadError && <Message error header="Failed to read file" />}
-            {saveError && <Message error header="Failed to upload variants" />}
-            <Button disabled={!hasFileData || isSaving} loading={isSaving} primary type="submit">
-              Upload
-            </Button>
-          </Form>
-        </Segment>
-        <Message attached>
-          <p>
-            This should be a JSON file containing an array of objects with the following format. The
-            expected file format is also available as a{" "}
-            <a href="https://json-schema.org" target="_blank" rel="noopener noreferrer">
-              JSON schema
-            </a>
-            .
-          </p>
-          <Button
-            type="button"
-            onClick={e => {
-              this.setState({ isSchemaModalOpen: true });
-              e.preventDefault();
-            }}
-          >
-            View JSON Schema
-          </Button>
-          <Button as="a" download href="/static/bundles/variants-schema.json">
-            Download JSON Schema
-          </Button>
-          <SchemaDescription schema={variantsSchema} />
-        </Message>
-
-        <Modal
-          open={isSchemaModalOpen}
-          onClose={() => {
-            this.setState({ isSchemaModalOpen: false });
-          }}
-        >
-          <Header>Variants Schema</Header>
-          <Modal.Content>
-            <pre>{JSON.stringify(variantsSchema, null, 2)}</pre>
-          </Modal.Content>
-          <Modal.Actions>
+                loading={isReadingFile}
+                htmlFor="variant-file"
+              >
+                <Icon name="upload" />
+                {fileName || "Select variant file"}
+                <input
+                  disabled={isReadingFile}
+                  hidden
+                  id="variant-file"
+                  type="file"
+                  onChange={e => this.onSelectFile(e.target.files[0])}
+                />
+              </Button>
+              {fileReadError && <Message error header="Failed to read file" />}
+              {saveError && <Message error header="Failed to upload variants" />}
+              <Button disabled={!hasFileData || isSaving} loading={isSaving} primary type="submit">
+                Upload
+              </Button>
+            </Form>
+          </Segment>
+          <Message attached>
+            <p>
+              This should be a JSON file containing an array of objects with the following format.
+              The expected file format is also available as a{" "}
+              <a href="https://json-schema.org" target="_blank" rel="noopener noreferrer">
+                JSON schema
+              </a>
+              .
+            </p>
             <Button
-              onClick={() => {
-                this.setState({ isSchemaModalOpen: false });
+              type="button"
+              onClick={e => {
+                this.setState({ isSchemaModalOpen: true });
+                e.preventDefault();
               }}
             >
-              Ok
+              View JSON Schema
             </Button>
-          </Modal.Actions>
-        </Modal>
+            <Button as="a" download href="/static/bundles/variants-schema.json">
+              Download JSON Schema
+            </Button>
+            <SchemaDescription schema={variantsSchema} />
+          </Message>
+
+          <Modal
+            open={isSchemaModalOpen}
+            onClose={() => {
+              this.setState({ isSchemaModalOpen: false });
+            }}
+          >
+            <Header>Variants Schema</Header>
+            <Modal.Content>
+              <pre>{JSON.stringify(variantsSchema, null, 2)}</pre>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button
+                onClick={() => {
+                  this.setState({ isSchemaModalOpen: false });
+                }}
+              >
+                Ok
+              </Button>
+            </Modal.Actions>
+          </Modal>
+        </PermissionRequired>
       </Page>
     );
   }
