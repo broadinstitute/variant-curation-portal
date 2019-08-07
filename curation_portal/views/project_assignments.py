@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from curation_portal.filters import AssignmentFilter
 from curation_portal.models import (
     CurationAssignment,
     CurationResult,
@@ -115,7 +116,7 @@ class ProjectAssignmentsView(APIView):
     def get(self, request, *args, **kwargs):
         project = self.get_project()
 
-        assignments = list(
+        assignments = (
             request.user.curation_assignments.filter(variant__project=project)
             .select_related("result", "variant")
             .prefetch_related(
@@ -125,10 +126,11 @@ class ProjectAssignmentsView(APIView):
                 )
             )
             .order_by("variant__xpos", "variant__ref", "variant__alt")
-            .all()
         )
 
-        assignments_serializer = AssignmentSerializer(assignments, many=True)
+        filtered_assignments = AssignmentFilter(request.GET, queryset=assignments)
+
+        assignments_serializer = AssignmentSerializer(filtered_assignments.qs, many=True)
         return Response({"assignments": assignments_serializer.data})
 
     def post(self, request, *args, **kwargs):
