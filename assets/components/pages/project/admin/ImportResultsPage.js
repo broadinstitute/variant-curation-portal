@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button, Form, Header, Icon, Message, Modal, Segment } from "semantic-ui-react";
 
 import api from "../../../../api";
+import { PermissionRequired } from "../../../../permissions";
 import resultsSchema from "../../../../results-schema.json";
 import DocumentTitle from "../../../DocumentTitle";
 import SchemaDescription from "../../../SchemaDescription";
@@ -19,6 +20,13 @@ class ImportResultsPage extends Component {
       name: PropTypes.string.isRequired,
     }).isRequired,
     refreshProject: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+    }),
+  };
+
+  static defaultProps = {
+    user: null,
   };
 
   resultsData = null;
@@ -82,7 +90,7 @@ class ImportResultsPage extends Component {
   };
 
   render() {
-    const { project } = this.props;
+    const { project, user } = this.props;
     const {
       fileName,
       fileReadError,
@@ -104,77 +112,79 @@ class ImportResultsPage extends Component {
         </div>
         <br />
 
-        <Segment attached>
-          <Header as="h4">Upload results from file</Header>
-          <Form error={Boolean(fileReadError || saveError)} onSubmit={this.onSubmit}>
-            <Button
-              as="label"
-              disabled={isReadingFile}
-              loading={isReadingFile}
-              htmlFor="results-file"
-            >
-              <Icon name="upload" />
-              {fileName || "Select results file"}
-              <input
+        <PermissionRequired user={user} action="edit" resourceType="project" resource={project}>
+          <Segment attached>
+            <Header as="h4">Upload results from file</Header>
+            <Form error={Boolean(fileReadError || saveError)} onSubmit={this.onSubmit}>
+              <Button
+                as="label"
                 disabled={isReadingFile}
-                hidden
-                id="results-file"
-                type="file"
-                onChange={e => this.onSelectFile(e.target.files[0])}
-              />
-            </Button>
-            {fileReadError && <Message error header="Failed to read file" />}
-            {saveError && <Message error header="Failed to upload results" />}
-            <Button disabled={!hasFileData || isSaving} loading={isSaving} primary type="submit">
-              Upload
-            </Button>
-          </Form>
-        </Segment>
+                loading={isReadingFile}
+                htmlFor="results-file"
+              >
+                <Icon name="upload" />
+                {fileName || "Select results file"}
+                <input
+                  disabled={isReadingFile}
+                  hidden
+                  id="results-file"
+                  type="file"
+                  onChange={e => this.onSelectFile(e.target.files[0])}
+                />
+              </Button>
+              {fileReadError && <Message error header="Failed to read file" />}
+              {saveError && <Message error header="Failed to upload results" />}
+              <Button disabled={!hasFileData || isSaving} loading={isSaving} primary type="submit">
+                Upload
+              </Button>
+            </Form>
+          </Segment>
 
-        <Message attached>
-          <p>
-            This should be a JSON file containing an array of objects with the following format. The
-            expected file format is also available as a{" "}
-            <a href="https://json-schema.org" target="_blank" rel="noopener noreferrer">
-              JSON schema
-            </a>
-            .
-          </p>
-          <Button
-            type="button"
-            onClick={e => {
-              this.setState({ isSchemaModalOpen: true });
-              e.preventDefault();
-            }}
-          >
-            View JSON Schema
-          </Button>
-          <Button as="a" download href="/static/bundles/results-schema.json">
-            Download JSON Schema
-          </Button>
-          <SchemaDescription schema={resultsSchema} />
-        </Message>
-
-        <Modal
-          open={isSchemaModalOpen}
-          onClose={() => {
-            this.setState({ isSchemaModalOpen: false });
-          }}
-        >
-          <Header>Results Schema</Header>
-          <Modal.Content>
-            <pre>{JSON.stringify(resultsSchema, null, 2)}</pre>
-          </Modal.Content>
-          <Modal.Actions>
+          <Message attached>
+            <p>
+              This should be a JSON file containing an array of objects with the following format.
+              The expected file format is also available as a{" "}
+              <a href="https://json-schema.org" target="_blank" rel="noopener noreferrer">
+                JSON schema
+              </a>
+              .
+            </p>
             <Button
-              onClick={() => {
-                this.setState({ isSchemaModalOpen: false });
+              type="button"
+              onClick={e => {
+                this.setState({ isSchemaModalOpen: true });
+                e.preventDefault();
               }}
             >
-              Ok
+              View JSON Schema
             </Button>
-          </Modal.Actions>
-        </Modal>
+            <Button as="a" download href="/static/bundles/results-schema.json">
+              Download JSON Schema
+            </Button>
+            <SchemaDescription schema={resultsSchema} />
+          </Message>
+
+          <Modal
+            open={isSchemaModalOpen}
+            onClose={() => {
+              this.setState({ isSchemaModalOpen: false });
+            }}
+          >
+            <Header>Results Schema</Header>
+            <Modal.Content>
+              <pre>{JSON.stringify(resultsSchema, null, 2)}</pre>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button
+                onClick={() => {
+                  this.setState({ isSchemaModalOpen: false });
+                }}
+              >
+                Ok
+              </Button>
+            </Modal.Actions>
+          </Modal>
+        </PermissionRequired>
       </Page>
     );
   }

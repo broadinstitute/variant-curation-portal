@@ -69,7 +69,12 @@ const ProjectPage = ({ match, projectId, user }) => (
             exact
             path={`${match.path}variants/`}
             render={props => (
-              <UploadVariantsPage {...props} project={project} refreshProject={refresh} />
+              <UploadVariantsPage
+                {...props}
+                project={project}
+                refreshProject={refresh}
+                user={user}
+              />
             )}
           />
 
@@ -77,7 +82,12 @@ const ProjectPage = ({ match, projectId, user }) => (
             exact
             path={`${match.path}results/import/`}
             render={props => (
-              <ImportResultsPage {...props} project={project} refreshProject={refresh} />
+              <ImportResultsPage
+                {...props}
+                project={project}
+                refreshProject={refresh}
+                user={user}
+              />
             )}
           />
 
