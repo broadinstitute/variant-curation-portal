@@ -1,3 +1,5 @@
+import queryString from "query-string";
+
 import getCookie from "./utilities/getCookie";
 
 class ApiClient {
@@ -22,8 +24,10 @@ class ApiClient {
     });
   }
 
-  get(path) {
-    return this.request(path, {});
+  get(path, params = {}) {
+    const query = queryString.stringify(params);
+    const requestPath = query ? `${path}?${query}` : path;
+    return this.request(requestPath, {});
   }
 
   patch(path, data) {

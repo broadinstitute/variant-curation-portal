@@ -16,6 +16,21 @@ describe("ApiClient", () => {
     global.fetch.mockClear();
   });
 
+  it("should add query parameters", async () => {
+    global.fetch = jest.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({}),
+      })
+    );
+
+    await api.get("/projects/", { search: "foo" });
+
+    expect(global.fetch).toHaveBeenCalledWith("/api/projects/?search=foo", {});
+
+    global.fetch.mockClear();
+  });
+
   it("should handle failed requests", async () => {
     global.fetch = jest.fn().mockImplementation(() => Promise.reject(new Error("Failed to fetch")));
 
