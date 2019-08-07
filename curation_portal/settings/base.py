@@ -146,6 +146,10 @@ CSRF_COOKIE_SECURE = True
 
 X_FRAME_OPTIONS = "DENY"
 
+# Rest Framework settings
+
+REST_FRAMEWORK = {"DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",)}
+
 # Curation portal app settings
 
 CURATION_PORTAL_AUTH_HEADER = os.getenv("CURATION_PORTAL_AUTH_HEADER", "REMOTE_USER")
