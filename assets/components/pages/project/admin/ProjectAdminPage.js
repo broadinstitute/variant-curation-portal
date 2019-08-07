@@ -8,7 +8,7 @@ import DocumentTitle from "../../../DocumentTitle";
 import Page from "../../Page";
 
 const ProjectAdminPage = ({ project, user }) => {
-  const curators = Object.keys(project.assignments);
+  const curators = Object.keys(project.assignments || {});
   return (
     <Page>
       <DocumentTitle title={project.name} />
@@ -25,7 +25,7 @@ const ProjectAdminPage = ({ project, user }) => {
         </p>
         <Header as="h2">Owners</Header>
         <List bulleted>
-          {project.owners.map(username => (
+          {(project.owners || []).map(username => (
             <List.Item key={username}>{username}</List.Item>
           ))}
         </List>
@@ -61,7 +61,7 @@ const ProjectAdminPage = ({ project, user }) => {
         </p>
         <Header as="h2">Results</Header>
         <p>
-          {project.variants.curated} / {project.variants.total} variants curated
+          {(project.variants || {}).curated} / {(project.variants || {}).total} variants curated
         </p>
         <p>
           <Link to={`/project/${project.id}/results/import/`}>Import curation results</Link>
@@ -83,11 +83,11 @@ ProjectAdminPage.propTypes = {
         total: PropTypes.number.isRequired,
         completed: PropTypes.number.isRequired,
       })
-    ).isRequired,
+    ),
     variants: PropTypes.shape({
       total: PropTypes.number.isRequired,
       curated: PropTypes.number.isRequired,
-    }).isRequired,
+    }),
   }).isRequired,
   user: PropTypes.shape({
     username: PropTypes.string.isRequired,
