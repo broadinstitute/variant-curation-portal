@@ -4,6 +4,7 @@
 #
 #    pip-compile
 #
+django-filter==2.2.0
 django-webpack-loader==0.6.0
 django==2.2.1
 djangorestframework==3.9.1

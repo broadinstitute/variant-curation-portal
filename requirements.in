@@ -1,4 +1,5 @@
 Django
+django-filter
 django-webpack-loader
 djangorestframework
 rules
