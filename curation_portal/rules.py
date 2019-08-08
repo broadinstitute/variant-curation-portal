@@ -18,6 +18,14 @@ rules.add_perm("curation_portal.change_project", is_project_owner)
 
 
 @rules.predicate
+def can_add_variants(user):
+    return user.user_permissions.filter(codename="add_variant").exists()
+
+
+rules.add_perm("curation_portal.add_variant_to_project", is_project_owner & can_add_variants)
+
+
+@rules.predicate
 def is_variant_curator(user, variant):
     return CurationAssignment.objects.filter(curator=user, variant=variant).exists()
 

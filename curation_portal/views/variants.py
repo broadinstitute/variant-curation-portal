@@ -40,6 +40,9 @@ class ProjectVariantsView(APIView):
     def post(self, request, *args, **kwargs):
         project = self.get_project()
 
+        if not request.user.has_perm("curation_portal.add_variant_to_project", project):
+            raise PermissionDenied
+
         serializer = UploadedVariantSerializer(
             data=request.data, context={"project": project}, many=True
         )
