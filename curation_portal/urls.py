@@ -8,7 +8,6 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 from django.urls import path
 from django.views.generic import TemplateView
 
-from curation_portal.views.auth import SigninView
 from curation_portal.views.curate_variant import CurateVariantView
 from curation_portal.views.export_results import ExportProjectResultsView
 from curation_portal.views.projects import AssignedProjectsView, OwnedProjectsView
@@ -23,7 +22,6 @@ DEFAULT_TEMPLATE_VIEW = TemplateView.as_view(template_name="default.template.htm
 
 urlpatterns = [
     path("", DEFAULT_TEMPLATE_VIEW, name="home"),
-    path("signin/", SigninView.as_view(), name="signin"),
     path("privacy/", DEFAULT_TEMPLATE_VIEW, name="privacy-policy"),
     path("terms/", DEFAULT_TEMPLATE_VIEW, name="terms"),
     path("assignments/", DEFAULT_TEMPLATE_VIEW, name="assignments"),
