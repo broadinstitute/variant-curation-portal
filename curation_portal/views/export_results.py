@@ -1,15 +1,17 @@
 import csv
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.views import View
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
-from curation_portal.models import CurationAssignment, CurationResult, Project
+from curation_portal.models import CurationAssignment, Project
 
 
-class ExportProjectResultsView(LoginRequiredMixin, View):
+class ExportProjectResultsView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get_project(self):
         project = get_object_or_404(Project, id=self.kwargs["project_id"])
         if not self.request.user.has_perm("curation_portal.change_project", project):
@@ -23,10 +25,23 @@ class ExportProjectResultsView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         project = self.get_project()
 
-        result_flag_fields = [
-            f.name for f in CurationResult._meta.get_fields() if f.name.startswith("flag")
+        result_fields = [
+            "notes",
+            "should_revisit",
+            "verdict",
+            "flag_mapping_error",
+            "flag_genotyping_error",
+            "flag_homopolymer",
+            "flag_no_read_data",
+            "flag_reference_error",
+            "flag_strand_bias",
+            "flag_mnp",
+            "flag_essential_splice_rescue",
+            "flag_minority_of_transcripts",
+            "flag_weak_exon_conservation",
+            "flag_last_exon",
+            "flag_other_transcript_error",
         ]
-        result_fields = ["notes", "should_revisit", "verdict"] + result_flag_fields
 
         completed_assignments = (
             CurationAssignment.objects.filter(
