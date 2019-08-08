@@ -31,11 +31,23 @@ def db_setup(django_db_setup, django_db_blocker, create_variant):
             "1-200-G-T",
             annotations=[
                 {
-                    "consequence": "splice_acceptor_variant",
+                    "consequence": "transcript_ablation",
                     "gene_id": "g2",
                     "gene_symbol": "GENETWO",
                     "transcript_id": "t2",
-                }
+                },
+                {
+                    "consequence": "splice_acceptor_variant",
+                    "gene_id": "g2",
+                    "gene_symbol": "GENETWO",
+                    "transcript_id": "t2-1",
+                },
+                {
+                    "consequence": "splice_donor_variant",
+                    "gene_id": "g3",
+                    "gene_symbol": "GENETHREE",
+                    "transcript_id": "t3",
+                },
             ],
         )
 
@@ -108,3 +120,15 @@ def test_exported_results_includes_only_curated_variants(exported_results):
             ("1-100-A-G", "user2@example.com"),
         ]
     )
+
+
+@pytest.mark.parametrize(
+    "variant_id,expected_genes",
+    [("1-100-A-G", {"GENEONE"}), ("1-200-G-T", {"GENETWO", "GENETHREE"})],
+)
+def test_exported_results_contains_gene(exported_results, variant_id, expected_genes):
+    variant_rows = [row for row in exported_results if row["Variant ID"] == variant_id]
+    assert variant_rows
+
+    for row in variant_rows:
+        assert set(row["Gene"].split(";")) == expected_genes
