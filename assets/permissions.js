@@ -18,6 +18,8 @@ export const can = (user, action, resourceType, resource) => {
           return user.permissions.includes("add_project");
         case "edit":
           return Boolean(resource.owners) && resource.owners.includes(user.username);
+        case "add_variant":
+          return can(user, "edit", "project", resource) && user.permissions.includes("add_variant");
         default:
           throw new Error(`Unknown action "${action}" for resource type "${resourceType}`);
       }
@@ -40,9 +42,9 @@ export const PermissionRequired = ({ action, children, resource, resourceType, u
 };
 
 PermissionRequired.propTypes = {
-  action: PropTypes.oneOf(["add", "view", "edit", "delete"]).isRequired,
+  action: PropTypes.string.isRequired,
   resource: PropTypes.any, // eslint-disable-line react/forbid-prop-types
-  resourceType: PropTypes.oneOf(["project"]),
+  resourceType: PropTypes.string.isRequired,
   user: PropTypes.shape({
     username: PropTypes.string.isRequired,
     permissions: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Header, Item, List } from "semantic-ui-react";
 
-import { PermissionRequired } from "../../../../permissions";
+import { can, PermissionRequired } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
 import Page from "../../Page";
 
@@ -32,10 +32,14 @@ const ProjectAdminPage = ({ project, user }) => {
         <p>
           <Link to={`/project/${project.id}/owners/`}>Edit project owners</Link>
         </p>
-        <Header as="h2">Variants</Header>
-        <p>
-          <Link to={`/project/${project.id}/variants`}>Upload variants</Link>
-        </p>
+        {can(user, "add_variant", "project", project) && (
+          <React.Fragment>
+            <Header as="h2">Variants</Header>
+            <p>
+              <Link to={`/project/${project.id}/variants`}>Upload variants</Link>
+            </p>
+          </React.Fragment>
+        )}
         <Header as="h2">Curators</Header>
         {curators.length ? (
           <Item.Group>

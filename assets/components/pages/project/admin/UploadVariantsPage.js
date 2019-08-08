@@ -112,7 +112,12 @@ class UploadVariantsPage extends Component {
         </div>
         <br />
 
-        <PermissionRequired user={user} action="edit" resourceType="project" resource={project}>
+        <PermissionRequired
+          user={user}
+          action="add_variant"
+          resourceType="project"
+          resource={project}
+        >
           <Segment attached>
             <Header as="h4">Upload variants from file</Header>
             <Form error={Boolean(fileReadError || saveError)} onSubmit={this.onSubmit}>
