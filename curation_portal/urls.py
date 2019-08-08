@@ -10,10 +10,11 @@ from django.views.generic import TemplateView
 
 from curation_portal.views.auth import SigninView
 from curation_portal.views.curate_variant import CurateVariantView
+from curation_portal.views.export_results import ExportProjectResultsView
 from curation_portal.views.projects import AssignedProjectsView, OwnedProjectsView
 from curation_portal.views.project import ProjectView
 from curation_portal.views.project_assignments import ProjectAssignmentsView
-from curation_portal.views.project_admin import CreateProjectView, DownloadProjectResultsView
+from curation_portal.views.project_admin import CreateProjectView
 from curation_portal.views.results import ProjectResultsView
 from curation_portal.views.user import ProfileView
 from curation_portal.views.variants import ProjectVariantsView
@@ -71,7 +72,7 @@ urlpatterns = [
     ),
     path(
         "api/project/<int:project_id>/results/export/",
-        DownloadProjectResultsView.as_view(),
+        ExportProjectResultsView.as_view(),
         name="api-project-results-export",
     ),
     path("api/profile/", ProfileView.as_view(), name="api-profile"),
