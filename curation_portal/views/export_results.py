@@ -1,12 +1,13 @@
 import csv
 
+from django.db.models import Prefetch
 from django.http import HttpResponse
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from curation_portal.models import CurationAssignment, Project
+from curation_portal.models import CurationAssignment, Project, VariantAnnotation
 
 
 class ExportProjectResultsView(APIView):
@@ -48,6 +49,11 @@ class ExportProjectResultsView(APIView):
                 variant__project=project, result__verdict__isnull=False
             )
             .select_related("curator", "variant", "result")
+            .prefetch_related(
+                Prefetch(
+                    "variant__annotations", queryset=VariantAnnotation.objects.only("gene_symbol")
+                )
+            )
             .all()
         )
 
@@ -56,15 +62,22 @@ class ExportProjectResultsView(APIView):
 
         writer = csv.writer(response)
 
-        header_row = ["Variant ID", "Curator"] + [
+        header_row = ["Variant ID", "Gene", "Curator"] + [
             " ".join(word.capitalize() for word in f.split("_")) for f in result_fields
         ]
         writer.writerow(header_row)
 
         for assignment in completed_assignments:
-            row = [assignment.variant.variant_id, assignment.curator.username] + [
-                getattr(assignment.result, f) for f in result_fields
-            ]
+            row = [
+                assignment.variant.variant_id,
+                ";".join(
+                    set(
+                        annotation.gene_symbol
+                        for annotation in assignment.variant.annotations.all()
+                    )
+                ),
+                assignment.curator.username,
+            ] + [getattr(assignment.result, f) for f in result_fields]
             writer.writerow(row)
 
         return response
