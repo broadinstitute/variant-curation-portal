@@ -6,6 +6,7 @@ import { Button, Form, Header, Message } from "semantic-ui-react";
 import api from "../../../../api";
 import { PermissionRequired } from "../../../../permissions";
 import DocumentTitle from "../../../DocumentTitle";
+import Page from "../../Page";
 
 class EditProjectPage extends Component {
   static propTypes = {
@@ -59,7 +60,7 @@ class EditProjectPage extends Component {
     const { isSaving, projectName, saveError } = this.state;
 
     return (
-      <React.Fragment>
+      <Page>
         <DocumentTitle title={project.name} />
         <Header as="h1" dividing>
           {project.name}
@@ -100,7 +101,7 @@ class EditProjectPage extends Component {
             )}
           </Form>
         </PermissionRequired>
-      </React.Fragment>
+      </Page>
     );
   }
 }
