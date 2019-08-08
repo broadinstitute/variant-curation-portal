@@ -1,5 +1,6 @@
 # pylint: disable=redefined-outer-name,unused-argument
 import pytest
+from django.contrib.auth.models import Permission
 from rest_framework.test import APIClient
 
 from curation_portal.models import CurationAssignment, Project, User, Variant
@@ -15,10 +16,13 @@ def db_setup(django_db_setup, django_db_blocker, create_variant):
         variant2 = create_variant(project, "1-200-G-A")
 
         user1 = User.objects.create(username="user1@example.com")
+        user1.user_permissions.add(Permission.objects.get(codename="add_variant"))
         user2 = User.objects.create(username="user2@example.com")
+        user2.user_permissions.add(Permission.objects.get(codename="add_variant"))
         user3 = User.objects.create(username="user3@example.com")
+        user4 = User.objects.create(username="user4@example.com")
 
-        project.owners.set([user1])
+        project.owners.set([user1, user4])
         CurationAssignment.objects.create(curator=user2, variant=variant1)
         CurationAssignment.objects.create(curator=user2, variant=variant2)
 
@@ -29,6 +33,7 @@ def db_setup(django_db_setup, django_db_blocker, create_variant):
         user1.delete()
         user2.delete()
         user3.delete()
+        user4.delete()
 
 
 def test_get_variants_requires_authentication(db_setup):
@@ -66,9 +71,16 @@ def test_upload_variants_requires_authentication(db_setup):
 
 @pytest.mark.parametrize(
     "username,expected_status_code",
-    [("user1@example.com", 200), ("user2@example.com", 403), ("user3@example.com", 404)],
+    [
+        ("user1@example.com", 200),  # owner with add_variant permission
+        ("user2@example.com", 403),  # curator with add_variant permission
+        ("user3@example.com", 404),  # no project access
+        ("user4@example.com", 403),  # owner without add_variant permission
+    ],
 )
-def test_variants_can_only_be_uploaded_by_project_owners(db_setup, username, expected_status_code):
+def test_variants_can_only_be_uploaded_by_project_owners_with_permission(
+    db_setup, username, expected_status_code
+):
     client = APIClient()
     client.force_authenticate(User.objects.get(username=username))
     response = client.post("/api/project/1/variants/", [{"variant_id": "1-300-T-G"}], format="json")
