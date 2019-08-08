@@ -17,7 +17,7 @@ export const can = (user, action, resourceType, resource) => {
         case "add":
           return user.permissions.includes("add_project");
         case "edit":
-          return resource.owners && resource.owners.includes(user.username);
+          return Boolean(resource.owners) && resource.owners.includes(user.username);
         default:
           throw new Error(`Unknown action "${action}" for resource type "${resourceType}`);
       }
