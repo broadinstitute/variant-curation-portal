@@ -1,5 +1,5 @@
 from django.db import transaction
-from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -43,8 +43,7 @@ class ProjectVariantsView(APIView):
         serializer = UploadedVariantSerializer(
             data=request.data, context={"project": project}, many=True
         )
-        if not serializer.is_valid():
-            raise ValidationError(serializer.errors)
+        serializer.is_valid(raise_exception=True)
 
         with transaction.atomic():
             serializer.save()

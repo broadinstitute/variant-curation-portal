@@ -3,7 +3,7 @@ from collections import Counter, defaultdict
 from django.db import transaction
 from django.db.models import Prefetch
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -58,7 +58,7 @@ class NewAssignmentListSerializer(serializers.ListSerializer):  # pylint: disabl
             for curator, variant_id in duplicate_assignments:
                 duplicates_by_curator[curator].append(variant_id)
 
-            raise ValidationError(
+            raise serializers.ValidationError(
                 "Duplicate assignments for "
                 + ", ".join(
                     f"{curator} (variants {', '.join(variants)})"
@@ -142,8 +142,7 @@ class ProjectAssignmentsView(APIView):
         serializer = NewAssignmentSerializer(
             data=request.data["assignments"], context={"project": project}, many=True
         )
-        if not serializer.is_valid():
-            raise ValidationError(serializer.errors)
+        serializer.is_valid(raise_exception=True)
 
         with transaction.atomic():
             serializer.save()

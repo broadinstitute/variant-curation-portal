@@ -1,4 +1,3 @@
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
@@ -20,8 +19,7 @@ class CreateProjectView(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = ProjectSerializer(data=request.data)
-        if not serializer.is_valid():
-            raise ValidationError(serializer.errors)
+        serializer.is_valid(raise_exception=True)
 
         project = serializer.save(created_by=request.user)
         project.owners.set([request.user])
