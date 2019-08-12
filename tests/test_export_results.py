@@ -105,10 +105,10 @@ def test_project_results_can_only_be_exported_by_project_owners(
 
 @pytest.fixture(scope="module")
 def get_exported_results(db_setup):
-    def _get_exported_results(username):
+    def _get_exported_results(username, query_params=None):
         client = APIClient()
         client.force_authenticate(User.objects.get(username=username))
-        response = client.get("/api/project/1/results/export/")
+        response = client.get("/api/project/1/results/export/", query_params)
         reader = csv.DictReader(StringIO(response.content.decode("utf-8")))
         return [row for row in reader]
 
@@ -125,6 +125,26 @@ def test_exported_results_includes_only_curated_variants(get_exported_results):
             ("1-100-A-G", "user2@example.com"),
         ]
     )
+
+
+@pytest.mark.parametrize(
+    "filter_username,expected_results",
+    [
+        (
+            "user1@example.com",
+            set([("1-100-A-G", "user1@example.com"), ("1-200-G-T", "user1@example.com")]),
+        ),
+        ("user2@example.com", set([("1-100-A-G", "user2@example.com")])),
+    ],
+)
+def test_exported_results_can_be_filtered_by_curator(
+    get_exported_results, filter_username, expected_results
+):
+    results = set(
+        (row["Variant ID"], row["Curator"])
+        for row in get_exported_results("user1@example.com", {"curator__username": filter_username})
+    )
+    assert results == expected_results
 
 
 @pytest.mark.parametrize(
