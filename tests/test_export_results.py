@@ -104,16 +104,21 @@ def test_project_results_can_only_be_exported_by_project_owners(
 
 
 @pytest.fixture(scope="module")
-def exported_results(db_setup):
-    client = APIClient()
-    client.force_authenticate(User.objects.get(username="user1@example.com"))
-    response = client.get("/api/project/1/results/export/")
-    reader = csv.DictReader(StringIO(response.content.decode("utf-8")))
-    return [row for row in reader]
+def get_exported_results(db_setup):
+    def _get_exported_results(username):
+        client = APIClient()
+        client.force_authenticate(User.objects.get(username=username))
+        response = client.get("/api/project/1/results/export/")
+        reader = csv.DictReader(StringIO(response.content.decode("utf-8")))
+        return [row for row in reader]
+
+    return _get_exported_results
 
 
-def test_exported_results_includes_only_curated_variants(exported_results):
-    assert set((row["Variant ID"], row["Curator"]) for row in exported_results) == set(
+def test_exported_results_includes_only_curated_variants(get_exported_results):
+    assert set(
+        (row["Variant ID"], row["Curator"]) for row in get_exported_results("user1@example.com")
+    ) == set(
         [
             ("1-100-A-G", "user1@example.com"),
             ("1-200-G-T", "user1@example.com"),
@@ -126,8 +131,10 @@ def test_exported_results_includes_only_curated_variants(exported_results):
     "variant_id,expected_genes",
     [("1-100-A-G", {"GENEONE"}), ("1-200-G-T", {"GENETWO", "GENETHREE"})],
 )
-def test_exported_results_contains_gene(exported_results, variant_id, expected_genes):
-    variant_rows = [row for row in exported_results if row["Variant ID"] == variant_id]
+def test_exported_results_contains_gene(get_exported_results, variant_id, expected_genes):
+    variant_rows = [
+        row for row in get_exported_results("user1@example.com") if row["Variant ID"] == variant_id
+    ]
     assert variant_rows
 
     for row in variant_rows:
