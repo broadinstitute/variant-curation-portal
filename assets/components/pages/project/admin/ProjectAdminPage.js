@@ -50,7 +50,19 @@ const ProjectAdminPage = ({ project, user }) => {
                   <Item.Content>
                     <Item.Header>{curator}</Item.Header>
                     <Item.Meta>
-                      {completed} / {total} variants curated
+                      <p>
+                        {completed} / {total} variants curated
+                      </p>
+                      <Button
+                        as="a"
+                        disabled={completed === 0}
+                        download
+                        href={`/api/project/${
+                          project.id
+                        }/results/export/?curator__username=${curator}`}
+                      >
+                        Download results
+                      </Button>
                     </Item.Meta>
                   </Item.Content>
                 </Item>
@@ -71,7 +83,7 @@ const ProjectAdminPage = ({ project, user }) => {
           <Link to={`/project/${project.id}/results/import/`}>Import curation results</Link>
         </p>
         <Button as="a" download href={`/api/project/${project.id}/results/export/`}>
-          Download
+          Download all results
         </Button>
       </PermissionRequired>
     </Page>
