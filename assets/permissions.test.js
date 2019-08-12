@@ -45,24 +45,34 @@ describe("can", () => {
   describe("add variant to project", () => {
     it("should return false if the project does not have an owners list", () => {
       expect(
-        can({ username: "user1", permissions: ["add_variant"] }, "add_variant", "project", {
-          name: "Project Foo",
-        })
+        can(
+          { username: "user1", permissions: ["add_variant"] },
+          "add_variant_to_project",
+          "project",
+          {
+            name: "Project Foo",
+          }
+        )
       ).toBe(false);
     });
 
     it("should return false if the user is not in the owners list", () => {
       expect(
-        can({ username: "user1", permissions: ["add_variant"] }, "add_variant", "project", {
-          name: "Project Foo",
-          owners: ["user2"],
-        })
+        can(
+          { username: "user1", permissions: ["add_variant"] },
+          "add_variant_to_project",
+          "project",
+          {
+            name: "Project Foo",
+            owners: ["user2"],
+          }
+        )
       ).toBe(false);
     });
 
     it("should return false if the user does not have add_variant permission", () => {
       expect(
-        can({ username: "user1", permissions: [] }, "add_variant", "project", {
+        can({ username: "user1", permissions: [] }, "add_variant_to_project", "project", {
           name: "Project Foo",
           owners: ["user0", "user1", "user2"],
         })
@@ -71,10 +81,15 @@ describe("can", () => {
 
     it("should return true if the user is in owners list and has add_variant permission", () => {
       expect(
-        can({ username: "user1", permissions: ["add_variant"] }, "add_variant", "project", {
-          name: "Project Foo",
-          owners: ["user1", "user2"],
-        })
+        can(
+          { username: "user1", permissions: ["add_variant"] },
+          "add_variant_to_project",
+          "project",
+          {
+            name: "Project Foo",
+            owners: ["user1", "user2"],
+          }
+        )
       ).toBe(true);
     });
   });

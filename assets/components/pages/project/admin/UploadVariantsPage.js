@@ -114,7 +114,7 @@ class UploadVariantsPage extends Component {
 
         <PermissionRequired
           user={user}
-          action="add_variant"
+          action="add_variant_to_project"
           resourceType="project"
           resource={project}
         >
