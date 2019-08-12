@@ -74,7 +74,11 @@ class App extends Component {
               <Route exact path="/privacy/" component={PrivacyPolicyPage} />
               <Route exact path="/terms/" component={TermsPage} />
 
-              <Route exact path="/assignments/" component={AssignedProjectsPage} />
+              <Route
+                exact
+                path="/assignments/"
+                render={props => <AssignedProjectsPage {...props} user={user} />}
+              />
               <Route
                 exact
                 path="/projects/"
