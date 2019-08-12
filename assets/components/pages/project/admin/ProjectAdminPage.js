@@ -32,7 +32,7 @@ const ProjectAdminPage = ({ project, user }) => {
         <p>
           <Link to={`/project/${project.id}/owners/`}>Edit project owners</Link>
         </p>
-        {can(user, "add_variant", "project", project) && (
+        {can(user, "add_variant_to_project", "project", project) && (
           <React.Fragment>
             <Header as="h2">Variants</Header>
             <p>
