@@ -1,12 +1,13 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Header, Item } from "semantic-ui-react";
+import { Button, Header, Item } from "semantic-ui-react";
 
 import DocumentTitle from "../../DocumentTitle";
 import Fetch from "../../Fetch";
 import Page from "../Page";
 
-const AssignedProjectsPage = () => {
+const AssignedProjectsPage = ({ user }) => {
   return (
     <Page>
       <DocumentTitle title="Assignments" />
@@ -27,7 +28,26 @@ const AssignedProjectsPage = () => {
                           <Link to={`/project/${project.id}/`}>{project.name}</Link>
                         </Item.Header>
                         <Item.Meta>
-                          {project.variants_curated} / {project.variants_assigned} variants curated
+                          <p>
+                            {project.variants_curated} / {project.variants_assigned} variants
+                            curated
+                          </p>
+                          {/*
+                            The restriction that curators can only download their own results is enforced server side.
+                            The filter query parameter here is for the case where a project owner is also a curator.
+                            For those users, clicking the download button here should download only their own results,
+                            not all results for the project.
+                           */}
+                          <Button
+                            as="a"
+                            disabled={project.variants_curated === 0}
+                            download
+                            href={`/api/project/${project.id}/results/export/?curator__username=${
+                              user.username
+                            }`}
+                          >
+                            Download results
+                          </Button>
                         </Item.Meta>
                       </Item.Content>
                     </Item>
@@ -42,6 +62,16 @@ const AssignedProjectsPage = () => {
       </Fetch>
     </Page>
   );
+};
+
+AssignedProjectsPage.propTypes = {
+  user: {
+    username: PropTypes.string.isRequired,
+  },
+};
+
+AssignedProjectsPage.defaultProps = {
+  user: null,
 };
 
 export default AssignedProjectsPage;
