@@ -2,12 +2,19 @@ import csv
 
 from django.db.models import Prefetch
 from django.http import HttpResponse
+from django_filters import FilterSet
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from curation_portal.models import CurationAssignment, Project, VariantAnnotation
+
+
+class ExportResultsFilter(FilterSet):
+    class Meta:
+        model = CurationAssignment
+        fields = {"curator__username": ["exact"]}
 
 
 class ExportProjectResultsView(APIView):
@@ -54,7 +61,10 @@ class ExportProjectResultsView(APIView):
                     "variant__annotations", queryset=VariantAnnotation.objects.only("gene_symbol")
                 )
             )
-            .all()
+        )
+
+        filtered_assignments = ExportResultsFilter(
+            request.query_params, queryset=completed_assignments
         )
 
         response = HttpResponse(content_type="text/csv")
@@ -67,7 +77,7 @@ class ExportProjectResultsView(APIView):
         ]
         writer.writerow(header_row)
 
-        for assignment in completed_assignments:
+        for assignment in filtered_assignments.qs:
             row = [
                 assignment.variant.variant_id,
                 ";".join(
