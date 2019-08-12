@@ -92,9 +92,9 @@ def test_export_results_requires_authentication(db_setup):
 
 @pytest.mark.parametrize(
     "username,expected_status_code",
-    [("user1@example.com", 200), ("user2@example.com", 403), ("user3@example.com", 404)],
+    [("user1@example.com", 200), ("user2@example.com", 200), ("user3@example.com", 404)],
 )
-def test_project_results_can_only_be_exported_by_project_owners(
+def test_project_results_can_only_be_exported_by_project_owners_or_curators(
     db_setup, username, expected_status_code
 ):
     client = APIClient()
@@ -159,3 +159,20 @@ def test_exported_results_contains_gene(get_exported_results, variant_id, expect
 
     for row in variant_rows:
         assert set(row["Gene"].split(";")) == expected_genes
+
+
+def test_results_exported_by_curator_contain_only_curators_results(get_exported_results):
+    results = set(
+        (row["Variant ID"], row["Curator"]) for row in get_exported_results("user2@example.com")
+    )
+    assert results == set([("1-100-A-G", "user2@example.com")])
+
+
+def test_curators_cannot_filter_exported_results(get_exported_results):
+    results = set(
+        (row["Variant ID"], row["Curator"])
+        for row in get_exported_results(
+            "user2@example.com", {"curator_username": "user1@example.com"}
+        )
+    )
+    assert results == set([("1-100-A-G", "user2@example.com")])

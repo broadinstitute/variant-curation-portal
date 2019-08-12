@@ -3,7 +3,7 @@ import csv
 from django.db.models import Prefetch
 from django.http import HttpResponse
 from django_filters import FilterSet
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -22,11 +22,8 @@ class ExportProjectResultsView(APIView):
 
     def get_project(self):
         project = get_object_or_404(Project, id=self.kwargs["project_id"])
-        if not self.request.user.has_perm("curation_portal.change_project", project):
-            if not self.request.user.has_perm("curation_portal.view_project", project):
-                raise NotFound
-
-            raise PermissionDenied
+        if not self.request.user.has_perm("curation_portal.view_project", project):
+            raise NotFound
 
         return project
 
@@ -63,9 +60,13 @@ class ExportProjectResultsView(APIView):
             )
         )
 
-        filtered_assignments = ExportResultsFilter(
-            request.query_params, queryset=completed_assignments
-        )
+        # Curators can only download their own results
+        if request.user.has_perm("curation_portal.change_project", project):
+            filter_params = request.query_params
+        else:
+            filter_params = {"curator__username": request.user.username}
+
+        filtered_assignments = ExportResultsFilter(filter_params, queryset=completed_assignments)
 
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{project.name}_results.csv"'
