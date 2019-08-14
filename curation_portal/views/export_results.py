@@ -60,7 +60,8 @@ class ExportProjectResultsView(APIView):
             )
         )
 
-        # Curators can only download their own results
+        # Project owners can download all results for the project and optionally filter them by curator.
+        # Curators can only download their own results.
         if request.user.has_perm("curation_portal.change_project", project):
             filter_params = request.query_params
         else:
