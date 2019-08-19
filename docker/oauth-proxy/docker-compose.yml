@@ -1,0 +1,25 @@
+version: "3"
+services:
+  proxy:
+    image: quay.io/pusher/oauth2_proxy
+    command:
+      - -upstream
+      - http://app:8000
+      - -http-address
+      - proxy:4180
+      - -redirect-url
+      - http://localhost:4180/oauth2/callback
+      - -email-domain
+      - "*"
+      - -cookie-secure=false
+    environment:
+      - OAUTH2_PROXY_CLIENT_ID
+      - OAUTH2_PROXY_CLIENT_SECRET
+      - OAUTH2_PROXY_COOKIE_SECRET
+    depends_on:
+      - app
+    ports:
+      - 4180:4180
+  app:
+    environment:
+      - CURATION_PORTAL_AUTH_HEADER=HTTP_X_FORWARDED_EMAIL
