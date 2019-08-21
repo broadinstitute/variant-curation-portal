@@ -11,10 +11,54 @@ pytestmark = pytest.mark.django_db  # pylint: disable=invalid-name
 def db_setup(django_db_setup, django_db_blocker, create_variant):
     with django_db_blocker.unblock():
         project = Project.objects.create(id=1, name="Test Project")
-        variant1 = create_variant(project, "1-100-A-G")
-        variant2 = create_variant(project, "1-100-A-C")
-        variant3 = create_variant(project, "1-100-A-AT")
-        variant4 = create_variant(project, "1-100-A-AC")
+        variant1 = create_variant(
+            project,
+            "1-100-A-G",
+            annotations=[
+                {
+                    "consequence": "frameshift_variant",
+                    "gene_id": "g2",
+                    "gene_symbol": "GENETWO",
+                    "transcript_id": "t2",
+                }
+            ],
+        )
+        variant2 = create_variant(
+            project,
+            "1-100-A-C",
+            annotations=[
+                {
+                    "consequence": "frameshift_variant",
+                    "gene_id": "g3",
+                    "gene_symbol": "GENETHREE",
+                    "transcript_id": "t3",
+                }
+            ],
+        )
+        variant3 = create_variant(
+            project,
+            "1-100-A-AT",
+            annotations=[
+                {
+                    "consequence": "frameshift_variant",
+                    "gene_id": "g2",
+                    "gene_symbol": "GENETWO",
+                    "transcript_id": "t2",
+                }
+            ],
+        )
+        variant4 = create_variant(
+            project,
+            "1-100-A-AC",
+            annotations=[
+                {
+                    "consequence": "frameshift_variant",
+                    "gene_id": "g1",
+                    "gene_symbol": "GENEONE",
+                    "transcript_id": "t1",
+                }
+            ],
+        )
 
         user1 = User.objects.create(username="user1@example.com")
         user2 = User.objects.create(username="user2@example.com")
@@ -154,3 +198,23 @@ def test_curate_variant_orders_multiallelic_variants(db_setup):
             assert response["next_variant"]["variant_id"] == expected_next_variant_id
         else:
             assert response["next_variant"] is None
+
+
+def test_curate_variant_adjacent_variants_respects_filters(db_setup):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username="user2@example.com"))
+
+    variant = Variant.objects.get(variant_id="1-100-A-AT", project_id=1)
+
+    response = client.get(f"/api/project/1/variant/{variant.id}/curate/").json()
+    assert response["previous_variant"]["variant_id"] == "1-100-A-AC"
+    assert response["next_variant"]["variant_id"] == "1-100-A-C"
+    assert response["index"] == 1
+
+    response = client.get(
+        f"/api/project/1/variant/{variant.id}/curate/",
+        {"variant__annotation__gene_symbol": "GENETWO"},
+    ).json()
+    assert response["previous_variant"] is None
+    assert response["next_variant"]["variant_id"] == "1-100-A-G"
+    assert response["index"] == 0
