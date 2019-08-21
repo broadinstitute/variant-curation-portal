@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ChoiceField, ModelSerializer
 from rest_framework.views import APIView
 
+from curation_portal.filters import AssignmentFilter
 from curation_portal.models import (
     CurationAssignment,
     CurationResult,
@@ -104,11 +105,13 @@ class CurateVariantView(APIView):
     def get(self, request, *args, **kwargs):
         assignment = self.get_assignment()
 
+        filtered_assignments = AssignmentFilter(
+            request.GET,
+            request.user.curation_assignments.filter(variant__project=assignment.variant.project),
+        )
+
         previous_site_variants = (
-            request.user.curation_assignments.filter(
-                variant__project=assignment.variant.project,
-                variant__xpos__lt=assignment.variant.xpos,
-            )
+            filtered_assignments.qs.filter(variant__xpos__lt=assignment.variant.xpos)
             .order_by("variant__xpos", "variant__ref", "variant__alt")
             .reverse()
             .values("variant", "variant__variant_id")
@@ -117,18 +120,13 @@ class CurateVariantView(APIView):
         previous_site_variant = previous_site_variants.first()
 
         colocated_variants = (
-            request.user.curation_assignments.filter(
-                variant__project=assignment.variant.project, variant__xpos=assignment.variant.xpos
-            )
+            filtered_assignments.qs.filter(variant__xpos=assignment.variant.xpos)
             .order_by("variant__xpos", "variant__ref", "variant__alt")
             .values("variant", "variant__variant_id")
         )
 
         next_site_variant = (
-            request.user.curation_assignments.filter(
-                variant__project=assignment.variant.project,
-                variant__xpos__gt=assignment.variant.xpos,
-            )
+            filtered_assignments.qs.filter(variant__xpos__gt=assignment.variant.xpos)
             .order_by("variant__xpos", "variant__ref", "variant__alt")
             .values("variant", "variant__variant_id")
             .first()
