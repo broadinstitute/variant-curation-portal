@@ -65,9 +65,9 @@ const AssignedProjectsPage = ({ user }) => {
 };
 
 AssignedProjectsPage.propTypes = {
-  user: {
+  user: PropTypes.shape({
     username: PropTypes.string.isRequired,
-  },
+  }),
 };
 
 AssignedProjectsPage.defaultProps = {
