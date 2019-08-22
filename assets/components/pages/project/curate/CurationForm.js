@@ -1,6 +1,6 @@
-import { cloneDeep } from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
+import { connect } from "react-redux";
 import {
   Button,
   Checkbox,
@@ -13,17 +13,23 @@ import {
   TextArea,
 } from "semantic-ui-react";
 
-import api from "../../../../api";
 import verdicts, { verdictLabels } from "../../../../constants/verdicts";
+import { saveResult, setResult } from "../../../../redux/actions";
+import { getCurationResult, getCurationResultErrors } from "../../../../redux/selectors";
 import { showNotification } from "../../../Notifications";
 import { CurationResultPropType } from "../../../propTypes";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
 
 class CurationForm extends React.Component {
   static propTypes = {
-    projectId: PropTypes.number.isRequired,
-    variantId: PropTypes.number.isRequired,
-    initialResult: CurationResultPropType.isRequired,
+    value: CurationResultPropType.isRequired,
+    errors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    onChange: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+  };
+
+  static defaultProps = {
+    errors: null,
   };
 
   formElement = React.createRef();
@@ -33,55 +39,41 @@ class CurationForm extends React.Component {
 
     this.state = {
       isSaving: false,
-      result: cloneDeep(props.initialResult),
-      saveError: null,
     };
   }
 
-  componentWillUnmount() {
-    if (this.clearLastSaveStatusTimeout) {
-      clearTimeout(this.clearLastSaveStatusTimeout);
-    }
-  }
-
-  setResultField(field, value) {
-    this.setState(state => ({ ...state, result: { ...state.result, [field]: value } }));
+  setResultField(field, fieldValue) {
+    const { value, onChange } = this.props;
+    onChange({ ...value, [field]: fieldValue });
   }
 
   toggleResultField(field) {
-    this.setState(state => ({
-      ...state,
-      result: { ...state.result, [field]: !state.result[field] },
-    }));
+    const { value, onChange } = this.props;
+    onChange({ ...value, [field]: !value[field] });
   }
 
   saveResult() {
-    const { projectId, variantId } = this.props;
-    const { result } = this.state;
+    const { value, onSubmit } = this.props;
 
-    this.setState({ isSaving: true, saveError: null });
-
-    return new Promise((resolve, reject) => {
-      api.post(`/project/${projectId}/variant/${variantId}/curate/`, result).then(
-        () => {
-          showNotification({ title: "Success", message: "Curation saved", status: "success" });
-          this.setState({ isSaving: false }, resolve);
-        },
-        err => {
-          showNotification({ title: "Error", message: "Unable to save curation", status: "error" });
-          this.setState({ isSaving: false, saveError: err }, reject);
-        }
-      );
-    });
+    this.setState({ isSaving: true });
+    onSubmit(value).then(
+      () => {
+        showNotification({ title: "Success", message: "Curation saved", status: "success" });
+        this.setState({ isSaving: false });
+      },
+      () => {
+        showNotification({ title: "Error", message: "Unable to save curation", status: "error" });
+        this.setState({ isSaving: false });
+      }
+    );
   }
 
-  // eslint-disable-next-line
   renderFlagInput(field, label, shortcut) {
-    const { result } = this.state;
+    const { value } = this.props;
     return (
       <React.Fragment>
         <Form.Field
-          checked={result[field]}
+          checked={value[field]}
           className="mousetrap"
           control={Checkbox}
           id={field}
@@ -108,7 +100,8 @@ class CurationForm extends React.Component {
   }
 
   render() {
-    const { isSaving, result, saveError } = this.state;
+    const { value, errors } = this.props;
+    const { isSaving } = this.state;
 
     return (
       <Ref innerRef={this.formElement}>
@@ -118,7 +111,7 @@ class CurationForm extends React.Component {
             e.preventDefault();
             this.saveResult();
           }}
-          error={Boolean(saveError)}
+          error={Boolean(errors)}
         >
           <Form.Field
             control={TextArea}
@@ -131,7 +124,7 @@ class CurationForm extends React.Component {
                 </React.Fragment>
               ),
             }}
-            value={result.notes}
+            value={value.notes}
             onChange={e => {
               this.setResultField("notes", e.target.value);
             }}
@@ -170,7 +163,7 @@ class CurationForm extends React.Component {
               <React.Fragment key={verdict}>
                 <Form.Field
                   control={Radio}
-                  checked={result.verdict === verdict}
+                  checked={value.verdict === verdict}
                   label={{
                     children: (
                       <React.Fragment>
@@ -181,8 +174,8 @@ class CurationForm extends React.Component {
                   }}
                   name="verdict"
                   value={verdict}
-                  onChange={(e, { value }) => {
-                    this.setResultField("verdict", value);
+                  onChange={(e, { value: selectedVerdict }) => {
+                    this.setResultField("verdict", selectedVerdict);
                   }}
                 />
                 <KeyboardShortcut
@@ -194,9 +187,7 @@ class CurationForm extends React.Component {
               </React.Fragment>
             ))}
           </Form.Group>
-          {saveError && saveError.data && saveError.data.verdict && (
-            <Message error>{saveError.data.verdict}</Message>
-          )}
+          {errors && errors.verdict && <Message error>{errors.verdict}</Message>}
           <Divider />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span>
@@ -225,4 +216,20 @@ class CurationForm extends React.Component {
   }
 }
 
-export default CurationForm;
+const ConnectedCurationForm = connect(
+  state => ({
+    errors: getCurationResultErrors(state),
+    value: getCurationResult(state),
+  }),
+  (dispatch, ownProps) => ({
+    onChange: result => dispatch(setResult(result)),
+    onSubmit: result => dispatch(saveResult(result, ownProps.projectId, ownProps.variantId)),
+  })
+)(CurationForm);
+
+ConnectedCurationForm.propTypes = {
+  projectId: PropTypes.number.isRequired,
+  variantId: PropTypes.number.isRequired,
+};
+
+export default ConnectedCurationForm;
