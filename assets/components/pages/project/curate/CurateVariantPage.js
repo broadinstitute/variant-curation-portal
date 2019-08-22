@@ -1,8 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button, Divider, Header, List, Segment } from "semantic-ui-react";
 
+import { saveResult, setResult } from "../../../../redux/actions";
+import { getCurationResult } from "../../../../redux/selectors";
 import DocumentTitle from "../../../DocumentTitle";
 import Fetch from "../../../Fetch";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
@@ -25,28 +28,31 @@ class CurateVariantPage extends React.Component {
       name: PropTypes.string.isRequired,
     }).isRequired,
     variantId: PropTypes.number.isRequired,
+    onLoadResult: PropTypes.func.isRequired,
+    saveCurrentResult: PropTypes.func.isRequired,
   };
 
   state = {
     showForm: true,
   };
 
-  curationForm = React.createRef();
-
   goToVariant(variantId) {
-    const { history, project } = this.props;
-    this.curationForm.current.saveResult().then(() => {
-      history.push(`/project/${project.id}/variant/${variantId}/curate/`);
-    });
+    const { history, project, saveCurrentResult } = this.props;
+    saveCurrentResult().then(
+      () => {
+        history.push(`/project/${project.id}/variant/${variantId}/curate/`);
+      },
+      () => {}
+    );
   }
 
   render() {
-    const { project, variantId } = this.props;
+    const { project, variantId, onLoadResult } = this.props;
     const { showForm } = this.state;
 
     return (
       <React.Fragment>
-        <Fetch path={`/project/${project.id}/variant/${variantId}/curate/`}>
+        <Fetch path={`/project/${project.id}/variant/${variantId}/curate/`} onLoad={onLoadResult}>
           {({
             data: {
               index,
@@ -208,7 +214,6 @@ class CurateVariantPage extends React.Component {
                     }
                   >
                     <CurationForm
-                      ref={this.curationForm}
                       projectId={project.id}
                       variantId={variantId}
                       initialResult={result || {}}
@@ -252,6 +257,21 @@ class CurateVariantPage extends React.Component {
   }
 }
 
+const ConnectedCurateVariantPage = connect(
+  null,
+  (dispatch, ownProps) => ({
+    onLoadResult: data => {
+      dispatch(setResult(data.result, true));
+    },
+    saveCurrentResult: () =>
+      dispatch((thunkDispatch, getState) => {
+        return thunkDispatch(
+          saveResult(getCurationResult(getState()), ownProps.project.id, ownProps.variantId)
+        );
+      }),
+  })
+)(CurateVariantPage);
+
 export default withParamsAsProps(({ variantId }) => ({
   variantId: parseInt(variantId, 10),
-}))(CurateVariantPage);
+}))(ConnectedCurateVariantPage);
