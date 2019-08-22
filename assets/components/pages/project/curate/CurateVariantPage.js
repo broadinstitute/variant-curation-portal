@@ -10,6 +10,7 @@ import DocumentTitle from "../../../DocumentTitle";
 import Fetch from "../../../Fetch";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
 import VariantId from "../../../VariantId";
+import Flags from "../../../result/Flags";
 import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
@@ -17,6 +18,8 @@ import { getGnomadVariantId, GnomadVariantView, GnomadGeneView } from "./gnomad"
 import SampleTable from "./SampleTable";
 import { UCSCVariantView, UCSCGeneView } from "./UCSC";
 import VariantData from "./VariantData";
+
+const ResultFlags = connect(state => ({ result: getCurationResult(state) }))(Flags);
 
 class CurateVariantPage extends React.Component {
   static propTypes = {
@@ -169,6 +172,9 @@ class CurateVariantPage extends React.Component {
                     </div>
                     <div>
                       <List horizontal>
+                        <List.Item>
+                          <ResultFlags />
+                        </List.Item>
                         <List.Item>
                           <Button
                             basic
