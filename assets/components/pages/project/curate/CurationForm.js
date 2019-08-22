@@ -14,8 +14,11 @@ import {
 } from "semantic-ui-react";
 
 import verdicts, { verdictLabels } from "../../../../constants/verdicts";
-import { saveResult, setResult } from "../../../../redux/actions";
-import { getCurationResult, getCurationResultErrors } from "../../../../redux/selectors";
+import { saveResult, setResult } from "../../../../redux/actions/curationResultActions";
+import {
+  getCurationResult,
+  getCurationResultErrors,
+} from "../../../../redux/selectors/curationResultSelectors";
 import { showNotification } from "../../../Notifications";
 import { CurationResultPropType } from "../../../propTypes";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";

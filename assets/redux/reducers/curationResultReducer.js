@@ -1,7 +1,6 @@
-import { actionTypes } from "./actions";
+import { actionTypes } from "../actions/curationResultActions";
 
-/* eslint-disable import/prefer-default-export */
-export const curationResultReducer = (state, action) => {
+const curationResultReducer = (state, action) => {
   if (state === undefined) {
     return {
       value: null,
@@ -30,3 +29,5 @@ export const curationResultReducer = (state, action) => {
       return state;
   }
 };
+
+export default curationResultReducer;
