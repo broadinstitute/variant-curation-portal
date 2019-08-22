@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button, Divider, Header, List, Segment } from "semantic-ui-react";
 
-import { saveResult, setResult } from "../../../../redux/actions";
-import { getCurationResult } from "../../../../redux/selectors";
+import { saveResult, setResult } from "../../../../redux/actions/curationResultActions";
+import { getCurationResult } from "../../../../redux/selectors/curationResultSelectors";
 import DocumentTitle from "../../../DocumentTitle";
 import Fetch from "../../../Fetch";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
