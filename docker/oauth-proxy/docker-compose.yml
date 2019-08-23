@@ -23,3 +23,4 @@ services:
   app:
     environment:
       - CURATION_PORTAL_AUTH_HEADER=HTTP_X_FORWARDED_EMAIL
+      - CURATION_PORTAL_SIGN_OUT_URL=/oauth2/sign_out

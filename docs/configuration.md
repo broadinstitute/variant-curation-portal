@@ -53,3 +53,9 @@ The variant curation portal can be configured using the following environment va
   The curation portal uses Django's [RemoteUserMiddleware](https://docs.djangoproject.com/en/2.2/howto/auth-remote-user/)
   for authentication. This setting controls the header from which the authenticated user's username is read.
   Defaults to `REMOTE_USER`.
+
+- `CURATION_PORTAL_SIGN_OUT_URL`
+
+  Since authentication is handled externally, the curation portal cannot sign out a user. This setting tells the
+  curation portal where to direct a user so that they can sign out of whatever system is handling authentication
+  for the portal.
