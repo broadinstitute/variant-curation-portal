@@ -153,3 +153,5 @@ REST_FRAMEWORK = {"DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.Dja
 # Curation portal app settings
 
 CURATION_PORTAL_AUTH_HEADER = os.getenv("CURATION_PORTAL_AUTH_HEADER", "REMOTE_USER")
+
+CURATION_PORTAL_SIGN_OUT_URL = os.getenv("CURATION_PORTAL_SIGN_OUT_URL", None)
