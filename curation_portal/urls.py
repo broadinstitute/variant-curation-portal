@@ -8,6 +8,7 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 from django.urls import path
 from django.views.generic import TemplateView
 
+from curation_portal.views.app_settings import ApplicationSettingsView
 from curation_portal.views.curate_variant import CurateVariantView
 from curation_portal.views.export_results import ExportProjectResultsView
 from curation_portal.views.projects import AssignedProjectsView, OwnedProjectsView
@@ -43,6 +44,7 @@ urlpatterns = [
         DEFAULT_TEMPLATE_VIEW,
         name="curate-variant",
     ),
+    path("api/settings/", ApplicationSettingsView.as_view(), name="api-app-settings"),
     path("api/assignments/", AssignedProjectsView.as_view(), name="api-assignments"),
     path("api/projects/", OwnedProjectsView.as_view(), name="api-projects"),
     path("api/projects/create/", CreateProjectView.as_view(), name="api-create-project"),
