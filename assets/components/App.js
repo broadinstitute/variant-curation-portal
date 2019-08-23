@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router, Link, Redirect, Route, Switch } from "react-router-dom";
 import "semantic-ui-css/semantic.css";
-import { Container, Dimmer, Loader, Menu } from "semantic-ui-react";
+import { Container, Dimmer, Dropdown, Loader, Menu } from "semantic-ui-react";
 
 import api from "../api";
 import store from "../redux/store";
@@ -19,14 +19,17 @@ import ProjectPage from "./pages/project/ProjectPage";
 class App extends Component {
   state = {
     isInitializing: true,
+    settings: {},
     user: null,
   };
 
   componentDidMount() {
-    api
-      .get(`/profile/`)
-      .then(data => {
-        this.setState({ user: data.user });
+    Promise.all([api.get("/profile/"), api.get("/settings/")])
+      .then(([profileData, settingsData]) => {
+        this.setState({
+          user: profileData.user,
+          settings: settingsData.settings,
+        });
       })
       .finally(() => {
         this.setState({ isInitializing: false });
@@ -34,7 +37,7 @@ class App extends Component {
   }
 
   render() {
-    const { isInitializing, user } = this.state;
+    const { isInitializing, settings, user } = this.state;
 
     if (isInitializing) {
       return (
@@ -59,9 +62,19 @@ class App extends Component {
                 <Menu.Item>
                   <Link to="/projects/">Projects</Link>
                 </Menu.Item>
-                <Menu.Item position="right">
-                  {user ? user.username : <a href="/signin/">Sign in</a>}
-                </Menu.Item>
+                <Menu.Menu position="right">
+                  {settings.sign_out_url ? (
+                    <Dropdown item text={user.username}>
+                      <Dropdown.Menu>
+                        <Dropdown.Item as="a" href={settings.sign_out_url}>
+                          Sign out
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  ) : (
+                    <Menu.Item position="right">{user.username}</Menu.Item>
+                  )}
+                </Menu.Menu>
               </Container>
             </Menu>
 
