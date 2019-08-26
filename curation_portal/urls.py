@@ -23,8 +23,6 @@ DEFAULT_TEMPLATE_VIEW = TemplateView.as_view(template_name="default.template.htm
 
 urlpatterns = [
     path("", DEFAULT_TEMPLATE_VIEW, name="home"),
-    path("privacy/", DEFAULT_TEMPLATE_VIEW, name="privacy-policy"),
-    path("terms/", DEFAULT_TEMPLATE_VIEW, name="terms"),
     path("assignments/", DEFAULT_TEMPLATE_VIEW, name="assignments"),
     path("projects/", DEFAULT_TEMPLATE_VIEW, name="projects"),
     path("projects/create/", DEFAULT_TEMPLATE_VIEW, name="create-project"),
