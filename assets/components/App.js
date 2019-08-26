@@ -9,8 +9,6 @@ import store from "../redux/store";
 import Notifications from "./Notifications";
 import HomePage from "./pages/HomePage";
 import PageNotFoundPage from "./pages/PageNotFoundPage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
-import TermsPage from "./pages/TermsPage";
 import AssignedProjectsPage from "./pages/projects/AssignedProjectsPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/projects/CreateProjectPage";
@@ -50,7 +48,7 @@ class App extends Component {
     return (
       <Provider store={store}>
         <Router>
-          <div style={{ height: "100%", padding: "45px 0 35px" }}>
+          <div style={{ height: "100%", padding: "45px 0 0" }}>
             <Menu fixed="top">
               <Container fluid>
                 <Menu.Item header>
@@ -89,9 +87,6 @@ class App extends Component {
                     user ? <Redirect to="/assignments/" /> : <HomePage {...props} />
                   }
                 />
-                <Route exact path="/privacy/" component={PrivacyPolicyPage} />
-                <Route exact path="/terms/" component={TermsPage} />
-
                 <Route
                   exact
                   path="/assignments/"
@@ -116,17 +111,6 @@ class App extends Component {
                 <Route component={PageNotFoundPage} />
               </Switch>
             </div>
-
-            <Menu fixed="bottom" size="mini">
-              <Container fluid>
-                <Menu.Item>
-                  <Link to="/privacy/">Privacy Policy</Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link to="/terms/">Terms of Service</Link>
-                </Menu.Item>
-              </Container>
-            </Menu>
           </div>
         </Router>
       </Provider>
