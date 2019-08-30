@@ -30,10 +30,10 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install dependencies
-RUN apk add --no-cache py3-psycopg2
-# psycopg2 installed through apk is placed in a different directory than
-# packages installed with pip
-ENV PYTHONPATH="${PYTHONPATH}:/usr/lib/python3.6/site-packages"
+RUN apk add --virtual build-deps gcc musl-dev python3-dev \
+  && apk add --no-cache postgresql-dev \
+  && pip install --no-cache-dir psycopg2 \
+  && apk del build-deps
 
 RUN pip install --no-cache-dir gunicorn==19.9.0
 
