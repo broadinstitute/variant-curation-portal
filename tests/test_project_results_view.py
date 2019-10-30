@@ -83,12 +83,13 @@ def test_upload_results_validates_variant_ids(db_setup):
     assert response.status_code == 400
 
 
-def test_upload_results_validates_verdicts(db_setup):
+@pytest.mark.parametrize("verdict", ["some_invalid_verdict", ""])
+def test_upload_results_validates_verdicts(db_setup, verdict):
     client = APIClient()
     client.force_authenticate(User.objects.get(username="user1@example.com"))
     response = client.post(
         "/api/project/1/results/",
-        [{"variant_id": "1-200-G-A", "curator": "user2@example.com", "verdict": "foo"}],
+        [{"variant_id": "1-200-G-A", "curator": "user2@example.com", "verdict": verdict}],
         format="json",
     )
     assert response.status_code == 400
