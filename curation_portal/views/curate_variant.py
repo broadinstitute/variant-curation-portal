@@ -17,12 +17,6 @@ from curation_portal.models import (
 )
 
 
-class ResultSerializer(ModelSerializer):
-    class Meta:
-        model = CurationResult
-        exclude = ("id",)
-
-
 class SampleSerializer(ModelSerializer):
     class Meta:
         model = Sample
@@ -148,7 +142,7 @@ class CurateVariantView(APIView):
                 "variant": VariantSerializer(assignment.variant).data,
                 "next_variant": serialize_adjacent_variant(next_variant),
                 "previous_variant": serialize_adjacent_variant(previous_variant),
-                "result": ResultSerializer(assignment.result).data,
+                "result": CurationResultSerializer(assignment.result).data,
             }
         )
 
