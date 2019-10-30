@@ -147,16 +147,15 @@ def test_curate_variant_stores_result(db_setup):
     assert assignment.result.notes == "LoF for sure"
 
 
-def test_curate_variant_validates_verdict(db_setup):
+@pytest.mark.parametrize("verdict", ["some_invalid_verdict", ""])
+def test_curate_variant_validates_verdict(db_setup, verdict):
     client = APIClient()
     client.force_authenticate(User.objects.get(username="user2@example.com"))
 
     variant1 = Variant.objects.get(variant_id="1-100-A-G", project__id=1)
 
     response = client.post(
-        f"/api/project/1/variant/{variant1.id}/curate/",
-        {"verdict": "some_invalid_verdict"},
-        format="json",
+        f"/api/project/1/variant/{variant1.id}/curate/", {"verdict": verdict}, format="json"
     )
     assert response.status_code == 400
 
