@@ -187,7 +187,7 @@ class ImportedResultSerializer(ModelSerializer):
     verdict = ChoiceField(
         ["lof", "likely_lof", "uncertain", "likely_not_lof", "not_lof"],
         required=False,
-        allow_blank=True,
+        allow_null=True,
     )
 
     class Meta:
