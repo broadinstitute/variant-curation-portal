@@ -157,7 +157,7 @@ class CurationResult(models.Model):
     should_revisit = models.BooleanField(default=False)
 
     # Decision
-    verdict = models.CharField(max_length=25, null=True, blank=True)
+    verdict = models.CharField(max_length=25, null=True)
 
     class Meta:
         db_table = "curation_result"
