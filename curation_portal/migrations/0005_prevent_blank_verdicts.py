@@ -11,6 +11,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="curationresult",
             name="verdict",
-            field=models.CharField(max_length=25, null=True),
+            field=models.CharField(max_length=25, null=True, blank=False),
         )
     ]
