@@ -6,7 +6,7 @@
 #
 django-filter==2.2.0
 django-webpack-loader==0.6.0
-django==2.2.8
+django==2.2.9
 djangorestframework==3.9.1
 pytz==2019.1              # via django
 rules==2.0.1
