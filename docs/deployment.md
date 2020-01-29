@@ -55,3 +55,8 @@ PostgreSQL database.
 The [docker](../docker) directory also includes example Docker Compose configurations for
 deployments using [HTTP Basic Authentication](../docker/nginx-basic-auth) and
 [OAuth](../docker/oauth-proxy) for authentication.
+
+## User permissions
+
+Once the variant curation portal is deployed, in order to start using it, at least one user
+needs to be granted some [permissions](./permissions.md).
