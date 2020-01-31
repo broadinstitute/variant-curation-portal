@@ -93,7 +93,7 @@ class ExportProjectResultsView(APIView):
                 assignment.variant.variant_id,
                 ";".join(
                     set(
-                        annotation.gene_symbol
+                        f"{annotation.gene_id}:{annotation.gene_symbol}"
                         for annotation in assignment.variant.annotations.all()
                     )
                 ),

@@ -46,8 +46,14 @@ def db_setup(django_db_setup, django_db_blocker, create_variant):
                 {
                     "consequence": "splice_donor_variant",
                     "gene_id": "g3",
-                    "gene_symbol": "GENETHREE",
+                    "gene_symbol": "GENETHREEANDFOUR",
                     "transcript_id": "t3",
+                },
+                {
+                    "consequence": "frameshift_variant",
+                    "gene_id": "g4",
+                    "gene_symbol": "GENETHREEANDFOUR",
+                    "transcript_id": "t4",
                 },
             ],
         )
@@ -176,7 +182,10 @@ def test_exported_results_filtered_by_curator_filename_contains_curator(
 
 @pytest.mark.parametrize(
     "variant_id,expected_genes",
-    [("1-100-A-G", {"GENEONE"}), ("1-200-G-T", {"GENETWO", "GENETHREE"})],
+    [
+        ("1-100-A-G", {"g1:GENEONE"}),
+        ("1-200-G-T", {"g2:GENETWO", "g3:GENETHREEANDFOUR", "g4:GENETHREEANDFOUR"}),
+    ],
 )
 def test_exported_results_contains_gene(get_exported_results, variant_id, expected_genes):
     variant_rows = [
