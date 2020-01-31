@@ -69,8 +69,13 @@ class ExportProjectResultsView(APIView):
 
         filtered_assignments = ExportResultsFilter(filter_params, queryset=completed_assignments)
 
+        # Include project name and (if applicable) curator name in downloaded file name.
+        filename_prefix = f"{project.name}"
+        if "curator__username" in filter_params:
+            filename_prefix += "_" + filter_params["curator__username"]
+
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = f'attachment; filename="{project.name}_results.csv"'
+        response["Content-Disposition"] = f'attachment; filename="{filename_prefix}_results.csv"'
 
         writer = csv.writer(response)
 

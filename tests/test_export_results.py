@@ -166,6 +166,14 @@ def test_exported_results_can_be_filtered_by_curator(
     assert results == expected_results
 
 
+@pytest.mark.parametrize("filter_username", ["user1@example.com", "user2@example.com"])
+def test_exported_results_filtered_by_curator_filename_contains_curator(
+    get_export_filename, filter_username
+):
+    filename = get_export_filename("user1@example.com", {"curator__username": filter_username})
+    assert filter_username in filename
+
+
 @pytest.mark.parametrize(
     "variant_id,expected_genes",
     [("1-100-A-G", {"GENEONE"}), ("1-200-G-T", {"GENETWO", "GENETHREE"})],
@@ -185,6 +193,11 @@ def test_results_exported_by_curator_contain_only_curators_results(get_exported_
         (row["Variant ID"], row["Curator"]) for row in get_exported_results("user2@example.com")
     )
     assert results == set([("1-100-A-G", "user2@example.com")])
+
+
+def test_results_exported_by_curator_filename_contains_curator(get_export_filename):
+    filename = get_export_filename("user2@example.com")
+    assert "user2@example.com" in filename
 
 
 def test_curators_cannot_filter_exported_results(get_exported_results):
