@@ -1,4 +1,5 @@
 import csv
+import re
 
 from django.db.models import Prefetch
 from django.http import HttpResponse
@@ -73,6 +74,9 @@ class ExportProjectResultsView(APIView):
         filename_prefix = f"{project.name}"
         if "curator__username" in filter_params:
             filename_prefix += "_" + filter_params["curator__username"]
+
+        # Based on django.utils.text.get_valid_filename, but replace characters with "-" instead of removing them.
+        filename_prefix = re.sub(r"(?u)[^-\w]", "-", filename_prefix)
 
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{filename_prefix}_results.csv"'

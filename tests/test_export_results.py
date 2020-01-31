@@ -143,7 +143,7 @@ def test_exported_results_includes_only_curated_variants(get_exported_results):
 
 def test_exported_file_contains_project_name(get_export_filename):
     filename = get_export_filename("user1@example.com")
-    assert filename == "Test Project_results.csv"
+    assert filename == "Test-Project_results.csv"
 
 
 @pytest.mark.parametrize(
@@ -171,7 +171,7 @@ def test_exported_results_filtered_by_curator_filename_contains_curator(
     get_export_filename, filter_username
 ):
     filename = get_export_filename("user1@example.com", {"curator__username": filter_username})
-    assert filter_username in filename
+    assert re.sub(r"@|\.", "-", filter_username) in filename
 
 
 @pytest.mark.parametrize(
@@ -197,7 +197,7 @@ def test_results_exported_by_curator_contain_only_curators_results(get_exported_
 
 def test_results_exported_by_curator_filename_contains_curator(get_export_filename):
     filename = get_export_filename("user2@example.com")
-    assert "user2@example.com" in filename
+    assert "user2-example-com" in filename
 
 
 def test_curators_cannot_filter_exported_results(get_exported_results):
