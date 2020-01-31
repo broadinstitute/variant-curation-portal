@@ -1,5 +1,6 @@
 # pylint: disable=redefined-outer-name,unused-argument
 import csv
+import re
 from io import StringIO
 
 import pytest
@@ -115,6 +116,19 @@ def get_exported_results(db_setup):
     return _get_exported_results
 
 
+@pytest.fixture(scope="module")
+def get_export_filename(db_setup):
+    def _get_export_filename(username, query_params=None):
+        client = APIClient()
+        client.force_authenticate(User.objects.get(username=username))
+        response = client.get("/api/project/1/results/export/", query_params)
+        match = re.match(r"^attachment; filename=\"(.*)\"$", response["Content-Disposition"])
+        assert match
+        return match.group(1)
+
+    return _get_export_filename
+
+
 def test_exported_results_includes_only_curated_variants(get_exported_results):
     assert set(
         (row["Variant ID"], row["Curator"]) for row in get_exported_results("user1@example.com")
@@ -125,6 +139,11 @@ def test_exported_results_includes_only_curated_variants(get_exported_results):
             ("1-100-A-G", "user2@example.com"),
         ]
     )
+
+
+def test_exported_file_contains_project_name(get_export_filename):
+    filename = get_export_filename("user1@example.com")
+    assert filename == "Test Project_results.csv"
 
 
 @pytest.mark.parametrize(
