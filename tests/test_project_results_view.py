@@ -31,6 +31,23 @@ def db_setup(django_db_setup, django_db_blocker, create_variant):
         user3.delete()
 
 
+def test_results_requires_authentication(db_setup):
+    client = APIClient()
+    response = client.get("/api/project/1/results/", format="json")
+    assert response.status_code == 403
+
+
+@pytest.mark.parametrize(
+    "username,expected_status_code",
+    [("user1@example.com", 200), ("user2@example.com", 403), ("user3@example.com", 404)],
+)
+def test_results_can_only_be_viewed_by_project_owners(db_setup, username, expected_status_code):
+    client = APIClient()
+    client.force_authenticate(User.objects.get(username=username))
+    response = client.get("/api/project/1/results/", format="json")
+    assert response.status_code == expected_status_code
+
+
 def test_upload_results_requires_authentication(db_setup):
     client = APIClient()
     response = client.post(
