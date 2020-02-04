@@ -10,6 +10,7 @@ import EditProjectPage from "./admin/EditProjectPage";
 import EditProjectOwnersPage from "./admin/EditProjectOwnersPage";
 import ImportResultsPage from "./admin/ImportResultsPage";
 import ProjectAdminPage from "./admin/ProjectAdminPage";
+import ProjectResultsPage from "./admin/ProjectResultsPage";
 import UploadVariantsPage from "./admin/UploadVariantsPage";
 import ProjectAssignmentsPage from "./assignments/ProjectAssignmentsPage";
 import CurateVariantPage from "./curate/CurateVariantPage";
@@ -76,6 +77,12 @@ const ProjectPage = ({ match, projectId, user }) => (
                 user={user}
               />
             )}
+          />
+
+          <Route
+            exact
+            path={`${match.path}results/`}
+            render={props => <ProjectResultsPage {...props} project={project} user={user} />}
           />
 
           <Route
