@@ -11,6 +11,7 @@ import Fetch from "../../../Fetch";
 import KeyboardShortcut, { KeyboardShortcutHint } from "../../../KeyboardShortcut";
 import VariantId from "../../../VariantId";
 import Flags from "../../../result/Flags";
+import Verdict from "../../../result/Verdict";
 import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
@@ -18,6 +19,10 @@ import { getGnomadVariantId, GnomadVariantView, GnomadGeneView } from "./gnomad"
 import SampleTable from "./SampleTable";
 import { UCSCVariantView, UCSCGeneView } from "./UCSC";
 import VariantData from "./VariantData";
+
+const ResultVerdict = connect(state => ({ verdict: getCurationResult(state).verdict }))(
+  ({ verdict }) => (verdict ? <Verdict verdict={verdict} /> : <span>No verdict</span>)
+);
 
 const ResultFlags = connect(state => ({ result: getCurationResult(state) }))(Flags);
 
@@ -173,6 +178,9 @@ class CurateVariantPage extends React.Component {
                     <div>
                       <List horizontal>
                         <List.Item>
+                          <span style={{ marginRight: "10px" }}>
+                            <ResultVerdict />
+                          </span>
                           <ResultFlags />
                         </List.Item>
                         <List.Item>
