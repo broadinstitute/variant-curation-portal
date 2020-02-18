@@ -66,7 +66,7 @@ def convert_vcf_to_json(
     variants = {}
 
     with gzip.open(vcf_path, "rt") as vcf_file:
-        reader = vcf.Reader(vcf_file)
+        reader = vcf.Reader(vcf_file, compressed=False)
 
         csq_header = (
             reader.infos["CSQ"]  # pylint: disable=unsubscriptable-object
