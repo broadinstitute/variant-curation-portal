@@ -16,6 +16,10 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "react/jsx-filename-extension": ["error", { extensions: [".js"] }],
+    "react/jsx-fragments": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/state-in-constructor": "off",
+    "react/static-property-placement": "off",
   },
   parserOptions: {
     ecmaVersion: "2018",

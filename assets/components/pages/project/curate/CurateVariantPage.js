@@ -20,9 +20,9 @@ import SampleTable from "./SampleTable";
 import { UCSCVariantView, UCSCGeneView } from "./UCSC";
 import VariantData from "./VariantData";
 
-const ResultVerdict = connect(state => ({ verdict: getCurationResult(state).verdict }))(
-  ({ verdict }) => (verdict ? <Verdict verdict={verdict} /> : <span>No verdict</span>)
-);
+const ResultVerdict = connect(state => ({
+  verdict: getCurationResult(state).verdict,
+}))(({ verdict }) => (verdict ? <Verdict verdict={verdict} /> : <span>No verdict</span>));
 
 const ResultFlags = connect(state => ({ result: getCurationResult(state) }))(Flags);
 
@@ -271,20 +271,17 @@ class CurateVariantPage extends React.Component {
   }
 }
 
-const ConnectedCurateVariantPage = connect(
-  null,
-  (dispatch, ownProps) => ({
-    onLoadResult: data => {
-      dispatch(setResult(data.result, true));
-    },
-    saveCurrentResult: () =>
-      dispatch((thunkDispatch, getState) => {
-        return thunkDispatch(
-          saveResult(getCurationResult(getState()), ownProps.project.id, ownProps.variantId)
-        );
-      }),
-  })
-)(CurateVariantPage);
+const ConnectedCurateVariantPage = connect(null, (dispatch, ownProps) => ({
+  onLoadResult: data => {
+    dispatch(setResult(data.result, true));
+  },
+  saveCurrentResult: () =>
+    dispatch((thunkDispatch, getState) => {
+      return thunkDispatch(
+        saveResult(getCurationResult(getState()), ownProps.project.id, ownProps.variantId)
+      );
+    }),
+}))(CurateVariantPage);
 
 export default withParamsAsProps(({ variantId }) => ({
   variantId: parseInt(variantId, 10),

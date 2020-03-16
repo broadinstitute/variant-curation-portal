@@ -57,9 +57,7 @@ const ProjectAdminPage = ({ project, user }) => {
                         as="a"
                         disabled={completed === 0}
                         download
-                        href={`/api/project/${
-                          project.id
-                        }/results/export/?curator__username=${curator}`}
+                        href={`/api/project/${project.id}/results/export/?curator__username=${curator}`}
                       >
                         Download results
                       </Button>
@@ -103,6 +101,7 @@ ProjectAdminPage.propTypes = {
         completed: PropTypes.number.isRequired,
       })
     ),
+    owners: PropTypes.arrayOf(PropTypes.string),
     variants: PropTypes.shape({
       total: PropTypes.number.isRequired,
       curated: PropTypes.number.isRequired,
