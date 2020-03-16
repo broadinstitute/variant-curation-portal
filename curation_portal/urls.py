@@ -10,14 +10,14 @@ from django.views.generic import TemplateView
 
 from curation_portal.views.app_settings import ApplicationSettingsView
 from curation_portal.views.curate_variant import CurateVariantView
-from curation_portal.views.export_results import ExportProjectResultsView
 from curation_portal.views.projects import AssignedProjectsView, OwnedProjectsView
 from curation_portal.views.project import ProjectView
 from curation_portal.views.project_assignments import ProjectAssignmentsView
 from curation_portal.views.project_admin import CreateProjectView
-from curation_portal.views.results import ProjectResultsView
+from curation_portal.views.project_results import ProjectResultsView
+from curation_portal.views.project_results_export import ExportProjectResultsView
+from curation_portal.views.project_variants import ProjectVariantsView
 from curation_portal.views.user import ProfileView
-from curation_portal.views.variants import ProjectVariantsView
 
 DEFAULT_TEMPLATE_VIEW = TemplateView.as_view(template_name="default.template.html")
 
