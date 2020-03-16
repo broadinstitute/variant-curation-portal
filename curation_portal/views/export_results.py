@@ -28,7 +28,7 @@ class ExportProjectResultsView(APIView):
 
         return project
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         project = self.get_project()
 
         result_fields = [

@@ -113,7 +113,7 @@ class ProjectAssignmentsView(APIView):
 
         return project
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         project = self.get_project()
 
         assignments = (
@@ -133,7 +133,7 @@ class ProjectAssignmentsView(APIView):
         assignments_serializer = AssignmentSerializer(filtered_assignments.qs, many=True)
         return Response({"assignments": assignments_serializer.data})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         project = self.get_project()
 
         if not request.user.has_perm("curation_portal.change_project", project):

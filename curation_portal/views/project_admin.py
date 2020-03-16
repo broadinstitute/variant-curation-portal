@@ -17,7 +17,7 @@ class CreateProjectView(APIView):
 
     queryset = Project.objects.none()  # required for DjangoModelPermissions
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = ProjectSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

@@ -29,7 +29,7 @@ class ProjectVariantsView(APIView):
 
         return project
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         project = self.get_project()
 
         variants = project.variants.all()
@@ -37,7 +37,7 @@ class ProjectVariantsView(APIView):
         serializer = VariantSerializer(variants, many=True)
         return Response({"variants": serializer.data})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         project = self.get_project()
 
         if not request.user.has_perm("curation_portal.add_variant_to_project", project):

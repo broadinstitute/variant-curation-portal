@@ -96,7 +96,7 @@ class CurateVariantView(APIView):
             raise NotFound
 
     @method_decorator(ensure_csrf_cookie)
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         assignment = self.get_assignment()
 
         filtered_assignments = AssignmentFilter(
@@ -146,7 +146,7 @@ class CurateVariantView(APIView):
             }
         )
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         assignment = self.get_assignment()
 
         if assignment.result:

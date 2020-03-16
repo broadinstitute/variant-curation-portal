@@ -69,7 +69,7 @@ class ProjectResultsView(APIView):
 
         return project
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         project = self.get_project()
 
         results = CurationResult.objects.filter(
@@ -78,7 +78,7 @@ class ProjectResultsView(APIView):
         serializer = CurationResultSerializer(results, many=True)
         return Response({"results": serializer.data})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         project = self.get_project()
 
         serializer = ImportedResultSerializer(

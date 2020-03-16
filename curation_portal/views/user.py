@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 class ProfileView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         user = request.user
         return Response(
             {
