@@ -19,12 +19,12 @@ class VariantSerializer(ModelSerializer):
 class CurationResultSerializer(ModelSerializer):
     variant = SerializerMethodField()
 
-    def get_variant(self, obj):
+    def get_variant(self, obj):  # pylint: disable=no-self-use
         return VariantSerializer(obj.assignment.variant).data
 
     curator = SerializerMethodField()
 
-    def get_curator(self, obj):
+    def get_curator(self, obj):  # pylint: disable=no-self-use
         return obj.assignment.curator.username
 
     verdict = ChoiceField(
