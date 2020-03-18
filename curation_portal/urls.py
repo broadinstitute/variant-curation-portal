@@ -5,7 +5,7 @@ The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
 """
 
-from django.urls import path
+from django.urls import path, register_converter
 from django.views.generic import TemplateView
 
 from curation_portal.views.app_settings import ApplicationSettingsView
@@ -18,6 +18,20 @@ from curation_portal.views.project_results import ProjectResultsView
 from curation_portal.views.project_results_export import ExportProjectResultsView
 from curation_portal.views.project_variants import ProjectVariantsView
 from curation_portal.views.user import ProfileView
+from curation_portal.views.variant_projects import VariantProjectsView
+
+
+class VariantIdConverter:
+    regex = r"(\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)"
+
+    def to_python(self, value):  # pylint: disable=no-self-use
+        return value
+
+    def to_url(self, value):  # pylint: disable=no-self-use
+        return value
+
+
+register_converter(VariantIdConverter, "variant_id")
 
 DEFAULT_TEMPLATE_VIEW = TemplateView.as_view(template_name="default.template.html")
 
@@ -75,6 +89,11 @@ urlpatterns = [
         name="api-project-results-export",
     ),
     path("api/profile/", ProfileView.as_view(), name="api-profile"),
+    path(
+        "api/variant/<variant_id:variant_id>/projects/",
+        VariantProjectsView.as_view(),
+        name="api-variant-projects",
+    ),
 ]
 
 handler400 = "rest_framework.exceptions.bad_request"  # pylint: disable=invalid-name

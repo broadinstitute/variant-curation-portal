@@ -20,7 +20,7 @@ def check_pylint(returncode):
 
 
 check_statuses = [
-    run("pylint curation_portal", check=check_pylint),
+    run("pylint --disable=fixme curation_portal", check=check_pylint),
     run("pylint tests/*", check=check_pylint),
     run("black --check curation_portal"),
     run("black --check tests"),
