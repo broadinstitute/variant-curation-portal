@@ -16,6 +16,10 @@ const VariantProjectsPage = ({ variantId }) => {
         <VariantId variantId={variantId} />
       </Header>
 
+      <div>
+        <Link to={`/variant/${variantId}/results/`}>View all results for this variant</Link>
+      </div>
+
       <Fetch path={`/variant/${variantId}/projects/`}>
         {({ data: { variant } }) => {
           const ownedProjects = variant.projects.filter(project => project.is_project_owner);

@@ -5,6 +5,7 @@ import { Route, Switch } from "react-router-dom";
 import PageNotFoundPage from "../PageNotFoundPage";
 import withParamsAsProps from "../withParamsAsProps";
 import VariantProjectsPage from "./VariantProjectsPage";
+import VariantResultsPage from "./VariantResultsPage";
 
 const VariantPage = ({ match, variantId, user }) => {
   return (
@@ -13,6 +14,12 @@ const VariantPage = ({ match, variantId, user }) => {
         exact
         path={match.path}
         render={props => <VariantProjectsPage {...props} user={user} variantId={variantId} />}
+      />
+
+      <Route
+        exact
+        path={`${match.path}results/`}
+        render={props => <VariantResultsPage {...props} user={user} variantId={variantId} />}
       />
 
       <Route component={PageNotFoundPage} />

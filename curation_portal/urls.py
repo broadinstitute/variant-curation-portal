@@ -59,6 +59,7 @@ urlpatterns = [
         name="curate-variant",
     ),
     path("variant/<variant_id:variant_id>/", DEFAULT_TEMPLATE_VIEW, name="variant"),
+    path("variant/<variant_id:variant_id>/results/", DEFAULT_TEMPLATE_VIEW, name="variant-results"),
     path("api/settings/", ApplicationSettingsView.as_view(), name="api-app-settings"),
     path("api/assignments/", AssignedProjectsView.as_view(), name="api-assignments"),
     path("api/projects/", OwnedProjectsView.as_view(), name="api-projects"),
