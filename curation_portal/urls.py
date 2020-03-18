@@ -19,6 +19,7 @@ from curation_portal.views.project_results_export import ExportProjectResultsVie
 from curation_portal.views.project_variants import ProjectVariantsView
 from curation_portal.views.user import ProfileView
 from curation_portal.views.variant_projects import VariantProjectsView
+from curation_portal.views.variant_results import VariantResultsView
 
 
 class VariantIdConverter:
@@ -94,6 +95,11 @@ urlpatterns = [
         "api/variant/<variant_id:variant_id>/projects/",
         VariantProjectsView.as_view(),
         name="api-variant-projects",
+    ),
+    path(
+        "api/variant/<variant_id:variant_id>/results/",
+        VariantResultsView.as_view(),
+        name="api-variant-results",
     ),
 ]
 
