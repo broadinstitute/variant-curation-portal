@@ -13,6 +13,7 @@ import AssignedProjectsPage from "./pages/projects/AssignedProjectsPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/projects/CreateProjectPage";
 import ProjectPage from "./pages/project/ProjectPage";
+import VariantPage from "./pages/variant/VariantPage";
 
 class App extends Component {
   state = {
@@ -106,6 +107,11 @@ class App extends Component {
                 <Route
                   path="/project/:projectId/"
                   render={props => <ProjectPage {...props} user={user} />}
+                />
+
+                <Route
+                  path="/variant/:variantId/"
+                  render={props => <VariantPage {...props} user={user} />}
                 />
 
                 <Route component={PageNotFoundPage} />
