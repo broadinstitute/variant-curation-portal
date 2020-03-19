@@ -16,9 +16,13 @@ const VariantProjectsPage = ({ variantId }) => {
         <VariantId variantId={variantId} />
       </Header>
 
-      <div>
+      <p>
+        <Link to="/variants/">Return to all variants</Link>
+      </p>
+
+      <p>
         <Link to={`/variant/${variantId}/results/`}>View all results for this variant</Link>
-      </div>
+      </p>
 
       <Fetch path={`/variant/${variantId}/projects/`}>
         {({ data: { variant } }) => {

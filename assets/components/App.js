@@ -13,6 +13,7 @@ import AssignedProjectsPage from "./pages/projects/AssignedProjectsPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/projects/CreateProjectPage";
 import ProjectPage from "./pages/project/ProjectPage";
+import VariantsPage from "./pages/variants/VariantsPage";
 import VariantPage from "./pages/variant/VariantPage";
 
 class App extends Component {
@@ -61,6 +62,9 @@ class App extends Component {
                 <Menu.Item>
                   <Link to="/projects/">Projects</Link>
                 </Menu.Item>
+                <Menu.Item>
+                  <Link to="/variants/">Variants</Link>
+                </Menu.Item>
                 <Menu.Menu position="right">
                   {settings.sign_out_url ? (
                     <Dropdown item text={user.username}>
@@ -107,6 +111,11 @@ class App extends Component {
                 <Route
                   path="/project/:projectId/"
                   render={props => <ProjectPage {...props} user={user} />}
+                />
+
+                <Route
+                  path="/variants/"
+                  render={props => <VariantsPage {...props} user={user} />}
                 />
 
                 <Route
