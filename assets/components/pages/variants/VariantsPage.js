@@ -6,6 +6,7 @@ import DocumentTitle from "../../DocumentTitle";
 import Fetch from "../../Fetch";
 import VariantId from "../../VariantId";
 import Page from "../Page";
+import VariantSearch from "./VariantSearch";
 
 const VariantsPage = () => {
   return (
@@ -14,6 +15,8 @@ const VariantsPage = () => {
       <Header as="h1" dividing>
         Variants
       </Header>
+
+      <VariantSearch />
 
       <Fetch path="/variants/">
         {({ data: { variants } }) => {
