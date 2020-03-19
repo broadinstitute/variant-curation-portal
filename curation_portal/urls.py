@@ -18,6 +18,7 @@ from curation_portal.views.project_results import ProjectResultsView
 from curation_portal.views.project_results_export import ExportProjectResultsView
 from curation_portal.views.project_variants import ProjectVariantsView
 from curation_portal.views.user import ProfileView
+from curation_portal.views.variants import VariantsView
 from curation_portal.views.variant_projects import VariantProjectsView
 from curation_portal.views.variant_results import VariantResultsView
 
@@ -92,6 +93,7 @@ urlpatterns = [
         name="api-project-results-export",
     ),
     path("api/profile/", ProfileView.as_view(), name="api-profile"),
+    path("api/variants/", VariantsView.as_view(), name="api-variants"),
     path(
         "api/variant/<variant_id:variant_id>/projects/",
         VariantProjectsView.as_view(),
