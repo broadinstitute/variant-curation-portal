@@ -30,7 +30,7 @@ jobs:
       - name: Check formatting
         run: black --check curation_portal tests
       - name: Run Pylint
-        run: pylint --disable=R --disable=C curation_portal tests/*
+        run: pylint --disable=R --disable=C --disable=fixme curation_portal tests/*
       - name: Run tests
         run: pytest
   frontend-checks:
