@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Header, Table } from "semantic-ui-react";
+import { Button, Header, Table } from "semantic-ui-react";
 
 import Fetch from "../../Fetch";
 import Flags from "../../result/Flags";
@@ -17,10 +17,16 @@ const VariantResultsPage = ({ variantId }) => {
       <Header as="h1" dividing>
         <VariantId variantId={variantId} />
       </Header>
-      <div>
+
+      <p>
         <Link to={`/variant/${variantId}/`}>Return to list of projects for this variant</Link>
-      </div>
-      <br />
+      </p>
+
+      <p>
+        <Button as="a" disabled={false} download href={`/api/variant/${variantId}/results/export/`}>
+          Download results
+        </Button>
+      </p>
 
       <Fetch path={`/variant/${variantId}/results/`}>
         {({ data: { results } }) => {
