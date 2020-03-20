@@ -10,10 +10,12 @@ const VariantIdForm = ({ onSubmit }) => {
 
   const isValid = !!variantId.match(VARIANT_ID_REGEX);
 
+  const showError = !!variantId && !isValid;
+
   return (
-    <Form error={variantId && !isValid} onSubmit={() => onSubmit(variantId)}>
+    <Form error={showError} onSubmit={() => onSubmit(variantId)}>
       <Form.Input
-        error={variantId && !isValid}
+        error={showError}
         id="variant-search-variant-id"
         label="Variant ID"
         placeholder="chrom-pos-ref-alt"
