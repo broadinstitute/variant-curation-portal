@@ -16,3 +16,6 @@ htmlcov
 
 # dotenv for Docker Compose
 .env
+
+# Hail logs
+hail-*.log
