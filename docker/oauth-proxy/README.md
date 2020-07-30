@@ -1,8 +1,8 @@
 ## OAuth with OAuth2_Proxy
 
-https://pusher.github.io/oauth2_proxy/
+https://oauth2-proxy.github.io/oauth2-proxy/
 
-- [Configure auth provider](https://pusher.github.io/oauth2_proxy/auth-configuration).
+- [Configure auth provider](https://oauth2-proxy.github.io/oauth2-proxy/auth-configuration).
 
 - Configure app. Fill in values below.
 
