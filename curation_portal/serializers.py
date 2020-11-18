@@ -17,6 +17,7 @@ from curation_portal.models import (
     Project,
     Sample,
     User,
+    UserSettings,
     Variant,
     VariantAnnotation,
     VariantTag,
@@ -24,6 +25,12 @@ from curation_portal.models import (
 
 
 VARIANT_ID_REGEX = r"^(\d+|X|Y)[-:]([0-9]+)[-:]([ACGT]+)[-:]([ACGT]+)$"
+
+
+class UserSettingsSerializer(ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = ("ucsc_username", "ucsc_session_name")
 
 
 class UserField(RelatedField):
