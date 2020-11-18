@@ -1,10 +1,14 @@
-import React, { Component } from "react";
-import { Provider } from "react-redux";
+import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
+import { Provider, connect } from "react-redux";
 import { BrowserRouter as Router, Link, Redirect, Route, Switch } from "react-router-dom";
 import "semantic-ui-css/semantic.css";
 import { Container, Dimmer, Dropdown, Loader, Menu } from "semantic-ui-react";
 
-import api from "../api";
+import { loadAppSettings } from "../redux/actions/appActions";
+import { loadUser } from "../redux/actions/userActions";
+import { getAppSettings } from "../redux/selectors/appSettingsSelectors";
+import { getUser } from "../redux/selectors/userSelectors";
 import store from "../redux/store";
 import Notifications from "./Notifications";
 import HomePage from "./pages/HomePage";
@@ -16,121 +20,124 @@ import ProjectPage from "./pages/project/ProjectPage";
 import VariantsPage from "./pages/variants/VariantsPage";
 import VariantPage from "./pages/variant/VariantPage";
 
-class App extends Component {
-  state = {
-    isInitializing: true,
-    settings: {},
-    user: null,
-  };
+const App = ({ settings, user }) => {
+  return (
+    <div style={{ height: "100%", padding: "45px 0 0" }}>
+      <Menu fixed="top">
+        <Container fluid>
+          <Menu.Item header>
+            <Link to="/">Variant Curation</Link>
+          </Menu.Item>
+          <Menu.Item>
+            <Link to="/assignments/">Assignments</Link>
+          </Menu.Item>
+          <Menu.Item>
+            <Link to="/projects/">Projects</Link>
+          </Menu.Item>
+          <Menu.Item>
+            <Link to="/variants/">Variants</Link>
+          </Menu.Item>
+          <Menu.Menu position="right">
+            {settings.sign_out_url ? (
+              <Dropdown item text={user.username}>
+                <Dropdown.Menu>
+                  <Dropdown.Item as="a" href={settings.sign_out_url}>
+                    Sign out
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : (
+              <Menu.Item position="right">{user.username}</Menu.Item>
+            )}
+          </Menu.Menu>
+        </Container>
+      </Menu>
 
-  componentDidMount() {
-    Promise.all([api.get("/profile/"), api.get("/settings/")])
-      .then(([profileData, settingsData]) => {
-        this.setState({
-          user: profileData.user,
-          settings: settingsData.settings,
-        });
-      })
-      .finally(() => {
-        this.setState({ isInitializing: false });
-      });
-  }
+      <Notifications />
 
-  render() {
-    const { isInitializing, settings, user } = this.state;
+      <div style={{ height: "100%", overflow: "auto" }}>
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={props => (user ? <Redirect to="/assignments/" /> : <HomePage {...props} />)}
+          />
+          <Route
+            exact
+            path="/assignments/"
+            render={props => <AssignedProjectsPage {...props} user={user} />}
+          />
+          <Route
+            exact
+            path="/projects/"
+            render={props => <ProjectsPage {...props} user={user} />}
+          />
+          <Route
+            exact
+            path="/projects/create/"
+            render={props => <CreateProjectPage {...props} user={user} />}
+          />
 
-    if (isInitializing) {
-      return (
-        <Dimmer active inverted>
-          <Loader inverted content="Loading" />
-        </Dimmer>
-      );
-    }
+          <Route
+            path="/project/:projectId/"
+            render={props => <ProjectPage {...props} user={user} />}
+          />
 
+          <Route path="/variants/" render={props => <VariantsPage {...props} user={user} />} />
+
+          <Route
+            path="/variant/:variantId/"
+            render={props => <VariantPage {...props} user={user} />}
+          />
+
+          <Route component={PageNotFoundPage} />
+        </Switch>
+      </div>
+    </div>
+  );
+};
+
+App.propTypes = {
+  settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
+const ConnectedApp = connect(
+  state => ({
+    settings: getAppSettings(state),
+    user: getUser(state),
+  }),
+  dispatch => ({
+    initializeApp: () => Promise.all([dispatch(loadAppSettings()), dispatch(loadUser())]),
+  })
+)(({ initializeApp, ...otherProps }) => {
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  useEffect(() => {
+    initializeApp().then(() => {
+      setIsInitializing(false);
+    });
+  }, []);
+
+  if (isInitializing) {
     return (
-      <Provider store={store}>
-        <Router>
-          <div style={{ height: "100%", padding: "45px 0 0" }}>
-            <Menu fixed="top">
-              <Container fluid>
-                <Menu.Item header>
-                  <Link to="/">Variant Curation</Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link to="/assignments/">Assignments</Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link to="/projects/">Projects</Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link to="/variants/">Variants</Link>
-                </Menu.Item>
-                <Menu.Menu position="right">
-                  {settings.sign_out_url ? (
-                    <Dropdown item text={user.username}>
-                      <Dropdown.Menu>
-                        <Dropdown.Item as="a" href={settings.sign_out_url}>
-                          Sign out
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  ) : (
-                    <Menu.Item position="right">{user.username}</Menu.Item>
-                  )}
-                </Menu.Menu>
-              </Container>
-            </Menu>
-
-            <Notifications />
-
-            <div style={{ height: "100%", overflow: "auto" }}>
-              <Switch>
-                <Route
-                  exact
-                  path="/"
-                  render={props =>
-                    user ? <Redirect to="/assignments/" /> : <HomePage {...props} />
-                  }
-                />
-                <Route
-                  exact
-                  path="/assignments/"
-                  render={props => <AssignedProjectsPage {...props} user={user} />}
-                />
-                <Route
-                  exact
-                  path="/projects/"
-                  render={props => <ProjectsPage {...props} user={user} />}
-                />
-                <Route
-                  exact
-                  path="/projects/create/"
-                  render={props => <CreateProjectPage {...props} user={user} />}
-                />
-
-                <Route
-                  path="/project/:projectId/"
-                  render={props => <ProjectPage {...props} user={user} />}
-                />
-
-                <Route
-                  path="/variants/"
-                  render={props => <VariantsPage {...props} user={user} />}
-                />
-
-                <Route
-                  path="/variant/:variantId/"
-                  render={props => <VariantPage {...props} user={user} />}
-                />
-
-                <Route component={PageNotFoundPage} />
-              </Switch>
-            </div>
-          </div>
-        </Router>
-      </Provider>
+      <Dimmer active inverted>
+        <Loader inverted content="Loading" />
+      </Dimmer>
     );
   }
-}
 
-export default App;
+  return <App {...otherProps} />;
+});
+
+export default () => {
+  return (
+    <Provider store={store}>
+      <Router>
+        <ConnectedApp />
+      </Router>
+    </Provider>
+  );
+};
