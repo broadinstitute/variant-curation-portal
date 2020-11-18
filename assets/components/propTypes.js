@@ -9,5 +9,5 @@ export const CurationResultPropType = PropTypes.shape({
 
 export const CurationAssignmentPropType = PropTypes.shape({
   result: CurationResultPropType,
-  variant: PropTypes.object,
+  variant: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 });
