@@ -24,7 +24,7 @@ check_statuses = [
     run("pylint tests/*", check=check_pylint),
     run("black --check curation_portal"),
     run("black --check tests"),
-    run("eslint assets"),
+    run("yarn run eslint assets"),
 ]
 
 exit_code = 0 if all(check_statuses) else 1
