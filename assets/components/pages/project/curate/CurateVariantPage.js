@@ -35,6 +35,9 @@ class CurateVariantPage extends React.Component {
       id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired,
     }).isRequired,
+    user: PropTypes.shape({
+      settings: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    }).isRequired,
     variantId: PropTypes.number.isRequired,
     onLoadResult: PropTypes.func.isRequired,
     saveCurrentResult: PropTypes.func.isRequired,
@@ -55,7 +58,7 @@ class CurateVariantPage extends React.Component {
   }
 
   render() {
-    const { project, variantId, onLoadResult } = this.props;
+    const { project, user, variantId, onLoadResult } = this.props;
     const { showForm } = this.state;
 
     return (
@@ -257,9 +260,9 @@ class CurateVariantPage extends React.Component {
                   <br />
                   <GnomadGeneView variant={variant} />
                   <br />
-                  <UCSCVariantView variant={variant} />
+                  <UCSCVariantView settings={user.settings} variant={variant} />
                   <br />
-                  <UCSCGeneView variant={variant} />
+                  <UCSCGeneView settings={user.settings} variant={variant} />
                   <br />
                 </div>
               </div>

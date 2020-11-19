@@ -101,7 +101,7 @@ const ProjectPage = ({ match, projectId, user }) => (
           <Route
             exact
             path={`${match.path}variant/:variantId/curate/`}
-            render={props => <CurateVariantPage {...props} project={project} />}
+            render={props => <CurateVariantPage {...props} project={project} user={user} />}
           />
 
           <Route component={PageNotFoundPage} />

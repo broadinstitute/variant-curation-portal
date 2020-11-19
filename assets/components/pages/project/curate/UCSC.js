@@ -8,23 +8,34 @@ import { Header, Segment } from "semantic-ui-react";
  * https://genome.ucsc.edu/goldenPath/help/customTrack.html#optParams
  */
 
-export const UCSCVariantView = ({ variant }) => {
+export const UCSCVariantView = ({ settings, variant }) => {
   const assembly = variant.reference_genome === "GRCh38" ? "hg38" : "hg19";
+
+  let url = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${encodeURIComponent(
+    `chr${variant.chrom}:${variant.pos - 25}-${variant.pos + 25}`
+  )}&highlight=${encodeURIComponent(
+    `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
+  )}`;
+
+  if (settings.ucsc_username && settings.ucsc_session_name) {
+    url = `${url}&hgS_doOtherUser=submit&hgS_otherUserName=${settings.ucsc_username}&hgS_otherUserSessionName=${settings.ucsc_session_name}`;
+  }
+
   return (
     <iframe
       title="UCSC variant view"
       id="ucsc"
-      src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${encodeURIComponent(
-        `chr${variant.chrom}:${variant.pos - 25}-${variant.pos + 25}`
-      )}&highlight=${encodeURIComponent(
-        `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
-      )}`}
+      src={url}
       style={{ width: "100%", height: "4000px" }}
     />
   );
 };
 
 UCSCVariantView.propTypes = {
+  settings: PropTypes.shape({
+    ucsc_username: PropTypes.string,
+    ucsc_session_name: PropTypes.string,
+  }).isRequired,
   variant: PropTypes.shape({
     chrom: PropTypes.string.isRequired,
     pos: PropTypes.number.isRequired,
@@ -32,7 +43,7 @@ UCSCVariantView.propTypes = {
   }).isRequired,
 };
 
-export const UCSCGeneView = ({ variant }) => {
+export const UCSCGeneView = ({ settings, variant }) => {
   const hasAnnotations = variant.annotations.length > 0;
 
   if (!hasAnnotations) {
@@ -50,23 +61,33 @@ export const UCSCGeneView = ({ variant }) => {
   const assembly = variant.reference_genome === "GRCh38" ? "hg38" : "hg19";
   const annotation = variant.annotations[0];
 
+  let url = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${
+    annotation.gene_symbol
+  }&singleSearch=knownCanonical&hgFind.matches=${
+    annotation.transcript_id
+  }&highlight=${encodeURIComponent(
+    `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
+  )}`;
+
+  if (settings.ucsc_username && settings.ucsc_session_name) {
+    url = `${url}&hgS_doOtherUser=submit&hgS_otherUserName=${settings.ucsc_username}&hgS_otherUserSessionName=${settings.ucsc_session_name}`;
+  }
+
   return (
     <iframe
       title="UCSC gene view"
       id="ucsc-gene"
-      src={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=${assembly}&position=${
-        annotation.gene_symbol
-      }&singleSearch=knownCanonical&hgFind.matches=${
-        annotation.transcript_id
-      }&highlight=${encodeURIComponent(
-        `${assembly}.chr${variant.chrom}:${variant.pos}-${variant.pos}`
-      )}`}
+      src={url}
       style={{ width: "100%", height: "4000px" }}
     />
   );
 };
 
 UCSCGeneView.propTypes = {
+  settings: PropTypes.shape({
+    ucsc_username: PropTypes.string,
+    ucsc_session_name: PropTypes.string,
+  }).isRequired,
   variant: PropTypes.shape({
     annotations: PropTypes.arrayOf(
       PropTypes.shape({
