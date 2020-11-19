@@ -17,6 +17,7 @@ import AssignedProjectsPage from "./pages/projects/AssignedProjectsPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import CreateProjectPage from "./pages/projects/CreateProjectPage";
 import ProjectPage from "./pages/project/ProjectPage";
+import SettingsPage from "./pages/SettingsPage";
 import VariantsPage from "./pages/variants/VariantsPage";
 import VariantPage from "./pages/variant/VariantPage";
 
@@ -38,17 +39,18 @@ const App = ({ settings, user }) => {
             <Link to="/variants/">Variants</Link>
           </Menu.Item>
           <Menu.Menu position="right">
-            {settings.sign_out_url ? (
-              <Dropdown item text={user.username}>
-                <Dropdown.Menu>
+            <Dropdown item text={user.username}>
+              <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/settings/">
+                  Settings
+                </Dropdown.Item>
+                {settings.sign_out_url && (
                   <Dropdown.Item as="a" href={settings.sign_out_url}>
                     Sign out
                   </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            ) : (
-              <Menu.Item position="right">{user.username}</Menu.Item>
-            )}
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
           </Menu.Menu>
         </Container>
       </Menu>
@@ -82,6 +84,8 @@ const App = ({ settings, user }) => {
             path="/project/:projectId/"
             render={props => <ProjectPage {...props} user={user} />}
           />
+
+          <Route path="/settings/" render={props => <SettingsPage {...props} user={user} />} />
 
           <Route path="/variants/" render={props => <VariantsPage {...props} user={user} />} />
 

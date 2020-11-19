@@ -8,6 +8,11 @@ const userReducer = (state, action) => {
   switch (action.type) {
     case actionTypes.SET_USER:
       return action.user;
+    case actionTypes.SET_USER_SETTINGS:
+      return {
+        ...state,
+        settings: action.settings,
+      };
     default:
       return state;
   }

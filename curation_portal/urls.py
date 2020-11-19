@@ -61,6 +61,7 @@ urlpatterns = [
         DEFAULT_TEMPLATE_VIEW,
         name="curate-variant",
     ),
+    path("settings/", DEFAULT_TEMPLATE_VIEW, name="settings"),
     path("variants/", DEFAULT_TEMPLATE_VIEW, name="variants"),
     path("variant/<variant_id:variant_id>/", DEFAULT_TEMPLATE_VIEW, name="variant"),
     path("variant/<variant_id:variant_id>/results/", DEFAULT_TEMPLATE_VIEW, name="variant-results"),
