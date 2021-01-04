@@ -62,12 +62,12 @@ PLOF_CONSEQUENCE_TERMS = hl.set(
 
 def load_gnomad_v2_variants():
     exomes = hl.read_table(
-        "gs://gnomad-public/release/2.1.1/ht/exomes/gnomad.exomes.r2.1.1.sites.ht"
+        "gs://gcp-public-data--gnomad/release/2.1.1/ht/exomes/gnomad.exomes.r2.1.1.sites.ht"
     )
     exomes = exomes.select(exome=exomes.row_value)
 
     genomes = hl.read_table(
-        "gs://gnomad-public/release/2.1.1/ht/genomes/gnomad.genomes.r2.1.1.sites.ht"
+        "gs://gcp-public-data--gnomad/release/2.1.1/ht/genomes/gnomad.genomes.r2.1.1.sites.ht"
     )
     genomes = genomes.select(genome=genomes.row_value)
 
@@ -81,7 +81,7 @@ def load_gnomad_v2_variants():
 
 
 def load_gnomad_v3_variants():
-    ds = hl.read_table("gs://gnomad-public/release/3.0/ht/genomes/gnomad.genomes.r3.0.sites.ht")
+    ds = hl.read_table("gs://gcp-public-data--gnomad/release/3.0/ht/genomes/gnomad.genomes.r3.0.sites.ht")
     ds = ds.select(genome=ds.row_value.drop("vep"), vep=ds.vep)
     ds = ds.annotate(exome=hl.null(ds.genome.dtype))
 
