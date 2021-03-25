@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/bin/bash -eu
+
+if [ -z "${REMOTE_USER:-}" ]; then
+  echo -e "\033[1;33mWarning: no REMOTE_USER set\033[0m"
+fi
 
 cd $(dirname "${BASH_SOURCE}")
 
