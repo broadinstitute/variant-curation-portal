@@ -16,9 +16,9 @@ IMAGE_NAME="$1"
 # Tag image with git revision
 REVISION=$(git rev-parse --short HEAD)
 
-# Add current branch name to tag if not on master branch
+# Add current branch name to tag if not on main branch
 BRANCH=$(git symbolic-ref --short -q HEAD)
-if [[ "$BRANCH" != "master" ]]; then
+if [[ "$BRANCH" != "main" ]]; then
   BRANCH_TAG="-$(echo "$BRANCH" | sed 's/[^A-Za-z0-9_\-\.]/_/g')"
 else
   BRANCH_TAG=""
