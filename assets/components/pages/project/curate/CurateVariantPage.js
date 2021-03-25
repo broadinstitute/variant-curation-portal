@@ -15,7 +15,7 @@ import Verdict from "../../../result/Verdict";
 import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
-import { getGnomadVariantId, GnomadVariantView, GnomadGeneView } from "./gnomad";
+import { GnomadVariantView, GnomadGeneView } from "./gnomad";
 import SampleTable from "./SampleTable";
 import { UCSCVariantView, UCSCGeneView } from "./UCSC";
 import VariantData from "./VariantData";
@@ -73,7 +73,6 @@ class CurateVariantPage extends React.Component {
               result,
             },
           }) => {
-            const gnomadVariantId = getGnomadVariantId(variant);
             const hasAnnotations = variant.annotations.length > 0;
 
             return (
@@ -156,11 +155,7 @@ class CurateVariantPage extends React.Component {
                             <a href="#top">top</a>
                           </List.Item>
                           <List.Item>
-                            {gnomadVariantId ? (
-                              <a href="#gnomad-variant">gnomAD (variant)</a>
-                            ) : (
-                              "gnomAD (variant)"
-                            )}
+                            <a href="#gnomad-variant">gnomAD (variant)</a>
                           </List.Item>
                           <List.Item>
                             {hasAnnotations ? (

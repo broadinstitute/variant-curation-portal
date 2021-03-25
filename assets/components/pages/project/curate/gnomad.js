@@ -2,27 +2,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Header, Segment } from "semantic-ui-react";
 
-// gnomAD is based on GRCh37. So if a variant's coordinates are based on GRCh38,
-// then we need lifted over coordinates to look it up in gnomAD.
-export const getGnomadVariantId = variant =>
-  variant.reference_genome === "GRCh38" ? variant.liftover_variant_id : variant.variant_id;
-
 export const GnomadVariantView = ({ variant }) => {
-  const gnomadVariantId = getGnomadVariantId(variant);
+  const gnomadDataset = variant.reference_genome === "GRCh37" ? "gnomad_r2_1" : "gnomad_r3";
 
-  if (!gnomadVariantId) {
-    return (
-      <Segment placeholder textAlign="center">
-        <Header>
-          gnomAD variant page not available
-          <br />
-          No GRCh37 variant ID
-        </Header>
-      </Segment>
-    );
-  }
-
-  const url = `https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`;
+  const url = `https://gnomad.broadinstitute.org/variant/${variant.variant_id}?dataset=${gnomadDataset}`;
 
   if (process.env.NODE_ENV === "development") {
     return (
