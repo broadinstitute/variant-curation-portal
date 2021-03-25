@@ -12,7 +12,8 @@ django==2.2.18
     # via
     #   -r requirements.in
     #   django-filter
-djangorestframework==3.9.1
+    #   djangorestframework
+djangorestframework==3.11.2
     # via -r requirements.in
 pytz==2019.1
     # via django
