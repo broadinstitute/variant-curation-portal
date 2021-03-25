@@ -21,6 +21,15 @@ export const UCSCVariantView = ({ settings, variant }) => {
     url = `${url}&hgS_doOtherUser=submit&hgS_otherUserName=${settings.ucsc_username}&hgS_otherUserSessionName=${settings.ucsc_session_name}`;
   }
 
+  if (process.env.NODE_ENV === "development") {
+    return (
+      <Segment placeholder id="ucsc" textAlign="center">
+        <p>UCSC variant view</p>
+        <a href={url}>{url}</a>
+      </Segment>
+    );
+  }
+
   return (
     <iframe
       title="UCSC variant view"
@@ -71,6 +80,15 @@ export const UCSCGeneView = ({ settings, variant }) => {
 
   if (settings.ucsc_username && settings.ucsc_session_name) {
     url = `${url}&hgS_doOtherUser=submit&hgS_otherUserName=${settings.ucsc_username}&hgS_otherUserSessionName=${settings.ucsc_session_name}`;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return (
+      <Segment placeholder id="ucsc-gene" textAlign="center">
+        <p>UCSC gene view</p>
+        <a href={url}>{url}</a>
+      </Segment>
+    );
   }
 
   return (

@@ -21,11 +21,23 @@ export const GnomadVariantView = ({ variant }) => {
       </Segment>
     );
   }
+
+  const url = `https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`;
+
+  if (process.env.NODE_ENV === "development") {
+    return (
+      <Segment placeholder id="gnomad-variant" textAlign="center">
+        <p>gnomAD variant page</p>
+        <a href={url}>{url}</a>
+      </Segment>
+    );
+  }
+
   return (
     <iframe
       title="gnomAD variant page"
       id="gnomad-variant"
-      src={`https://gnomad.broadinstitute.org/variant/${gnomadVariantId}`}
+      src={url}
       style={{ width: "100%", height: "3900px" }}
     />
   );
@@ -54,11 +66,22 @@ export const GnomadGeneView = ({ variant }) => {
     );
   }
 
+  const url = `https://gnomad.broadinstitute.org/gene/${variant.annotations[0].gene_id}`;
+
+  if (process.env.NODE_ENV === "development") {
+    return (
+      <Segment placeholder id="gnomad-gene" textAlign="center">
+        <p>gnomAD gene page</p>
+        <a href={url}>{url}</a>
+      </Segment>
+    );
+  }
+
   return (
     <iframe
       title="gnomAD gene page"
       id="gnomad-gene"
-      src={`https://gnomad.broadinstitute.org/gene/${variant.annotations[0].gene_id}`}
+      src={url}
       style={{ width: "100%", height: "2000px" }}
     />
   );
