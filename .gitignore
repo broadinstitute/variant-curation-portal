@@ -14,6 +14,9 @@ webpack-stats.json
 htmlcov
 .tox
 
+# pyenv
+.python-version
+
 # dotenv for Docker Compose
 .env
 
