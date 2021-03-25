@@ -49,7 +49,15 @@ export const GnomadGeneView = ({ variant }) => {
     );
   }
 
-  const url = `https://gnomad.broadinstitute.org/gene/${variant.annotations[0].gene_id}`;
+  // For GRCh38 variants, if the GRCh37 equivalent is available, the v2 gene page is more useful because it has pext.
+  // https://github.com/macarthur-lab/variant-curation-portal/issues/204
+  const gnomadDataset =
+    variant.reference_genome === "GRCh37" ||
+    (variant.reference_genome === "GRCh38" && variant.liftover_variant_id)
+      ? "gnomad_r2_1"
+      : "gnomad_r3";
+
+  const url = `https://gnomad.broadinstitute.org/gene/${variant.annotations[0].gene_id}?dataset=${gnomadDataset}`;
 
   if (process.env.NODE_ENV === "development") {
     return (
@@ -80,5 +88,7 @@ GnomadGeneView.propTypes = {
         transcript_id: PropTypes.string.isRequired,
       })
     ).isRequired,
+    liftover_variant_id: PropTypes.string,
+    reference_genome: PropTypes.oneOf(["GRCh37", "GRCh38"]).isRequired,
   }).isRequired,
 };
