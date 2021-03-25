@@ -34,6 +34,6 @@ fi
 
 IMAGE_TAG="${REVISION}${BRANCH_TAG}${STATUS_TAG}"
 
-docker build --tag ${IMAGE_NAME}:${IMAGE_TAG} --tag ${IMAGE_NAME}:latest .
+docker build --pull --tag ${IMAGE_NAME}:${IMAGE_TAG} --tag ${IMAGE_NAME}:latest .
 
 echo ${IMAGE_NAME}:${IMAGE_TAG}
