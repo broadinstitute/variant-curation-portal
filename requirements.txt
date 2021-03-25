@@ -4,11 +4,21 @@
 #
 #    pip-compile
 #
-django-filter==2.2.0      # via -r requirements.in
-django-webpack-loader==0.6.0  # via -r requirements.in
-django==2.2.13            # via -r requirements.in, django-filter
-djangorestframework==3.9.1  # via -r requirements.in
-pytz==2019.1              # via django
-rules==2.0.1              # via -r requirements.in
-sqlparse==0.3.0           # via django
-whitenoise==4.1.2         # via -r requirements.in
+django-filter==2.2.0
+    # via -r requirements.in
+django-webpack-loader==0.6.0
+    # via -r requirements.in
+django==2.2.18
+    # via
+    #   -r requirements.in
+    #   django-filter
+djangorestframework==3.9.1
+    # via -r requirements.in
+pytz==2019.1
+    # via django
+rules==2.0.1
+    # via -r requirements.in
+sqlparse==0.3.0
+    # via django
+whitenoise==4.1.2
+    # via -r requirements.in
