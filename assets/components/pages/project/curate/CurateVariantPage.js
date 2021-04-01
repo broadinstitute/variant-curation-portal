@@ -155,15 +155,36 @@ class CurateVariantPage extends React.Component {
                             <a href="#top">top</a>
                           </List.Item>
                           <List.Item>
-                            <a href="#gnomad-variant">gnomAD (variant)</a>
+                            <a href="#gnomad-variant">
+                              gnomAD v{variant.reference_genome === "GRCh37" ? "2" : "3"} (variant)
+                            </a>
                           </List.Item>
-                          <List.Item>
-                            {hasAnnotations ? (
-                              <a href="#gnomad-gene">gnomAD (gene)</a>
-                            ) : (
-                              "gnomAD (gene)"
-                            )}
-                          </List.Item>
+                          {variant.reference_genome === "GRCh37" ? (
+                            <List.Item>
+                              {hasAnnotations ? (
+                                <a href="#gnomad-v2-gene">gnomAD v2 (gene)</a>
+                              ) : (
+                                "gnomAD v2 (gene)"
+                              )}
+                            </List.Item>
+                          ) : (
+                            <>
+                              <List.Item>
+                                {hasAnnotations ? (
+                                  <a href="#gnomad-v3-gene">gnomAD v3 (gene)</a>
+                                ) : (
+                                  "gnomAD v3 (gene)"
+                                )}
+                              </List.Item>
+                              <List.Item>
+                                {hasAnnotations ? (
+                                  <a href="#gnomad-v2-gene">gnomAD v2 (gene)</a>
+                                ) : (
+                                  "gnomAD v2 (gene)"
+                                )}
+                              </List.Item>
+                            </>
+                          )}
                           <List.Item>
                             <a href="#ucsc">UCSC (variant)</a>
                           </List.Item>
@@ -251,9 +272,31 @@ class CurateVariantPage extends React.Component {
                     </Segment>
                   )}
                   <hr style={{ margin: "30px 0" }} />
-                  <GnomadVariantView variant={variant} />
+                  <div id="gnomad-variant">
+                    <GnomadVariantView
+                      gnomadVersion={variant.reference_genome === "GRCh37" ? "2" : "3"}
+                      variant={variant}
+                    />
+                  </div>
                   <br />
-                  <GnomadGeneView variant={variant} />
+                  {variant.reference_genome === "GRCh37" ? (
+                    <div id="gnomad-v2-gene">
+                      <GnomadGeneView
+                        gnomadVersion={variant.reference_genome === "GRCh37" ? "2" : "3"}
+                        variant={variant}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div id="gnomad-v3-gene">
+                        <GnomadGeneView gnomadVersion="3" variant={variant} />
+                      </div>
+                      <br />
+                      <div id="gnomad-v2-gene">
+                        <GnomadGeneView gnomadVersion="2" variant={variant} />
+                      </div>
+                    </>
+                  )}
                   <br />
                   <UCSCVariantView settings={user.settings} variant={variant} />
                   <br />
