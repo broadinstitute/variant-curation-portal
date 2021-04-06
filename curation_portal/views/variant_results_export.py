@@ -6,7 +6,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from curation_portal.models import CurationAssignment, Variant, VariantAnnotation
+from curation_portal.models import CurationAssignment, Variant, VariantAnnotation, FLAG_LABELS
 
 
 class ExportVariantResultsView(APIView):
@@ -74,7 +74,8 @@ class ExportVariantResultsView(APIView):
         writer = csv.writer(response)
 
         header_row = ["Project", "Gene", "Curator"] + [
-            " ".join(word.capitalize() for word in f.split("_")) for f in result_fields
+            FLAG_LABELS.get(f, " ".join(word.capitalize() for word in f.split("_")))
+            for f in result_fields
         ]
         writer.writerow(header_row)
 

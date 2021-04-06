@@ -9,7 +9,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from curation_portal.models import CurationAssignment, Project, VariantAnnotation
+from curation_portal.models import CurationAssignment, Project, VariantAnnotation, FLAG_LABELS
 
 
 class ExportResultsFilter(FilterSet):
@@ -84,7 +84,8 @@ class ExportProjectResultsView(APIView):
         writer = csv.writer(response)
 
         header_row = ["Variant ID", "Gene", "Curator"] + [
-            " ".join(word.capitalize() for word in f.split("_")) for f in result_fields
+            FLAG_LABELS.get(f, " ".join(word.capitalize() for word in f.split("_")))
+            for f in result_fields
         ]
         writer.writerow(header_row)
 

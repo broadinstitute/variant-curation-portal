@@ -171,3 +171,6 @@ class CurationResult(models.Model):
 
     class Meta:
         db_table = "curation_result"
+
+
+FLAG_LABELS = {"flag_mnp": "Flag MNV/Frame Restoring Indel"}

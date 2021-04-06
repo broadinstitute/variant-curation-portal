@@ -21,7 +21,7 @@ const Legend = () => (
     </List.Item>
     <List.Item>
       <List horizontal>
-        <List.Item>P = In-phase MNP</List.Item>
+        <List.Item>P = In-phase MNV or frame-restoring indel</List.Item>
         <List.Item>R = Essential splice site rescue</List.Item>
       </List>
     </List.Item>
