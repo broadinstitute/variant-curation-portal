@@ -58,7 +58,7 @@ class Notifications extends Component {
 
     return (
       <div style={{ position: "relative" }}>
-        <div style={{ position: "absolute", right: "1.5rem", top: "1.5rem", zIndex: 2 }}>
+        <div style={{ position: "absolute", right: "1.5rem", bottom: "1.5rem", zIndex: 2 }}>
           {notifications.map(notification => {
             const { id, title, message, status } = notification;
             return (
@@ -69,7 +69,7 @@ class Notifications extends Component {
                 info={status === "info"}
                 success={status === "success"}
                 warning={status === "warning"}
-                style={{ marginBottom: "1rem" }}
+                style={{ marginBottom: "1rem", minWidth: "200px" }}
               >
                 <Message.Header>{title}</Message.Header>
                 {message && <p>{message}</p>}

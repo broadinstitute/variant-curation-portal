@@ -55,8 +55,6 @@ const App = ({ settings, user }) => {
         </Container>
       </Menu>
 
-      <Notifications />
-
       <div style={{ height: "100%", overflow: "auto" }}>
         <Switch>
           <Route
@@ -97,6 +95,8 @@ const App = ({ settings, user }) => {
           <Route component={PageNotFoundPage} />
         </Switch>
       </div>
+
+      <Notifications />
     </div>
   );
 };
