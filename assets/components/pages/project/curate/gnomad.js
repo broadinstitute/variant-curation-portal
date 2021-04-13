@@ -59,7 +59,11 @@ GnomadVariantView.propTypes = {
 };
 
 export const GnomadGeneView = ({ gnomadVersion, variant }) => {
-  const hasAnnotations = variant.annotations.length > 0;
+  const annotations = variant.annotations.filter(annotation =>
+    annotation.gene_id.startsWith("ENSG")
+  );
+
+  const hasAnnotations = annotations.length > 0;
 
   if (!hasAnnotations) {
     return (
@@ -78,7 +82,7 @@ export const GnomadGeneView = ({ gnomadVersion, variant }) => {
     "3": "gnomad_r3",
   }[gnomadVersion];
 
-  const url = `https://gnomad.broadinstitute.org/gene/${variant.annotations[0].gene_id}?dataset=${gnomadDataset}`;
+  const url = `https://gnomad.broadinstitute.org/gene/${annotations[0].gene_id}?dataset=${gnomadDataset}`;
 
   if (process.env.NODE_ENV === "development") {
     return (
