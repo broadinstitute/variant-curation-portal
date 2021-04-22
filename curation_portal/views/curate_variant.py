@@ -10,17 +10,10 @@ from curation_portal.filters import AssignmentFilter
 from curation_portal.models import (
     CurationAssignment,
     CurationResult,
-    Sample,
     Variant,
     VariantAnnotation,
     VariantTag,
 )
-
-
-class SampleSerializer(ModelSerializer):
-    class Meta:
-        model = Sample
-        exclude = ("id", "variant")
 
 
 class VariantAnnotationSerializer(ModelSerializer):
@@ -38,7 +31,6 @@ class VariantTagSerializer(ModelSerializer):
 class VariantSerializer(ModelSerializer):
     annotations = VariantAnnotationSerializer(many=True)
     tags = VariantTagSerializer(many=True)
-    samples = SampleSerializer(many=True)
 
     class Meta:
         model = Variant
@@ -87,7 +79,7 @@ class CurateVariantView(APIView):
         try:
             assignment = (
                 self.request.user.curation_assignments.select_related("variant", "result")
-                .prefetch_related("variant__annotations", "variant__samples", "variant__tags")
+                .prefetch_related("variant__annotations", "variant__tags")
                 .get(variant=self.kwargs["variant_id"], variant__project=self.kwargs["project_id"])
             )
 

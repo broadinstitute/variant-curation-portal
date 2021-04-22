@@ -15,7 +15,6 @@ from curation_portal.models import (
     CurationAssignment,
     CurationResult,
     Project,
-    Sample,
     User,
     UserSettings,
     Variant,
@@ -90,12 +89,6 @@ def variant_id_parts(variant_id):
     return {"chrom": chrom, "pos": pos, "xpos": xpos, "ref": ref, "alt": alt}
 
 
-class SampleSerializer(ModelSerializer):
-    class Meta:
-        model = Sample
-        exclude = ("id", "variant")
-
-
 class VariantAnnotationSerializer(ModelSerializer):
     class Meta:
         model = VariantAnnotation
@@ -124,7 +117,6 @@ class VariantSerializer(ModelSerializer):
 
     annotations = VariantAnnotationSerializer(many=True, required=False)
     tags = VariantTagSerializer(many=True, required=False)
-    samples = SampleSerializer(many=True, required=False)
 
     class Meta:
         model = Variant
@@ -142,7 +134,6 @@ class VariantSerializer(ModelSerializer):
     def create(self, validated_data):
         annotations_data = validated_data.pop("annotations", None)
         tags_data = validated_data.pop("tags", None)
-        samples_data = validated_data.pop("samples", None)
 
         variant_id = validated_data["variant_id"]
         variant = Variant.objects.create(
@@ -156,10 +147,6 @@ class VariantSerializer(ModelSerializer):
         if tags_data:
             tags = [VariantTag(**item, variant=variant) for item in tags_data]
             VariantTag.objects.bulk_create(tags)
-
-        if samples_data:
-            samples = [Sample(**item, variant=variant) for item in samples_data]
-            Sample.objects.bulk_create(samples)
 
         return variant
 

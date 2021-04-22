@@ -99,44 +99,6 @@
           },
           "required": ["label", "value"]
         }
-      },
-      "samples": {
-        "description": "Sample information",
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "sample_id": {
-              "description": "Sample ID",
-              "type": ["string", "integer"]
-            },
-            "GT": {
-              "description": "Genotype",
-              "enum": ["0/1", "1/1"]
-            },
-            "GQ": {
-              "description": "Genotype quality",
-              "type": ["integer", "null"]
-            },
-            "DP": {
-              "description": "Depth",
-              "type": ["integer", "null"]
-            },
-            "AD_REF": {
-              "description": "Allele depth for reference allele",
-              "type": ["integer", "null"]
-            },
-            "AD_ALT": {
-              "description": "Allele depth for alt allele",
-              "type": ["integer", "null"]
-            },
-            "AB": {
-              "description": "Allele balance",
-              "type": ["number", "null"]
-            }
-          },
-          "required": ["sample_id"]
-        }
       }
     },
     "required": ["variant_id"]

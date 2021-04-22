@@ -95,24 +95,6 @@ class VariantTag(models.Model):
         db_table = "curation_variant_tag"
 
 
-class Sample(models.Model):
-    variant = models.ForeignKey(
-        Variant, on_delete=models.CASCADE, related_name="samples", related_query_name="sample"
-    )
-    sample_id = models.CharField(max_length=100)
-
-    GT = models.TextField(null=True, blank=True)
-    GQ = models.IntegerField(null=True, blank=True)
-    DP = models.IntegerField(null=True, blank=True)
-    AD_REF = models.IntegerField(null=True, blank=True)
-    AD_ALT = models.IntegerField(null=True, blank=True)
-    AB = models.FloatField(null=True, blank=True)
-
-    class Meta:
-        db_table = "curation_sample"
-        unique_together = ("variant", "sample_id")
-
-
 class CurationAssignment(models.Model):
     variant = models.ForeignKey(
         Variant,

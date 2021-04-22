@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Button, Divider, Header, List, Segment } from "semantic-ui-react";
+import { Button, Divider, Header, List } from "semantic-ui-react";
 
 import { saveResult, setResult } from "../../../../redux/actions/curationResultActions";
 import { getCurationResult } from "../../../../redux/selectors/curationResultSelectors";
@@ -16,7 +16,6 @@ import withParamsAsProps from "../../withParamsAsProps";
 
 import CurationForm from "./CurationForm";
 import { GnomadVariantView, GnomadGeneView } from "./gnomad";
-import SampleTable from "./SampleTable";
 import { UCSCVariantView, UCSCGeneView } from "./UCSC";
 import VariantData from "./VariantData";
 
@@ -264,13 +263,6 @@ class CurateVariantPage extends React.Component {
                 >
                   <a id="top" /> {/* eslint-disable-line */}
                   <VariantData variant={variant} />
-                  {variant.samples.length ? (
-                    <SampleTable samples={variant.samples} />
-                  ) : (
-                    <Segment placeholder textAlign="center" style={{ minHeight: "6rem" }}>
-                      <Header>Sample data not available for this variant</Header>
-                    </Segment>
-                  )}
                   <hr style={{ margin: "30px 0" }} />
                   <div id="gnomad-variant">
                     <GnomadVariantView

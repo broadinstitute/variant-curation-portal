@@ -60,9 +60,7 @@ def get_rank(annotation):
     return min(CONSEQUENCE_TERM_RANK.get(t) for t in terms)
 
 
-def convert_vcf_to_json(
-    vcf_path, output_path, max_samples_per_genotype=5, reference_genome="GRCh37", tag_fields=None
-):
+def convert_vcf_to_json(vcf_path, output_path, reference_genome="GRCh37", tag_fields=None):
     variants = {}
 
     with gzip.open(vcf_path, "rt") as vcf_file:
@@ -79,8 +77,6 @@ def convert_vcf_to_json(
                 raise Exception(
                     "VCF contains multiallelic rows, which are not supported by this script"
                 )
-
-            samples = list(row.samples)
 
             # Parse CSQ field
             vep_annotations = [dict(zip(csq_header, v.split("|"))) for v in row.INFO.get("CSQ", [])]
@@ -117,10 +113,9 @@ def convert_vcf_to_json(
                     "AC": row.INFO["AC"],
                     "AN": row.INFO["AN"],
                     "AF": row.INFO["AF"],
-                    "n_homozygotes": sum(1 for s in samples if s["GT"] == "1/1"),
+                    "n_homozygotes": sum(1 for s in list(row.samples) if s["GT"] == "1/1"),
                     "annotations": [],
                     "tags": [],
-                    "samples": [],
                 }
 
             variant = variants[variant_id]
@@ -144,44 +139,6 @@ def convert_vcf_to_json(
                     if value is not None:
                         variant["tags"].append({"label": label, "value": value})
 
-            for sample in sorted(samples, key=lambda s: getattr(s.data, "GQ", None) or 0):
-                if sample["GT"] not in {"0/1", "1/1"}:
-                    continue
-
-                if (
-                    sum(1 for s in variant["samples"] if s["GT"] == sample["GT"])
-                    >= max_samples_per_genotype
-                ):
-                    continue
-
-                allele_depth = getattr(sample.data, "AD", None)
-                depth = getattr(sample.data, "DP", None)
-                genotype_quality = getattr(sample.data, "GQ", None)
-
-                # Skip samples without any relevant information
-                if not (depth or genotype_quality or allele_depth):
-                    continue
-
-                ref_allele_depth = allele_depth[0] if allele_depth else None
-                alt_allele_depth = sum(allele_depth[1:]) if allele_depth else None
-                allele_balance = (
-                    alt_allele_depth / float(depth)
-                    if depth is not None and depth > 0
-                    else float("NaN")
-                )
-
-                variant["samples"].append(
-                    {
-                        "sample_id": len(variant["samples"]),
-                        "GT": sample["GT"],
-                        "DP": depth,
-                        "GQ": genotype_quality,
-                        "AD_REF": ref_allele_depth,
-                        "AD_ALT": alt_allele_depth,
-                        "AB": allele_balance,
-                    }
-                )
-
     with open(output_path, "w") as output_file:
         json.dump(list(variants.values()), output_file)
 
@@ -190,7 +147,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("vcf_path")
     parser.add_argument("output_path")
-    parser.add_argument("--max-samples-per-genotype", type=int, default=5)
     parser.add_argument("--reference-genome", choices=["GRCh37", "GRCh38"], default="GRCh37")
     parser.add_argument("--tag-field", action="append", default=[])
 
@@ -208,7 +164,6 @@ def main():
     convert_vcf_to_json(
         args.vcf_path,
         args.output_path,
-        max_samples_per_genotype=args.max_samples_per_genotype,
         reference_genome=args.reference_genome,
         tag_fields=tag_fields,
     )
