@@ -13,6 +13,7 @@ import {
   TextArea,
 } from "semantic-ui-react";
 
+import { FLAG_LABELS, FLAG_SHORTCUTS } from "../../../../constants/flags";
 import verdicts, { verdictLabels } from "../../../../constants/verdicts";
 import { saveResult, setResult } from "../../../../redux/actions/curationResultActions";
 import {
@@ -74,7 +75,7 @@ class CurationForm extends React.Component {
   renderFlagInput(field, label, shortcut) {
     const { value } = this.props;
     return (
-      <React.Fragment>
+      <React.Fragment key={field}>
         <Form.Field
           checked={value[field]}
           className="mousetrap"
@@ -141,24 +142,25 @@ class CurationForm extends React.Component {
           />
           <div style={{ columns: 2 }}>
             <Header sub>Technical</Header>
-            {this.renderFlagInput("flag_mapping_error", "Mapping error", "m a")}
-            {this.renderFlagInput("flag_genotyping_error", "Genotyping error", "g e")}
-            {this.renderFlagInput("flag_homopolymer", "Homopolymer", "h o")}
-            {this.renderFlagInput("flag_no_read_data", "No read data", "n r")}
-            {this.renderFlagInput("flag_reference_error", "Reference error", "r e")}
-            {this.renderFlagInput("flag_strand_bias", "Strand bias", "b i")}
+            {[
+              "flag_mapping_error",
+              "flag_genotyping_error",
+              "flag_homopolymer",
+              "flag_no_read_data",
+              "flag_reference_error",
+              "flag_strand_bias",
+            ].map(flag => this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag]))}
             <Header sub>Rescue</Header>
-            {this.renderFlagInput("flag_mnp", "In-phase MNV or frame-restoring indel", "i n")}
-            {this.renderFlagInput(
-              "flag_essential_splice_rescue",
-              "Essential splice site rescue",
-              "e s"
+            {["flag_mnp", "flag_essential_splice_rescue"].map(flag =>
+              this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag])
             )}
             <Header sub>Impact</Header>
-            {this.renderFlagInput("flag_minority_of_transcripts", "Minority of transcripts", "m i")}
-            {this.renderFlagInput("flag_weak_exon_conservation", "Weak exon conservation", "w e")}
-            {this.renderFlagInput("flag_last_exon", "Last exon", "l e")}
-            {this.renderFlagInput("flag_other_transcript_error", "Other transcript error", "o t")}
+            {[
+              "flag_minority_of_transcripts",
+              "flag_weak_exon_conservation",
+              "flag_last_exon",
+              "flag_other_transcript_error",
+            ].map(flag => this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag]))}
           </div>
           <Header sub>Verdict</Header>
           <Form.Group>

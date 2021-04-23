@@ -1,6 +1,7 @@
 import React from "react";
 import { List } from "semantic-ui-react";
 
+import { FLAG_CODES, FLAG_LABELS } from "../../../../constants/flags";
 import verdicts, {
   verdictColors,
   verdictLabels,
@@ -11,26 +12,41 @@ const Legend = () => (
   <List relaxed>
     <List.Item>
       <List horizontal>
-        <List.Item>M = Mapping error</List.Item>
-        <List.Item>G = Genotyping error</List.Item>
-        <List.Item>H = Homopolymer</List.Item>
-        <List.Item>N = No read data</List.Item>
-        <List.Item>E = Reference error</List.Item>
-        <List.Item>S = Strand bias</List.Item>
+        {[
+          "flag_mapping_error",
+          "flag_genotyping_error",
+          "flag_homopolymer",
+          "flag_no_read_data",
+          "flag_reference_error",
+          "flag_strand_bias",
+        ].map(flag => (
+          <List.Item key={flag}>
+            {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
+          </List.Item>
+        ))}
       </List>
     </List.Item>
     <List.Item>
       <List horizontal>
-        <List.Item>P = In-phase MNV or frame-restoring indel</List.Item>
-        <List.Item>R = Essential splice site rescue</List.Item>
+        {["flag_mnp", "flag_essential_splice_rescue"].map(flag => (
+          <List.Item key={flag}>
+            {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
+          </List.Item>
+        ))}
       </List>
     </List.Item>
     <List.Item>
       <List horizontal>
-        <List.Item>T = Minority of transcripts</List.Item>
-        <List.Item>C = Weak exon/site conservation</List.Item>
-        <List.Item>L = Last exon</List.Item>
-        <List.Item>O = Other transcript error</List.Item>
+        {[
+          "flag_minority_of_transcripts",
+          "flag_weak_exon_conservation",
+          "flag_last_exon",
+          "flag_other_transcript_error",
+        ].map(flag => (
+          <List.Item key={flag}>
+            {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
+          </List.Item>
+        ))}
       </List>
     </List.Item>
     <List.Item>
