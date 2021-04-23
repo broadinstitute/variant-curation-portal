@@ -155,4 +155,23 @@ class CurationResult(models.Model):
         db_table = "curation_result"
 
 
+FLAG_FIELDS = [
+    ## Technical
+    "flag_mapping_error",
+    "flag_genotyping_error",
+    "flag_homopolymer",
+    "flag_no_read_data",
+    "flag_reference_error",
+    "flag_strand_bias",
+    ## Rescue
+    "flag_mnp",
+    "flag_essential_splice_rescue",
+    ## Impact
+    "flag_minority_of_transcripts",
+    "flag_weak_exon_conservation",
+    "flag_last_exon",
+    "flag_other_transcript_error",
+]
+
+
 FLAG_LABELS = {"flag_mnp": "Flag MNV/Frame Restoring Indel"}

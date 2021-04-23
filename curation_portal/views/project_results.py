@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ChoiceField, ModelSerializer, SerializerMethodField
 from rest_framework.views import APIView
 
-from curation_portal.models import CurationResult, Project, Variant
+from curation_portal.models import CurationResult, Project, Variant, FLAG_FIELDS
 from curation_portal.serializers import ImportedResultSerializer
 
 
@@ -35,25 +35,7 @@ class CurationResultSerializer(ModelSerializer):
 
     class Meta:
         model = CurationResult
-        fields = (
-            "flag_mapping_error",
-            "flag_genotyping_error",
-            "flag_homopolymer",
-            "flag_no_read_data",
-            "flag_reference_error",
-            "flag_strand_bias",
-            "flag_mnp",
-            "flag_essential_splice_rescue",
-            "flag_minority_of_transcripts",
-            "flag_weak_exon_conservation",
-            "flag_last_exon",
-            "flag_other_transcript_error",
-            "notes",
-            "should_revisit",
-            "verdict",
-            "variant",
-            "curator",
-        )
+        fields = (*FLAG_FIELDS, "notes", "should_revisit", "verdict", "variant", "curator")
 
 
 class ProjectResultsView(APIView):

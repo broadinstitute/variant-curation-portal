@@ -6,7 +6,13 @@ from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from curation_portal.models import CurationAssignment, Variant, VariantAnnotation, FLAG_LABELS
+from curation_portal.models import (
+    CurationAssignment,
+    Variant,
+    VariantAnnotation,
+    FLAG_FIELDS,
+    FLAG_LABELS,
+)
 
 
 class ExportVariantResultsView(APIView):
@@ -48,23 +54,7 @@ class ExportVariantResultsView(APIView):
             )
         )
 
-        result_fields = [
-            "notes",
-            "should_revisit",
-            "verdict",
-            "flag_mapping_error",
-            "flag_genotyping_error",
-            "flag_homopolymer",
-            "flag_no_read_data",
-            "flag_reference_error",
-            "flag_strand_bias",
-            "flag_mnp",
-            "flag_essential_splice_rescue",
-            "flag_minority_of_transcripts",
-            "flag_weak_exon_conservation",
-            "flag_last_exon",
-            "flag_other_transcript_error",
-        ]
+        result_fields = ["notes", "should_revisit", "verdict", *FLAG_FIELDS]
 
         response = HttpResponse(content_type="text/csv")
         response[
