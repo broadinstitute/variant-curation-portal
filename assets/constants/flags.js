@@ -1,3 +1,5 @@
+import { mapValues } from "lodash";
+
 export const FLAGS = [
   // Technical
   "flag_mapping_error",
@@ -18,20 +20,20 @@ export const FLAGS = [
 
 export const FLAG_CODES = {
   // Technical
-  flag_mapping_error: "M",
-  flag_genotyping_error: "G",
-  flag_homopolymer: "H",
-  flag_no_read_data: "N",
-  flag_reference_error: "E",
-  flag_strand_bias: "S",
+  flag_mapping_error: "MA",
+  flag_genotyping_error: "GE",
+  flag_homopolymer: "HO",
+  flag_no_read_data: "NR",
+  flag_reference_error: "RE",
+  flag_strand_bias: "BI",
   // Rescue
-  flag_mnp: "P",
-  flag_essential_splice_rescue: "R",
+  flag_mnp: "IN",
+  flag_essential_splice_rescue: "ES",
   // Impact
-  flag_minority_of_transcripts: "T",
-  flag_weak_exon_conservation: "C",
-  flag_last_exon: "L",
-  flag_other_transcript_error: "O",
+  flag_minority_of_transcripts: "MI",
+  flag_weak_exon_conservation: "WE",
+  flag_last_exon: "LE",
+  flag_other_transcript_error: "OT",
 };
 
 if (process.env.NODE_ENV === "development") {
@@ -61,29 +63,9 @@ export const FLAG_LABELS = {
   flag_other_transcript_error: "Other transcript error",
 };
 
-export const FLAG_SHORTCUTS = {
-  // Technical
-  flag_mapping_error: "m a",
-  flag_genotyping_error: "g e",
-  flag_homopolymer: "h o",
-  flag_no_read_data: "n r",
-  flag_reference_error: "r e",
-  flag_strand_bias: "b i",
-  // Rescue
-  flag_mnp: "i n",
-  flag_essential_splice_rescue: "e s",
-  // Impact
-  flag_minority_of_transcripts: "m i",
-  flag_weak_exon_conservation: "w e",
-  flag_last_exon: "l e",
-  flag_other_transcript_error: "o t",
-};
-
-if (process.env.NODE_ENV === "development") {
-  const flagShortcuts = Object.values(FLAG_SHORTCUTS);
-
-  const duplicateShortcuts = new Set(flagShortcuts.filter((s, i, a) => i !== a.indexOf(s)));
-  if (duplicateShortcuts.size > 0) {
-    throw new Error(`Duplicate flag shortcuts: ${Array.from(duplicateShortcuts).join(", ")}`);
-  }
-}
+export const FLAG_SHORTCUTS = mapValues(FLAG_CODES, code =>
+  code
+    .toLowerCase()
+    .split("")
+    .join(" ")
+);

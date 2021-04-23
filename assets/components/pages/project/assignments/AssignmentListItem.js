@@ -10,7 +10,10 @@ import VariantId from "../../../VariantId";
 
 const CurationResult = ({ result }) => (
   <React.Fragment>
-    {result.verdict && <Verdict verdict={result.verdict} />} <Flags result={result} />{" "}
+    {result.verdict && <Verdict verdict={result.verdict} />}{" "}
+    <span style={{ marginLeft: "1ch" }}>
+      <Flags result={result} />
+    </span>{" "}
     {result.notes && (
       <span>
         <strong>note:</strong> {result.notes}

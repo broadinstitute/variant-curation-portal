@@ -5,7 +5,7 @@ import { CurationResultPropType } from "../propTypes";
 
 const Flags = ({ result }) => (
   <span style={{ fontFamily: "monospace" }}>
-    {FLAGS.map(flag => (result[flag] ? FLAG_CODES[flag] : "_")).join("")}
+    {FLAGS.map(flag => (result[flag] ? FLAG_CODES[flag] : "")).join(" ")}
   </span>
 );
 
