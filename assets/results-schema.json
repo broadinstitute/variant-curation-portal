@@ -57,6 +57,10 @@
         "description": "Essential splice rescue",
         "type": ["boolean", "null"]
       },
+      "flag_in_frame_exon": {
+        "description": "In-frame exon",
+        "type": ["boolean", "null"]
+      },
       "flag_minority_of_transcripts": {
         "description": "Minority of transcripts",
         "type": ["boolean", "null"]
@@ -71,6 +75,22 @@
       },
       "flag_other_transcript_error": {
         "description": "Other transcript error",
+        "type": ["boolean", "null"]
+      },
+      "flag_first_150_bp": {
+        "description": "First 150 base pairs",
+        "type": ["boolean", "null"]
+      },
+      "flag_long_exon": {
+        "description": "Long exon",
+        "type": ["boolean", "null"]
+      },
+      "flag_ab_filter": {
+        "description": "AB filter",
+        "type": ["boolean", "null"]
+      },
+      "flag_possible_splice_site_rescue": {
+        "description": "Possible splice site rescue",
         "type": ["boolean", "null"]
       },
       "created_at": {

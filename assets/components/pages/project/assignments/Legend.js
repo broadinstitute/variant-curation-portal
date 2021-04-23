@@ -28,7 +28,7 @@ const Legend = () => (
     </List.Item>
     <List.Item>
       <List horizontal>
-        {["flag_mnp", "flag_essential_splice_rescue"].map(flag => (
+        {["flag_mnp", "flag_essential_splice_rescue", "flag_in_frame_exon"].map(flag => (
           <List.Item key={flag}>
             {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
           </List.Item>
@@ -42,7 +42,18 @@ const Legend = () => (
           "flag_weak_exon_conservation",
           "flag_last_exon",
           "flag_other_transcript_error",
+          "flag_first_150_bp",
+          "flag_long_exon",
         ].map(flag => (
+          <List.Item key={flag}>
+            {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
+          </List.Item>
+        ))}
+      </List>
+    </List.Item>
+    <List.Item>
+      <List horizontal>
+        {["flag_ab_filter", "flag_possible_splice_site_rescue"].map(flag => (
           <List.Item key={flag}>
             {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
           </List.Item>

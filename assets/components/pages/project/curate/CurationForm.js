@@ -151,7 +151,7 @@ class CurationForm extends React.Component {
               "flag_strand_bias",
             ].map(flag => this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag]))}
             <Header sub>Rescue</Header>
-            {["flag_mnp", "flag_essential_splice_rescue"].map(flag =>
+            {["flag_mnp", "flag_essential_splice_rescue", "flag_in_frame_exon"].map(flag =>
               this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag])
             )}
             <Header sub>Impact</Header>
@@ -160,7 +160,13 @@ class CurationForm extends React.Component {
               "flag_weak_exon_conservation",
               "flag_last_exon",
               "flag_other_transcript_error",
+              "flag_first_150_bp",
+              "flag_long_exon",
             ].map(flag => this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag]))}
+            <Header sub>Comments</Header>
+            {["flag_ab_filter", "flag_possible_splice_site_rescue"].map(flag =>
+              this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag])
+            )}
           </div>
           <Header sub>Verdict</Header>
           <Form.Group>

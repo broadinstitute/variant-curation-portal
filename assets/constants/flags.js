@@ -11,11 +11,17 @@ export const FLAGS = [
   // Rescue
   "flag_mnp",
   "flag_essential_splice_rescue",
+  "flag_in_frame_exon",
   // Impact
   "flag_minority_of_transcripts",
   "flag_weak_exon_conservation",
   "flag_last_exon",
   "flag_other_transcript_error",
+  "flag_first_150_bp",
+  "flag_long_exon",
+  // Comment
+  "flag_ab_filter",
+  "flag_possible_splice_site_rescue",
 ];
 
 export const FLAG_CODES = {
@@ -29,11 +35,17 @@ export const FLAG_CODES = {
   // Rescue
   flag_mnp: "IN",
   flag_essential_splice_rescue: "ES",
+  flag_in_frame_exon: "IE",
   // Impact
   flag_minority_of_transcripts: "MI",
   flag_weak_exon_conservation: "WE",
   flag_last_exon: "LE",
   flag_other_transcript_error: "OT",
+  flag_first_150_bp: "F1",
+  flag_long_exon: "LO",
+  // Comment
+  flag_ab_filter: "AB",
+  flag_possible_splice_site_rescue: "SS",
 };
 
 if (process.env.NODE_ENV === "development") {
@@ -56,11 +68,17 @@ export const FLAG_LABELS = {
   // Rescue
   flag_mnp: "In-phase MNV or frame-restoring indel",
   flag_essential_splice_rescue: "Essential splice site rescue",
+  flag_in_frame_exon: "In-frame exon",
   // Impact
   flag_minority_of_transcripts: "Minority of transcripts",
   flag_weak_exon_conservation: "Weak exon conservation",
   flag_last_exon: "Last exon",
   flag_other_transcript_error: "Other transcript error",
+  flag_first_150_bp: "First 150 base pairs",
+  flag_long_exon: "Long exon",
+  // Comment
+  flag_ab_filter: "AB filter",
+  flag_possible_splice_site_rescue: "Possible splice site rescue",
 };
 
 export const FLAG_SHORTCUTS = mapValues(FLAG_CODES, code =>

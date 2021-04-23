@@ -138,11 +138,17 @@ class CurationResult(models.Model):
     ## Rescue
     flag_mnp = models.BooleanField(default=False)
     flag_essential_splice_rescue = models.BooleanField(default=False)
+    flag_in_frame_exon = models.BooleanField(default=False)
     ## Impact
     flag_minority_of_transcripts = models.BooleanField(default=False)
     flag_weak_exon_conservation = models.BooleanField(default=False)
     flag_last_exon = models.BooleanField(default=False)
     flag_other_transcript_error = models.BooleanField(default=False)
+    flag_first_150_bp = models.BooleanField(default=False)
+    flag_long_exon = models.BooleanField(default=False)
+    ## Comment
+    flag_ab_filter = models.BooleanField(default=False)
+    flag_possible_splice_site_rescue = models.BooleanField(default=False)
 
     # Notes
     notes = models.TextField(null=True, blank=True)
@@ -166,12 +172,18 @@ FLAG_FIELDS = [
     ## Rescue
     "flag_mnp",
     "flag_essential_splice_rescue",
+    "flag_in_frame_exon",
     ## Impact
     "flag_minority_of_transcripts",
     "flag_weak_exon_conservation",
     "flag_last_exon",
     "flag_other_transcript_error",
+    "flag_first_150_bp",
+    "flag_long_exon",
+    ## Comment
+    "flag_ab_filter",
+    "flag_possible_splice_site_rescue",
 ]
 
 
-FLAG_LABELS = {"flag_mnp": "Flag MNV/Frame Restoring Indel"}
+FLAG_LABELS = {"flag_mnp": "Flag MNV/Frame Restoring Indel", "flag_ab_filter": "Flag AB Filter"}
