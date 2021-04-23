@@ -34,6 +34,15 @@ export const FLAG_CODES = {
   flag_other_transcript_error: "O",
 };
 
+if (process.env.NODE_ENV === "development") {
+  const flagCodes = Object.values(FLAG_CODES);
+
+  const duplicateCodes = new Set(flagCodes.filter((s, i, a) => i !== a.indexOf(s)));
+  if (duplicateCodes.size > 0) {
+    throw new Error(`Duplicate flag codes: ${Array.from(duplicateCodes).join(", ")}`);
+  }
+}
+
 export const FLAG_LABELS = {
   // Technical
   flag_mapping_error: "Mapping error",
@@ -69,3 +78,12 @@ export const FLAG_SHORTCUTS = {
   flag_last_exon: "l e",
   flag_other_transcript_error: "o t",
 };
+
+if (process.env.NODE_ENV === "development") {
+  const flagShortcuts = Object.values(FLAG_SHORTCUTS);
+
+  const duplicateShortcuts = new Set(flagShortcuts.filter((s, i, a) => i !== a.indexOf(s)));
+  if (duplicateShortcuts.size > 0) {
+    throw new Error(`Duplicate flag shortcuts: ${Array.from(duplicateShortcuts).join(", ")}`);
+  }
+}
