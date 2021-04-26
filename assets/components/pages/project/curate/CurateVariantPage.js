@@ -210,7 +210,7 @@ class CurateVariantPage extends React.Component {
                             }}
                           >
                             {showForm ? "Hide" : "Show"} form{" "}
-                            <KeyboardShortcutHint color="rgba(0, 0, 0, 0.4)" keys="f" />
+                            <KeyboardShortcutHint color="rgba(0, 0, 0, 0.4)" keys="f f" />
                           </Button>
                           <KeyboardShortcut
                             keys="f"
