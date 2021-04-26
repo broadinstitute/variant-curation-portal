@@ -81,7 +81,7 @@ def load_gnomad_v2_variants():
 
 
 def load_gnomad_v3_variants():
-    ds = hl.read_table("gs://gcp-public-data--gnomad/release/3.0/ht/genomes/gnomad.genomes.r3.0.sites.ht")
+    ds = hl.read_table("gs://gcp-public-data--gnomad/release/3.1.1/ht/genomes/gnomad.genomes.v3.1.1.sites.ht")
     ds = ds.select(genome=ds.row_value.drop("vep"), vep=ds.vep)
     ds = ds.annotate(exome=hl.null(ds.genome.dtype))
 
