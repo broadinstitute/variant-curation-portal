@@ -45,7 +45,7 @@ export const FLAG_CODES = {
   flag_long_exon: "LO",
   // Comment
   flag_ab_filter: "AB",
-  flag_possible_splice_site_rescue: "SS",
+  flag_possible_splice_site_rescue: "PS",
 };
 
 if (process.env.NODE_ENV === "development") {
