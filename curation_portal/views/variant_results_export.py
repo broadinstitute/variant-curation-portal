@@ -50,7 +50,9 @@ class ExportVariantResultsView(APIView):
             .prefetch_related(
                 Prefetch(
                     "variant__annotations",
-                    queryset=VariantAnnotation.objects.only("variant_id", "gene_id", "gene_symbol"),
+                    queryset=VariantAnnotation.objects.only(
+                        "variant_id", "gene_id", "gene_symbol", "transcript_id"
+                    ),
                 )
             )
         )
@@ -64,7 +66,7 @@ class ExportVariantResultsView(APIView):
 
         writer = csv.writer(response)
 
-        header_row = ["Project", "Gene", "Curator"] + [
+        header_row = ["Project", "Gene", "Transcript", "Curator"] + [
             FLAG_LABELS.get(f, " ".join(word.capitalize() for word in f.split("_")))
             for f in result_fields
         ]
@@ -76,6 +78,12 @@ class ExportVariantResultsView(APIView):
                 ";".join(
                     set(
                         f"{annotation.gene_id}:{annotation.gene_symbol}"
+                        for annotation in assignment.variant.annotations.all()
+                    )
+                ),
+                ";".join(
+                    set(
+                        annotation.transcript_id
                         for annotation in assignment.variant.annotations.all()
                     )
                 ),
