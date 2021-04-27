@@ -46,7 +46,8 @@ class ExportProjectResultsView(APIView):
             .select_related("curator", "variant", "result")
             .prefetch_related(
                 Prefetch(
-                    "variant__annotations", queryset=VariantAnnotation.objects.only("gene_symbol")
+                    "variant__annotations",
+                    queryset=VariantAnnotation.objects.only("variant_id", "gene_id", "gene_symbol"),
                 )
             )
         )
