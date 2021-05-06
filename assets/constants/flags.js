@@ -24,7 +24,7 @@ export const FLAGS = [
   "flag_uninformative_pext",
   "flag_weak_gene_conservation",
   // Comment
-  "flag_ab_filter",
+  "flag_skewed_ab",
   "flag_possible_splice_site_rescue",
 ];
 
@@ -52,7 +52,7 @@ export const FLAG_CODES = {
   flag_uninformative_pext: "UP",
   flag_weak_gene_conservation: "WG",
   // Comment
-  flag_ab_filter: "AB",
+  flag_skewed_ab: "AB",
   flag_possible_splice_site_rescue: "PS",
 };
 
@@ -89,7 +89,7 @@ export const FLAG_LABELS = {
   flag_uninformative_pext: "Uninformative pext",
   flag_weak_gene_conservation: "weak gene conservation",
   // Comment
-  flag_ab_filter: "AB filter",
+  flag_skewed_ab: "Skewed AB",
   flag_possible_splice_site_rescue: "Possible splice site rescue",
 };
 

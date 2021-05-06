@@ -151,7 +151,7 @@ class CurationResult(models.Model):
     flag_uninformative_pext = models.BooleanField(default=False)
     flag_weak_gene_conservation = models.BooleanField(default=False)
     ## Comment
-    flag_ab_filter = models.BooleanField(default=False)
+    flag_skewed_ab = models.BooleanField(default=False)
     flag_possible_splice_site_rescue = models.BooleanField(default=False)
 
     # Notes
@@ -189,14 +189,14 @@ FLAG_FIELDS = [
     "flag_uninformative_pext",
     "flag_weak_gene_conservation",
     ## Comment
-    "flag_ab_filter",
+    "flag_skewed_ab",
     "flag_possible_splice_site_rescue",
 ]
 
 
 FLAG_LABELS = {
     "flag_mnp": "Flag MNV/Frame Restoring Indel",
-    "flag_ab_filter": "Flag AB Filter",
+    "flag_skewed_ab": "Flag skewed AB",
     "flag_low_pext": "Flag Low pext (< 0.2)",
     "flag_pext_less_than_half_max": "Flag pext < 50% max",
     "flag_uninformative_pext": "Flag Uninformative pext",

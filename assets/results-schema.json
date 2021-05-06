@@ -101,8 +101,8 @@
         "description": "Weak gene conservation",
         "type": ["boolean", "null"]
       },
-      "flag_ab_filter": {
-        "description": "AB filter",
+      "flag_skewed_ab": {
+        "description": "Skewed AB",
         "type": ["boolean", "null"]
       },
       "flag_possible_splice_site_rescue": {

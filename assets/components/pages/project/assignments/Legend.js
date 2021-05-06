@@ -66,7 +66,7 @@ const Legend = () => (
     </List.Item>
     <List.Item>
       <List horizontal>
-        {["flag_ab_filter", "flag_possible_splice_site_rescue"].map(flag => (
+        {["flag_skewed_ab", "flag_possible_splice_site_rescue"].map(flag => (
           <List.Item key={flag}>
             {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
           </List.Item>
