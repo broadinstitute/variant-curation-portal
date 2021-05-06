@@ -146,6 +146,10 @@ class CurationResult(models.Model):
     flag_other_transcript_error = models.BooleanField(default=False)
     flag_first_150_bp = models.BooleanField(default=False)
     flag_long_exon = models.BooleanField(default=False)
+    flag_low_pext = models.BooleanField(default=False)
+    flag_pext_less_than_half_max = models.BooleanField(default=False)
+    flag_uninformative_pext = models.BooleanField(default=False)
+    flag_weak_gene_conservation = models.BooleanField(default=False)
     ## Comment
     flag_ab_filter = models.BooleanField(default=False)
     flag_possible_splice_site_rescue = models.BooleanField(default=False)
@@ -180,10 +184,20 @@ FLAG_FIELDS = [
     "flag_other_transcript_error",
     "flag_first_150_bp",
     "flag_long_exon",
+    "flag_low_pext",
+    "flag_pext_less_than_half_max",
+    "flag_uninformative_pext",
+    "flag_weak_gene_conservation",
     ## Comment
     "flag_ab_filter",
     "flag_possible_splice_site_rescue",
 ]
 
 
-FLAG_LABELS = {"flag_mnp": "Flag MNV/Frame Restoring Indel", "flag_ab_filter": "Flag AB Filter"}
+FLAG_LABELS = {
+    "flag_mnp": "Flag MNV/Frame Restoring Indel",
+    "flag_ab_filter": "Flag AB Filter",
+    "flag_low_pext": "Flag Low pext (< 0.2)",
+    "flag_pext_less_than_half_max": "Flag pext < 50% max",
+    "flag_uninformative_pext": "Flag Uninformative pext",
+}

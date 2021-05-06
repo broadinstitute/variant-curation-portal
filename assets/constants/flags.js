@@ -19,6 +19,10 @@ export const FLAGS = [
   "flag_other_transcript_error",
   "flag_first_150_bp",
   "flag_long_exon",
+  "flag_low_pext",
+  "flag_pext_less_than_half_max",
+  "flag_uninformative_pext",
+  "flag_weak_gene_conservation",
   // Comment
   "flag_ab_filter",
   "flag_possible_splice_site_rescue",
@@ -43,6 +47,10 @@ export const FLAG_CODES = {
   flag_other_transcript_error: "OT",
   flag_first_150_bp: "F1",
   flag_long_exon: "LO",
+  flag_low_pext: "LP",
+  flag_pext_less_than_half_max: "P5",
+  flag_uninformative_pext: "UP",
+  flag_weak_gene_conservation: "WG",
   // Comment
   flag_ab_filter: "AB",
   flag_possible_splice_site_rescue: "PS",
@@ -76,6 +84,10 @@ export const FLAG_LABELS = {
   flag_other_transcript_error: "Other transcript error",
   flag_first_150_bp: "First 150 base pairs",
   flag_long_exon: "Long exon",
+  flag_low_pext: "Low pext (< 0.2)",
+  flag_pext_less_than_half_max: "pext < 50% max",
+  flag_uninformative_pext: "Uninformative pext",
+  flag_weak_gene_conservation: "weak gene conservation",
   // Comment
   flag_ab_filter: "AB filter",
   flag_possible_splice_site_rescue: "Possible splice site rescue",

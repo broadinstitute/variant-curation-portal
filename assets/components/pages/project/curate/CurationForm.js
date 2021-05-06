@@ -162,6 +162,10 @@ class CurationForm extends React.Component {
               "flag_other_transcript_error",
               "flag_first_150_bp",
               "flag_long_exon",
+              "flag_low_pext",
+              "flag_pext_less_than_half_max",
+              "flag_uninformative_pext",
+              "flag_weak_gene_conservation",
             ].map(flag => this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag]))}
             <Header sub>Comments</Header>
             {["flag_ab_filter", "flag_possible_splice_site_rescue"].map(flag =>

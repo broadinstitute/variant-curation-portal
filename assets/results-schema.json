@@ -85,6 +85,22 @@
         "description": "Long exon",
         "type": ["boolean", "null"]
       },
+      "flag_low_pext": {
+        "description": "Low pext (< 0.2)",
+        "type": ["boolean", "null"]
+      },
+      "flag_pext_less_than_half_max": {
+        "description": "pext < 50% max",
+        "type": ["boolean", "null"]
+      },
+      "flag_uninformative_pext": {
+        "description": "Uninformative pext",
+        "type": ["boolean", "null"]
+      },
+      "flag_weak_gene_conservation": {
+        "description": "Weak gene conservation",
+        "type": ["boolean", "null"]
+      },
       "flag_ab_filter": {
         "description": "AB filter",
         "type": ["boolean", "null"]

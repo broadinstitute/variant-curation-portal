@@ -43,7 +43,20 @@ const Legend = () => (
           "flag_last_exon",
           "flag_other_transcript_error",
           "flag_first_150_bp",
+        ].map(flag => (
+          <List.Item key={flag}>
+            {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
+          </List.Item>
+        ))}
+      </List>
+      <br />
+      <List horizontal>
+        {[
           "flag_long_exon",
+          "flag_low_pext",
+          "flag_pext_less_than_half_max",
+          "flag_uninformative_pext",
+          "flag_weak_gene_conservation",
         ].map(flag => (
           <List.Item key={flag}>
             {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}
