@@ -84,7 +84,7 @@ def load_gnomad_v2_variants():
 def load_gnomad_v3_variants():
     ds = hl.read_table("gs://gcp-public-data--gnomad/release/3.1.1/ht/genomes/gnomad.genomes.v3.1.1.sites.ht")
     ds = ds.select(genome=ds.row_value.drop("vep"), vep=ds.vep)
-    ds = ds.annotate(exome=hl.null(ds.genome.dtype))
+    ds = ds.annotate(exome=hl.missing(ds.genome.dtype))
 
     return ds
 
@@ -178,7 +178,7 @@ def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=Fal
     ds = ds.select(
         reference_genome="GRCh37" if gnomad_version == 2 else "GRCh38",
         variant_id=variant_id(ds.locus, ds.alleles),
-        liftover_variant_id=hl.null(hl.tstr),
+        liftover_variant_id=hl.missing(hl.tstr),
         qc_filter=hl.delimit(
             hl.array(ds.exome.filters)
             .map(lambda f: f + " (exomes)")
@@ -202,8 +202,8 @@ def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=Fal
     )
 
     ds = ds.annotate(
-        qc_filter=hl.cond(ds.qc_filter == "", "PASS", ds.qc_filter),
-        AF=hl.cond(ds.AN == 0, 0, ds.AC / ds.AN),
+        qc_filter=hl.if_else(ds.qc_filter == "", "PASS", ds.qc_filter),
+        AF=hl.if_else(ds.AN == 0, 0, ds.AC / ds.AN),
     )
 
     return ds
