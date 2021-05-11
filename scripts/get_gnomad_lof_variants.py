@@ -1,6 +1,7 @@
 import argparse
 
 import hail as hl
+import requests
 
 
 CONSEQUENCE_TERMS = [
@@ -88,6 +89,35 @@ def load_gnomad_v3_variants():
     return ds
 
 
+def fetch_gene(gene_id, reference_genome):
+    query = """
+    query Gene($gene_id: String!, $reference_genome: ReferenceGenomeId!) {
+        gene(gene_id: $gene_id, reference_genome: $reference_genome) {
+            chrom
+            start
+            stop
+        }
+    }
+    """
+
+    variables = {
+        "gene_id": gene_id,
+        "reference_genome": reference_genome,
+    }
+
+    headers = {"content-type": "application/json"}
+    response = requests.post(
+        "https://gnomad.broadinstitute.org/api",
+        json={"query": query, "variables": variables},
+        headers=headers,
+    ).json()
+
+    if "errors" in response:
+        raise Exception(f"Failed to fetch gene ({', '.join(response['errors'])})")
+
+    return response["data"]["gene"]
+
+
 def variant_id(locus, alleles):
     return (
         locus.contig.replace("^chr", "")
@@ -104,7 +134,7 @@ def add(a, b):
     return hl.or_else(a, 0) + hl.or_else(b, 0)
 
 
-def get_gnomad_lof_variants(gnomad_version, genes, include_low_confidence=False):
+def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=False):
     if gnomad_version not in (2, 3):
         raise Exception(f"Invalid gnomAD version {gnomad_version}")
 
@@ -113,13 +143,26 @@ def get_gnomad_lof_variants(gnomad_version, genes, include_low_confidence=False)
     elif gnomad_version == 3:
         ds = load_gnomad_v3_variants()
 
-    genes = hl.set(genes)
+    reference_genome = "GRCh37" if gnomad_version == 2 else "GRCh38"
+    genes = [fetch_gene(gene_id, reference_genome) for gene_id in gene_ids]
+
+    ds = hl.filter_intervals(
+        ds,
+        [
+            hl.parse_locus_interval(
+                f"{gene['chrom']}:{gene['start']}-{gene['stop']}", reference_genome=reference_genome
+            )
+            for gene in genes
+        ],
+    )
+
+    gene_ids = hl.set(gene_ids)
 
     # Filter to variants which have pLoF consequences in the selected genes.
     ds = ds.annotate(
         lof_consequences=ds.vep.transcript_consequences.filter(
             lambda csq: (
-                genes.contains(csq.gene_id)
+                gene_ids.contains(csq.gene_id)
                 & csq.consequence_terms.any(lambda term: PLOF_CONSEQUENCE_TERMS.contains(term))
                 & (include_low_confidence | (csq.lof == "HC"))
             )
