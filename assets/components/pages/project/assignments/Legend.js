@@ -57,6 +57,7 @@ const Legend = () => (
           "flag_pext_less_than_half_max",
           "flag_uninformative_pext",
           "flag_weak_gene_conservation",
+          "flag_untranslated_transcript",
         ].map(flag => (
           <List.Item key={flag}>
             {FLAG_CODES[flag]} = {FLAG_LABELS[flag]}

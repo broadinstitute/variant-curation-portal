@@ -166,6 +166,7 @@ class CurationForm extends React.Component {
               "flag_pext_less_than_half_max",
               "flag_uninformative_pext",
               "flag_weak_gene_conservation",
+              "flag_untranslated_transcript",
             ].map(flag => this.renderFlagInput(flag, FLAG_LABELS[flag], FLAG_SHORTCUTS[flag]))}
             <Header sub>Comments</Header>
             {["flag_skewed_ab", "flag_possible_splice_site_rescue"].map(flag =>

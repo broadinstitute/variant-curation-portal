@@ -101,6 +101,10 @@
         "description": "Weak gene conservation",
         "type": ["boolean", "null"]
       },
+      "flag_untranslated_transcript": {
+        "description": "Untranslated transcript",
+        "type": ["boolean", "null"]
+      },
       "flag_skewed_ab": {
         "description": "Skewed AB",
         "type": ["boolean", "null"]

@@ -150,6 +150,7 @@ class CurationResult(models.Model):
     flag_pext_less_than_half_max = models.BooleanField(default=False)
     flag_uninformative_pext = models.BooleanField(default=False)
     flag_weak_gene_conservation = models.BooleanField(default=False)
+    flag_untranslated_transcript = models.BooleanField(default=False)
     ## Comment
     flag_skewed_ab = models.BooleanField(default=False)
     flag_possible_splice_site_rescue = models.BooleanField(default=False)
@@ -188,6 +189,7 @@ FLAG_FIELDS = [
     "flag_pext_less_than_half_max",
     "flag_uninformative_pext",
     "flag_weak_gene_conservation",
+    "flag_untranslated_transcript",
     ## Comment
     "flag_skewed_ab",
     "flag_possible_splice_site_rescue",

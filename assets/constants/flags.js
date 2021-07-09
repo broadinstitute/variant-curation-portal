@@ -23,6 +23,7 @@ export const FLAGS = [
   "flag_pext_less_than_half_max",
   "flag_uninformative_pext",
   "flag_weak_gene_conservation",
+  "flag_untranslated_transcript",
   // Comment
   "flag_skewed_ab",
   "flag_possible_splice_site_rescue",
@@ -51,6 +52,7 @@ export const FLAG_CODES = {
   flag_pext_less_than_half_max: "P5",
   flag_uninformative_pext: "UP",
   flag_weak_gene_conservation: "WG",
+  flag_untranslated_transcript: "UT",
   // Comment
   flag_skewed_ab: "AB",
   flag_possible_splice_site_rescue: "PS",
@@ -88,6 +90,7 @@ export const FLAG_LABELS = {
   flag_pext_less_than_half_max: "pext < 50% max",
   flag_uninformative_pext: "Uninformative pext",
   flag_weak_gene_conservation: "weak gene conservation",
+  flag_untranslated_transcript: "Untranslated transcript",
   // Comment
   flag_skewed_ab: "Skewed AB",
   flag_possible_splice_site_rescue: "Possible splice site rescue",
