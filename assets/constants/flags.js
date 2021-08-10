@@ -46,7 +46,7 @@ export const FLAG_CODES = {
   flag_weak_exon_conservation: "WE",
   flag_last_exon: "LE",
   flag_other_transcript_error: "OT",
-  flag_first_150_bp: "F1",
+  flag_first_150_bp: "FH",
   flag_long_exon: "LO",
   flag_low_pext: "LP",
   flag_pext_less_than_half_max: "P5",
