@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from curation_portal.constants import CONSEQUENCE_TERM_RANK
 from curation_portal.filters import AssignmentFilter
 from curation_portal.models import (
     CurationAssignment,
@@ -21,14 +22,21 @@ from curation_portal.models import (
 
 
 class VariantSerializer(serializers.ModelSerializer):
+    major_consequence = serializers.SerializerMethodField()
     genes = serializers.SerializerMethodField()
+
+    def get_major_consequence(self, obj):  # pylint: disable=no-self-use
+        ranked_consequences = sorted(
+            (a.consequence for a in obj.annotations.all()), key=CONSEQUENCE_TERM_RANK.get
+        )
+        return ranked_consequences[0]
 
     def get_genes(self, obj):  # pylint: disable=no-self-use
         return set(a.gene_symbol for a in obj.annotations.all())
 
     class Meta:
         model = Variant
-        fields = ("id", "variant_id", "AC", "AN", "AF", "genes")
+        fields = ("id", "variant_id", "AC", "AN", "AF", "major_consequence", "genes")
 
 
 class ResultSerializer(serializers.ModelSerializer):
@@ -122,7 +130,9 @@ class ProjectAssignmentsView(APIView):
             .prefetch_related(
                 Prefetch(
                     "variant__annotations",
-                    queryset=VariantAnnotation.objects.only("gene_symbol", "variant_id", "id"),
+                    queryset=VariantAnnotation.objects.only(
+                        "consequence", "gene_symbol", "variant_id", "id"
+                    ),
                 )
             )
             .order_by("variant__xpos", "variant__ref", "variant__alt")

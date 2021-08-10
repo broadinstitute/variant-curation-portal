@@ -50,6 +50,9 @@ const AssignmentListItem = ({ assignment, projectId }) => {
               <strong>Genes:</strong> {variant.genes.join(", ")}
             </List.Item>
             <List.Item>
+              <strong>Major consequence:</strong> {variant.major_consequence || "–"}
+            </List.Item>
+            <List.Item>
               <strong>AC:</strong> {variant.AC}
             </List.Item>
             <List.Item>
