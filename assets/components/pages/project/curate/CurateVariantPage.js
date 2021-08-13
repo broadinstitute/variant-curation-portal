@@ -213,7 +213,7 @@ class CurateVariantPage extends React.Component {
                             <KeyboardShortcutHint color="rgba(0, 0, 0, 0.4)" keys="f f" />
                           </Button>
                           <KeyboardShortcut
-                            keys="f"
+                            keys="f f"
                             onShortcut={() => {
                               this.setState(state => ({ ...state, showForm: !state.showForm }));
                             }}
