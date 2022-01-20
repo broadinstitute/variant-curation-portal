@@ -1,3 +1,4 @@
+import itertools
 from collections import Counter, defaultdict
 
 from django.db import transaction
@@ -27,7 +28,8 @@ class VariantSerializer(serializers.ModelSerializer):
 
     def get_major_consequence(self, obj):  # pylint: disable=no-self-use
         ranked_consequences = sorted(
-            (a.consequence for a in obj.annotations.all()), key=CONSEQUENCE_TERM_RANK.get
+            itertools.chain.from_iterable(a.consequence.split("&") for a in obj.annotations.all()),
+            key=CONSEQUENCE_TERM_RANK.get,
         )
         return ranked_consequences[0]
 
