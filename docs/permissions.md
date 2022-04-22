@@ -31,5 +31,5 @@ username = "user" # username of the user to grant permission to
 permission_name = "add_project" # either "add_project" or "add_variant"
 
 user, _ = User.objects.get_or_create(username=username)
-user.user_permissions.add(Permission.objects.get(codename=permission))
+user.user_permissions.add(Permission.objects.get(codename=permission_name))
 ```

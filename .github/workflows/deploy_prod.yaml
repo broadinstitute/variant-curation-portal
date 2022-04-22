@@ -1,0 +1,39 @@
+name: Deploy to prod
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_server:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_BUILDKIT: 1
+      BUILDKIT_PROGRESS: plain
+      CLOUDSDK_CORE_DISABLE_PROMPTS: 1
+
+    steps:
+    - name: "checkout repo"
+      uses: actions/checkout@v2
+
+    - name: "gcloud setup"
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: curator-348003
+        service_account_key: ${{ secrets.GCP_DEPLOY_KEY }}
+
+    - name: "build and deploy"
+      run: |
+        gcloud run deploy \
+          --project=curator-348003 \
+          --region=australia-southeast1 \
+          --service-account=curator-prod@curator-348003.iam.gserviceaccount.com \
+          --no-allow-unauthenticated \
+          --vpc-connector=curator-vpc-connector \
+          --source=. \
+          --port=8000 \
+          --set-env-vars=DJANGO_SETTINGS_MODULE=curation_portal.settings.base,ALLOWED_HOSTS=curator.populationgenomics.org.au,CURATION_PORTAL_AUTH_HEADER=X-Goog-Authenticated-User-Email,DB_ENGINE=django.db.backends.postgresql,DB_HOST=10.48.64.3,DB_PORT=5432,DB_DATABASE=lof_curation,DB_USER=lof_curation \
+          --update-secrets=SECRET_KEY=django-secret-key-prod:latest,DB_PASSWORD=postgres-password-prod:latest \
+          curator-prod
