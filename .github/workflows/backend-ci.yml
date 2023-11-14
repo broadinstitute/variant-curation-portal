@@ -1,0 +1,38 @@
+name: Backend CI
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "curation-portal/**"
+      - "tests/**"
+  pull_request:
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Use pip cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Check formatting
+        run: black --check curation_portal tests --exclude curation_portal/migrations
+      - name: Run Pylint
+        run: pylint --disable=R --disable=C --disable=fixme curation_portal tests/*
+      - name: Run tests
+        run: pytest

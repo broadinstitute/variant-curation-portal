@@ -1,3 +1,5 @@
 # Variant Curation Portal
 
-![CI status bage](https://github.com/macarthur-lab/variant-curation-portal/workflows/CI/badge.svg)
+![Frontend CI status badge](https://github.com/broadinstitute/variant-curation-portal/actions/workflows/frontend-ci.yml/badge.svg)
+
+![Backend CI status badge](https://github.com/broadinstitute/variant-curation-portal/actions/workflows/backend-ci.yml/badge.svg)
