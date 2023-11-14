@@ -81,12 +81,58 @@ def load_gnomad_v2_variants():
     return ds
 
 
-def load_gnomad_v3_variants():
-    ds = hl.read_table("gs://gcp-public-data--gnomad/release/3.1.1/ht/genomes/gnomad.genomes.v3.1.1.sites.ht")
-    ds = ds.select(genome=ds.row_value.drop("vep"), vep=ds.vep)
-    ds = ds.annotate(exome=hl.missing(ds.genome.dtype))
+def load_gnomad_v4_variants():
+    exomes = hl.read_table(
+        "gs://gcp-public-data--gnomad/release/4.0/ht/exomes/gnomad.exomes.v4.0.sites.ht"
+    )
+    exomes = exomes.select(exome=exomes.row_value)
+
+    genomes = hl.read_table(
+        "gs://gcp-public-data--gnomad/release/4.0/ht/genomes/gnomad.genomes.v4.0.sites.ht/"
+    )
+    genomes = genomes.select(genome=genomes.row_value)
+
+    exomes = exomes.select_globals()
+    genomes = genomes.select_globals()
+    ds = exomes.join(genomes, how="outer")
+    ds = ds.annotate(vep=hl.or_else(ds.exome.vep, ds.genome.vep))
+    ds = ds.annotate(exome=ds.exome.drop("vep"), genome=ds.genome.drop("vep"))
 
     return ds
+
+
+def annotate_gnomad_v4_variants_with_liftover(ds, genes, reference_genome):
+    exomes = hl.read_table(
+        "gs://gcp-public-data--gnomad/release/2.1.1/liftover_grch38/ht/exomes/gnomad.exomes.r2.1.1.sites.liftover_grch38.ht"
+    )
+    exomes = exomes.select(liftover_variant_id_exome=exomes.original_locus)
+
+    genomes = hl.read_table(
+        "gs://gcp-public-data--gnomad/release/2.1.1/liftover_grch38/ht/genomes/gnomad.genomes.r2.1.1.sites.liftover_grch38.ht"
+    )
+    genomes = genomes.select(liftover_variant_id_genome=genomes.original_locus)
+
+    exomes = exomes.select_globals()
+    genomes = genomes.select_globals()
+
+    ds_liftover = exomes.join(genomes, how="outer")
+
+    chrom_prefix = "chr" if reference_genome == "GRCh38" else ""
+
+    ds_liftover = hl.filter_intervals(
+        ds_liftover,
+        [
+            hl.parse_locus_interval(
+                f"{chrom_prefix}{gene['chrom']}:{gene['start']}-{gene['stop']}",
+                reference_genome=reference_genome,
+            )
+            for gene in genes
+        ],
+    )
+
+    ds_annotated_with_liftover = ds.join(ds_liftover, how="outer")
+
+    return ds_annotated_with_liftover
 
 
 def fetch_gene(gene_id, reference_genome):
@@ -130,33 +176,53 @@ def variant_id(locus, alleles):
     )
 
 
+def liftover_variant_id(exome_liftover_id, genome_liftover_id, alleles):
+    return variant_id(
+        hl.if_else(
+            hl.is_missing(exome_liftover_id),
+            genome_liftover_id,
+            exome_liftover_id,
+        ),
+        alleles,
+    )
+
+
 def add(a, b):
     return hl.or_else(a, 0) + hl.or_else(b, 0)
 
 
+SUPPORTED_GNOMAD_VERSIONS = (2, 4)
+
+
 def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=False):
-    if gnomad_version not in (2, 3):
+    if gnomad_version not in SUPPORTED_GNOMAD_VERSIONS:
         raise Exception(f"Invalid gnomAD version {gnomad_version}")
 
     if gnomad_version == 2:
         ds = load_gnomad_v2_variants()
-    elif gnomad_version == 3:
-        ds = load_gnomad_v3_variants()
+    elif gnomad_version == 4:
+        ds = load_gnomad_v4_variants()
 
     reference_genome = "GRCh37" if gnomad_version == 2 else "GRCh38"
     genes = [fetch_gene(gene_id, reference_genome) for gene_id in gene_ids]
+
+    chrom_prefix = "chr" if reference_genome == "GRCh38" else ""
 
     ds = hl.filter_intervals(
         ds,
         [
             hl.parse_locus_interval(
-                f"{gene['chrom']}:{gene['start']}-{gene['stop']}", reference_genome=reference_genome
+                f"{chrom_prefix}{gene['chrom']}:{gene['start']}-{gene['stop']}",
+                reference_genome=reference_genome,
             )
             for gene in genes
         ],
     )
 
     gene_ids = hl.set(gene_ids)
+
+    if gnomad_version == 4:
+        ds = annotate_gnomad_v4_variants_with_liftover(ds, genes, reference_genome)
 
     # Filter to variants which have pLoF consequences in the selected genes.
     ds = ds.annotate(
@@ -178,7 +244,13 @@ def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=Fal
     ds = ds.select(
         reference_genome="GRCh37" if gnomad_version == 2 else "GRCh38",
         variant_id=variant_id(ds.locus, ds.alleles),
-        liftover_variant_id=hl.missing(hl.tstr),
+        liftover_variant_id=hl.if_else(
+            "liftover_variant_id_exome" in ds.row,
+            liftover_variant_id(
+                ds.liftover_variant_id_exome, ds.liftover_variant_id_genome, ds.alleles
+            ),
+            hl.missing(hl.tstr),
+        ),
         qc_filter=hl.delimit(
             hl.array(ds.exome.filters)
             .map(lambda f: f + " (exomes)")
@@ -224,8 +296,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--gnomad-version",
         type=int,
-        choices=(2, 3),
-        default=2,
+        choices=SUPPORTED_GNOMAD_VERSIONS,
+        default=4,
         help="gnomAD dataset to get variants from (defaults to %(default)s)",
     )
     parser.add_argument(
