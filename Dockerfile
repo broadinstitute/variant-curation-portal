@@ -19,7 +19,7 @@ RUN yarn run build
 #########################
 # App image             #
 #########################
-FROM python:3.6-alpine
+FROM python:3.9-slim
 
 # Create app user and group
 RUN addgroup -S app && adduser -S app -G app

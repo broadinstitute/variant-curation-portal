@@ -70,7 +70,7 @@ Check formatting of JS code with `yarn run prettier --check 'assets/**'`.
 
 ## Dependencies
 
-- [Python 3.6+](https://www.python.org/)
+- [Python 3.9+](https://www.python.org/)
 - [Django](https://www.djangoproject.com/)
 - [Django REST framework](https://www.django-rest-framework.org/)
 - [django-filter](https://pypi.org/project/django-filter/)
