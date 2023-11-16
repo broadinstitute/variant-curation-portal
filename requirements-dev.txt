@@ -1,4 +1,5 @@
 black==19.3b0
+hail==0.2.126
 pip-tools==4.4.1
 pydocstyle==3.0.0
 pylint==2.4.4
