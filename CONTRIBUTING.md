@@ -22,12 +22,33 @@
   ./manage.py migrate
   ```
 
+- Set an admin user to be able to view all features
+
+  - Enter manage.py shell
+
+    ```
+    ./manage.py shell
+    ```
+
+  - Give permissions to the user "developer"
+
+    ```
+    from django.contrib.auth.models import Permission
+    from curation_portal.models import User
+
+    username = "developer"
+
+    user, _ = User.objects.get_or_create(username=username)
+    user.user_permissions.add(Permission.objects.get(codename="add_project"))
+    user.user_permissions.add(Permission.objects.get(codename="add_variant"))
+    ```
+
 - Start Django and webpack development servers
 
-  Set REMOTE_USER to simulate an authenticated user
+  Set `REMOTE_USER` to simulate an authenticated user
 
   ```
-  REMOTE_USER=someuser ./start.sh
+  REMOTE_USER=developer ./start.sh
   ```
 
 - Open browser to http://localhost:3000
@@ -44,6 +65,7 @@ Run tests with either `pytest` or `tox -e py36`.
 [pytest-cov](https://pytest-cov.readthedocs.io) is used to generate coverage reports.
 
 To generate and view an HTML coverage report, use:
+
 ```
 pytest --cov-report=html
 python3 -m http.server --directory htmlcov
