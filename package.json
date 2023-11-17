@@ -5,7 +5,8 @@
   "scripts": {
     "build": "webpack",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "start": "REMOTE_USER=developer ./start.sh"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
