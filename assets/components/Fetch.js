@@ -10,11 +10,13 @@ class BaseFetch extends Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
     path: PropTypes.string.isRequired,
+    params: PropTypes.object,
     onLoad: PropTypes.func,
   };
 
   static defaultProps = {
     onLoad: () => {},
+    params: {},
   };
 
   state = {
@@ -41,7 +43,7 @@ class BaseFetch extends Component {
   }
 
   loadData() {
-    const { path, onLoad } = this.props;
+    const { path, params, onLoad } = this.props;
 
     this.setState({
       isFetching: true,
@@ -52,7 +54,7 @@ class BaseFetch extends Component {
       this.currentRequest.cancel();
     }
 
-    this.currentRequest = makeCancelable(api.get(path));
+    this.currentRequest = makeCancelable(api.get(path, params));
     this.currentRequest.then(
       data => {
         onLoad(data);
@@ -78,8 +80,8 @@ class BaseFetch extends Component {
   }
 }
 
-const Fetch = ({ path, children, onLoad }) => (
-  <BaseFetch path={path} onLoad={onLoad}>
+const Fetch = ({ path, params, children, onLoad }) => (
+  <BaseFetch path={path} onLoad={onLoad} params={params}>
     {({ data, error, isFetching, refresh }) => {
       if (isFetching) {
         return (
@@ -109,10 +111,12 @@ const Fetch = ({ path, children, onLoad }) => (
 Fetch.propTypes = {
   children: PropTypes.func.isRequired,
   path: PropTypes.string.isRequired,
+  params: PropTypes.object,
   onLoad: PropTypes.func,
 };
 
 Fetch.defaultProps = {
+  params: {},
   onLoad: undefined,
 };
 

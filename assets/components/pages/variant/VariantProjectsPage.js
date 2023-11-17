@@ -9,11 +9,14 @@ import VariantId from "../../VariantId";
 import Page from "../Page";
 
 const VariantProjectsPage = ({ variantId }) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const referenceGenome = urlParams.get("reference_genome");
+
   return (
     <Page>
       <DocumentTitle title={`Projects | ${variantId}`} />
       <Header as="h1" dividing>
-        <VariantId variantId={variantId} />
+        <VariantId variantId={variantId} referenceGenome={referenceGenome} />
       </Header>
 
       <p>
@@ -24,7 +27,10 @@ const VariantProjectsPage = ({ variantId }) => {
         <Link to={`/variant/${variantId}/results/`}>View all results for this variant</Link>
       </p>
 
-      <Fetch path={`/variant/${variantId}/projects/`}>
+      <Fetch
+        path={`/variant/${variantId}/projects/`}
+        params={{ reference_genome: referenceGenome }}
+      >
         {({ data: { variant } }) => {
           const ownedProjects = variant.projects.filter(project => project.is_project_owner);
           const assignedProjects = variant.projects.filter(project => project.is_variant_curator);
