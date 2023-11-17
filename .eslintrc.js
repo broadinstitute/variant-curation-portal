@@ -15,6 +15,7 @@ module.exports = {
   plugins: ["prettier"],
   rules: {
     "prettier/prettier": "error",
+    "react/forbid-prop-types": "off",
     "react/jsx-filename-extension": ["error", { extensions: [".js"] }],
     "react/jsx-fragments": "off",
     "react/jsx-props-no-spreading": "off",

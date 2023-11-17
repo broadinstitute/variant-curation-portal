@@ -11,10 +11,16 @@ class VariantProjectsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        reference_genome = (
+            request.query_params["reference_genome"]
+            if "reference_genome" in request.query_params
+            else "GRCh37"
+        )
+
         variants = (
             Variant.objects.filter(
                 Q(variant_id=kwargs["variant_id"])
-                & Q(reference_genome="GRCh37")  # TODO: Handle different reference genomes
+                & Q(reference_genome=reference_genome)
                 & (
                     Q(project__owners__id__contains=request.user.id)
                     | Q(curation_assignment__curator=request.user)
