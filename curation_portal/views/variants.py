@@ -12,14 +12,13 @@ class VariantsView(APIView):
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         variants = (
             Variant.objects.filter(
-                Q(reference_genome="GRCh37")  # TODO: Handle different reference genomes
-                & (
-                    Q(project__owners__id__contains=request.user.id)
-                    | Q(curation_assignment__curator=request.user)
-                )
+                Q(project__owners__id__contains=request.user.id)
+                | Q(curation_assignment__curator=request.user)
             )
-            .values_list("variant_id", flat=True)
+            .values_list("variant_id", "reference_genome")
             .distinct()
         )
 
-        return Response({"variants": [{"variant_id": variant_id} for variant_id in variants]})
+        return Response(
+            {"variants": [{"variant_id": v[0], "reference_genome": v[1]} for v in variants]}
+        )

@@ -29,8 +29,13 @@ const VariantsPage = () => {
                       <Item key={variant.variant_id}>
                         <Item.Content>
                           <Item.Header>
-                            <Link to={`/variant/${variant.variant_id}/`}>
-                              <VariantId variantId={variant.variant_id} />
+                            <Link
+                              to={`/variant/${variant.variant_id}?reference_genome=${variant.reference_genome}`}
+                            >
+                              <VariantId
+                                variantId={variant.variant_id}
+                                referenceGenome={variant.reference_genome}
+                              />
                             </Link>
                           </Item.Header>
                         </Item.Content>
