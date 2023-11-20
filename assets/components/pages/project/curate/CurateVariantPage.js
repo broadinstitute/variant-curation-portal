@@ -155,7 +155,7 @@ class CurateVariantPage extends React.Component {
                           </List.Item>
                           <List.Item>
                             <a href="#gnomad-variant">
-                              gnomAD v{variant.reference_genome === "GRCh37" ? "2" : "3"} (variant)
+                              gnomAD v{variant.reference_genome === "GRCh37" ? "2" : "4"} (variant)
                             </a>
                           </List.Item>
                           {variant.reference_genome === "GRCh37" ? (
@@ -170,9 +170,9 @@ class CurateVariantPage extends React.Component {
                             <>
                               <List.Item>
                                 {hasAnnotations ? (
-                                  <a href="#gnomad-v3-gene">gnomAD v3 (gene)</a>
+                                  <a href="#gnomad-v3-gene">gnomAD v4 (gene)</a>
                                 ) : (
-                                  "gnomAD v3 (gene)"
+                                  "gnomAD v4 (gene)"
                                 )}
                               </List.Item>
                               <List.Item>
@@ -266,7 +266,7 @@ class CurateVariantPage extends React.Component {
                   <hr style={{ margin: "30px 0" }} />
                   <div id="gnomad-variant">
                     <GnomadVariantView
-                      gnomadVersion={variant.reference_genome === "GRCh37" ? "2" : "3"}
+                      gnomadVersion={variant.reference_genome === "GRCh37" ? "2" : "4"}
                       variant={variant}
                     />
                   </div>
@@ -274,14 +274,14 @@ class CurateVariantPage extends React.Component {
                   {variant.reference_genome === "GRCh37" ? (
                     <div id="gnomad-v2-gene">
                       <GnomadGeneView
-                        gnomadVersion={variant.reference_genome === "GRCh37" ? "2" : "3"}
+                        gnomadVersion={variant.reference_genome === "GRCh37" ? "2" : "4"}
                         variant={variant}
                       />
                     </div>
                   ) : (
                     <>
-                      <div id="gnomad-v3-gene">
-                        <GnomadGeneView gnomadVersion="3" variant={variant} />
+                      <div id="gnomad-v4-gene">
+                        <GnomadGeneView gnomadVersion="4" variant={variant} />
                       </div>
                       <br />
                       <div id="gnomad-v2-gene">
