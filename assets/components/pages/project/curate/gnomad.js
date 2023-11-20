@@ -5,19 +5,19 @@ import { Header, Segment } from "semantic-ui-react";
 export const GnomadVariantView = ({ gnomadVersion, variant }) => {
   const gnomadDataset = {
     "2": "gnomad_r2_1",
-    "3": "gnomad_r3",
+    "4": "gnomad_r4",
   }[gnomadVersion];
 
   let gnomadVariantId;
   if (variant.reference_genome === "GRCh37") {
     gnomadVariantId = {
       "2": variant.variant_id,
-      "3": variant.liftover_variant_id,
+      "4": variant.liftover_variant_id,
     }[gnomadVersion];
   } else if (variant.reference_genome === "GRCh38") {
     gnomadVariantId = {
       "2": variant.liftover_variant_id,
-      "3": variant.variant_id,
+      "4": variant.variant_id,
     }[gnomadVersion];
   }
 
@@ -50,7 +50,7 @@ export const GnomadVariantView = ({ gnomadVersion, variant }) => {
 };
 
 GnomadVariantView.propTypes = {
-  gnomadVersion: PropTypes.oneOf(["2", "3"]).isRequired,
+  gnomadVersion: PropTypes.oneOf(["2", "4"]).isRequired,
   variant: PropTypes.shape({
     reference_genome: PropTypes.oneOf(["GRCh37", "GRCh38"]).isRequired,
     variant_id: PropTypes.string.isRequired,
@@ -79,7 +79,7 @@ export const GnomadGeneView = ({ gnomadVersion, variant }) => {
 
   const gnomadDataset = {
     "2": "gnomad_r2_1",
-    "3": "gnomad_r3",
+    "4": "gnomad_r4",
   }[gnomadVersion];
 
   const url = `https://gnomad.broadinstitute.org/gene/${annotations[0].gene_id}?dataset=${gnomadDataset}`;
@@ -97,7 +97,7 @@ export const GnomadGeneView = ({ gnomadVersion, variant }) => {
 };
 
 GnomadGeneView.propTypes = {
-  gnomadVersion: PropTypes.oneOf(["2", "3"]).isRequired,
+  gnomadVersion: PropTypes.oneOf(["2", "4"]).isRequired,
   variant: PropTypes.shape({
     annotations: PropTypes.arrayOf(
       PropTypes.shape({
