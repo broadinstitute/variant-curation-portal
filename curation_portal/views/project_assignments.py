@@ -31,7 +31,7 @@ class VariantSerializer(serializers.ModelSerializer):
             itertools.chain.from_iterable(a.consequence.split("&") for a in obj.annotations.all()),
             key=CONSEQUENCE_TERM_RANK.get,
         )
-        return ranked_consequences[0]
+        return ranked_consequences[0] if len(ranked_consequences) > 0 else "unknown"
 
     def get_genes(self, obj):  # pylint: disable=no-self-use
         return set(a.gene_symbol for a in obj.annotations.all())
