@@ -158,6 +158,11 @@ class CurateVariantPage extends React.Component {
                               gnomAD v{variant.reference_genome === "GRCh37" ? "2" : "4"} (variant)
                             </a>
                           </List.Item>
+                          <List.Item>
+                            <a href="#gnomad-liftover-variant">
+                              gnomAD v{variant.reference_genome === "GRCh37" ? "4" : "2"} (variant)
+                            </a>
+                          </List.Item>
                           {variant.reference_genome === "GRCh37" ? (
                             <List.Item>
                               {hasAnnotations ? (
@@ -270,6 +275,17 @@ class CurateVariantPage extends React.Component {
                       variant={variant}
                     />
                   </div>
+                  {variant.liftover_variant_id && (
+                    <>
+                      <br />
+                      <div id="gnomad-liftover-variant">
+                        <GnomadVariantView
+                          gnomadVersion={variant.reference_genome === "GRCh37" ? "4" : "2"}
+                          variant={variant}
+                        />
+                      </div>
+                    </>
+                  )}
                   <br />
                   {variant.reference_genome === "GRCh37" ? (
                     <div id="gnomad-v2-gene">
