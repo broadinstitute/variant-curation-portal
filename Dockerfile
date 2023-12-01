@@ -1,7 +1,7 @@
 #########################
 # Build front end       #
 #########################
-FROM node:lts-alpine
+FROM --platform=linux/amd64 node:lts-alpine
 
 WORKDIR /app
 
@@ -14,12 +14,15 @@ COPY babel.config.js .
 COPY webpack.config.js .
 COPY assets ./assets
 
+# https://github.com/expo/expo/issues/20652
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 RUN yarn run build
 
 #########################
 # App image             #
 #########################
-FROM python:3.9-slim
+FROM --platform=linux/amd64 python:3.9-alpine
 
 # Create app user and group
 RUN addgroup -S app && adduser -S app -G app
