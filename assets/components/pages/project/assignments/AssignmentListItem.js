@@ -50,13 +50,15 @@ const AssignmentListItem = ({ assignment, projectId }) => {
               <strong>Genes:</strong> {variant.genes.join(", ")}
             </List.Item>
             <List.Item>
-              <strong>Major consequence:</strong> {variant.major_consequence || "–"}
+              <strong>Major consequence:</strong>{" "}
+              {variant.major_consequence === "unknown" ? "-" : variant.major_consequence}
             </List.Item>
             <List.Item>
-              <strong>AC:</strong> {variant.AC}
+              <strong>AC:</strong> {variant.AC || "-"}
             </List.Item>
             <List.Item>
-              <strong>AF:</strong> {Number(variant.AF.toPrecision(4)).toExponential()}
+              <strong>AF:</strong>{" "}
+              {variant.AF ? Number(variant.AF.toPrecision(4)).toExponential() : "-"}
             </List.Item>
           </List>
         </Item.Meta>
