@@ -116,6 +116,7 @@ ClingenAlleleIdForm.propTypes = {
 
 const VariantSearch = withRouter(({ history }) => {
   const [searchType, setSearchType] = useState("VariantID");
+  const [searchReferenceGenome, setSearchReferenceGenome] = useState("GRCh38");
   return (
     <Segment attached>
       <Header as="h4">Look up variant</Header>
@@ -139,13 +140,39 @@ const VariantSearch = withRouter(({ history }) => {
             onChange={(e, { value }) => setSearchType(value)}
           />
         </Form.Group>
+        <Form.Group inline>
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+          <label>Reference genome</label>
+          <Form.Radio
+            id="variant-search-reference-genome-grch38"
+            label="GRCh38"
+            value="GRCh38"
+            checked={searchReferenceGenome === "GRCh38"}
+            onChange={(e, { value }) => setSearchReferenceGenome(value)}
+          />
+          <Form.Radio
+            id="variant-search-reference-genome-grch37"
+            label="GRCh37"
+            value="GRCh37"
+            checked={searchReferenceGenome === "GRCh37"}
+            onChange={(e, { value }) => setSearchReferenceGenome(value)}
+          />
+        </Form.Group>
       </Form>
 
       {searchType === "VariantID" && (
-        <VariantIdForm onSubmit={variantId => history.push(`/variant/${variantId}/`)} />
+        <VariantIdForm
+          onSubmit={variantId =>
+            history.push(`/variant/${variantId}/?reference_genome=${searchReferenceGenome}`)
+          }
+        />
       )}
       {searchType === "CAID" && (
-        <ClingenAlleleIdForm onMatch={variantId => history.push(`/variant/${variantId}/`)} />
+        <ClingenAlleleIdForm
+          onMatch={variantId =>
+            history.push(`/variant/${variantId}/?reference_genome=${searchReferenceGenome}`)
+          }
+        />
       )}
     </Segment>
   );
