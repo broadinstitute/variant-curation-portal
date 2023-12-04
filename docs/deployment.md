@@ -4,6 +4,10 @@ The variant curation portal is a [Django](https://www.djangoproject.com/) applic
 Django provides [documentation](https://docs.djangoproject.com/en/2.2/howto/deployment/)
 on several options for deploying with WSGI.
 
+## Updating the production deployment
+
+See instructions in the private `lof-curation-portal-env` [Github repo](https://github.com/broadinstitute/lof-curation-portal-env/blob/main/README.md#deploy-app-updates).
+
 ## Dependencies
 
 Dependencies are listed in [requirements.txt](../requirements.txt).
