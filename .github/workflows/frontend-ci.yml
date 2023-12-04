@@ -6,6 +6,8 @@ on:
     paths:
       - "assets/**"
   pull_request:
+    paths:
+      - "assets/**"
 jobs:
   checks:
     name: Checks
