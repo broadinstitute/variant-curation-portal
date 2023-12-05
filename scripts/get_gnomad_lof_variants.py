@@ -3,6 +3,7 @@ import argparse
 import hail as hl
 import requests
 
+import os
 
 CONSEQUENCE_TERMS = [
     "transcript_ablation",
@@ -101,38 +102,13 @@ def load_gnomad_v4_variants():
     return ds
 
 
-def annotate_gnomad_v4_variants_with_liftover(ds, genes, reference_genome):
-    exomes = hl.read_table(
-        "gs://gcp-public-data--gnomad/release/2.1.1/liftover_grch38/ht/exomes/gnomad.exomes.r2.1.1.sites.liftover_grch38.ht"
-    )
-    exomes = exomes.select(liftover_variant_id_exome=exomes.original_locus)
+def annotate_gnomad_v4_variants_with_liftover(ds):
+    rg37 = hl.get_reference("GRCh37")
+    rg38 = hl.get_reference("GRCh38")
+    rg38.add_liftover("gs://hail-common/references/grch38_to_grch37.over.chain.gz", rg37)
 
-    genomes = hl.read_table(
-        "gs://gcp-public-data--gnomad/release/2.1.1/liftover_grch38/ht/genomes/gnomad.genomes.r2.1.1.sites.liftover_grch38.ht"
-    )
-    genomes = genomes.select(liftover_variant_id_genome=genomes.original_locus)
-
-    exomes = exomes.select_globals()
-    genomes = genomes.select_globals()
-
-    ds_liftover = exomes.join(genomes, how="outer")
-
-    chrom_prefix = "chr" if reference_genome == "GRCh38" else ""
-
-    ds_liftover = hl.filter_intervals(
-        ds_liftover,
-        [
-            hl.parse_locus_interval(
-                f"{chrom_prefix}{gene['chrom']}:{gene['start']}-{gene['stop']}",
-                reference_genome=reference_genome,
-            )
-            for gene in genes
-        ],
-    )
-
-    ds_annotated_with_liftover = ds.join(ds_liftover, how="outer")
-
-    return ds_annotated_with_liftover
+    ds = ds.annotate(liftover_variant_id=variant_id(hl.liftover(ds.locus, "GRCh37"), ds.alleles))
+    return ds
 
 
 def fetch_gene(gene_id, reference_genome):
@@ -222,7 +198,7 @@ def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=Fal
     gene_ids = hl.set(gene_ids)
 
     if gnomad_version == 4:
-        ds = annotate_gnomad_v4_variants_with_liftover(ds, genes, reference_genome)
+        ds = annotate_gnomad_v4_variants_with_liftover(ds)
 
     # Filter to variants which have pLoF consequences in the selected genes.
     ds = ds.annotate(
@@ -245,10 +221,8 @@ def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=Fal
         reference_genome="GRCh37" if gnomad_version == 2 else "GRCh38",
         variant_id=variant_id(ds.locus, ds.alleles),
         liftover_variant_id=hl.if_else(
-            "liftover_variant_id_exome" in ds.row,
-            liftover_variant_id(
-                ds.liftover_variant_id_exome, ds.liftover_variant_id_genome, ds.alleles
-            ),
+            hl.bool(gnomad_version == 4),
+            ds.liftover_variant_id,
             hl.missing(hl.tstr),
         ),
         qc_filter=hl.delimit(
@@ -317,6 +291,9 @@ if __name__ == "__main__":
     variants = get_gnomad_lof_variants(
         args.gnomad_version, genes, include_low_confidence=args.include_low_confidence
     )
+
+    filename = args.output
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     if args.output.endswith(".ht"):
         variants.write(args.output)
