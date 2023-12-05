@@ -19,7 +19,10 @@ CONSEQUENCE_TERMS = [
     "inframe_deletion",
     "missense_variant",
     "protein_altering_variant",  # new in v79
+    "splice_donor_5th_base_variant",
     "splice_region_variant",
+    "splice_donor_region_variant",
+    "splice_polypyrimidine_tract_variant",
     "incomplete_terminal_codon_variant",
     "start_retained_variant",
     "stop_retained_variant",
