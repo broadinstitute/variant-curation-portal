@@ -1,6 +1,7 @@
 import argparse
 
 import hail as hl
+import pandas as pd
 import requests
 
 import os
@@ -265,11 +266,88 @@ def open_file(path, mode="r"):
         return open(path, mode)
 
 
+def annotate_list_of_variants(gnomad_version, variants_csv_file):
+    reference_genome = "GRCh37" if gnomad_version == 2 else "GRCh38"
+    prefix = "" if reference_genome == "GRCh37" else "chr"
+
+    # use pandas to get intial data and efficiently create a hailtable from it
+    df = pd.read_csv(variants_csv_file, names=["variant_id"])
+    df["reference_genome"] = reference_genome
+    df["contig"] = df["variant_id"].apply(lambda id: f"{prefix}{id.split('-')[0]}")
+    df["position"] = df["variant_id"].apply(lambda id: int(id.split("-")[1]))
+    df["alleles"] = df["variant_id"].apply(lambda id: [id.split("-")[2], id.split("-")[3]])
+
+    ds = hl.Table.from_pandas(df)
+    ds = ds.annotate(locus=hl.locus(ds.contig, ds.position, reference_genome=reference_genome))
+    ds = ds.key_by("locus", "alleles")
+
+    if gnomad_version == 4:
+        ds = annotate_gnomad_v4_variants_with_liftover(ds)
+
+    if gnomad_version == 2:
+        gnomad = load_gnomad_v2_variants()
+    elif gnomad_version == 4:
+        gnomad = load_gnomad_v4_variants()
+    ds = ds.annotate(
+        **gnomad[ds.locus, ds.alleles].select(
+            "exome",
+            "genome",
+            "vep",
+        )
+    )
+
+    # Filter to variants which have pLoF consequences in the selected genes.
+    ds = ds.annotate(
+        lof_consequences=ds.vep.transcript_consequences.filter(
+            lambda csq: (
+                csq.consequence_terms.any(lambda term: PLOF_CONSEQUENCE_TERMS.contains(term))
+                & (csq.lof == "HC")
+            )
+        )
+    )
+
+    ds = ds.select(
+        reference_genome=ds.reference_genome,
+        variant_id=ds.variant_id,
+        liftover_variant_id=ds.liftover_variant_id,
+        qc_filter=hl.delimit(
+            hl.array(ds.exome.filters)
+            .map(lambda f: f + " (exomes)")
+            .extend(hl.array(ds.genome.filters).map(lambda f: f + " (genomes)")),
+            ", ",
+        ),
+        AC=add(ds.exome.freq[0].AC, ds.genome.freq[0].AC),
+        AN=add(ds.exome.freq[0].AN, ds.genome.freq[0].AN),
+        n_homozygotes=add(ds.exome.freq[0].homozygote_count, ds.genome.freq[0].homozygote_count),
+        annotations=ds.lof_consequences.map(
+            lambda csq: csq.select(
+                "gene_id",
+                "gene_symbol",
+                "transcript_id",
+                consequence=hl.sorted(csq.consequence_terms, lambda t: CONSEQUENCE_TERM_RANK[t])[0],
+                loftee=csq.lof,
+                loftee_flags=csq.lof_flags,
+                loftee_filter=csq.lof_filter,
+            )
+        ),
+    )
+
+    ds = ds.annotate(
+        qc_filter=hl.if_else(ds.qc_filter == "", "PASS", ds.qc_filter),
+        AF=hl.if_else(ds.AN == 0, 0, ds.AC / ds.AN),
+    )
+
+    return ds
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get gnomAD pLoF variants in selected genes.")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--gene-ids", nargs="+", metavar="GENE", help="Ensembl IDs of genes")
     group.add_argument("--genes-file", help="path to file containing list of Ensembl IDs of genes")
+    group.add_argument(
+        "--variants-file", help="path to file containing list of gnomAD IDs of variants"
+    )
     parser.add_argument(
         "--gnomad-version",
         type=int,
@@ -285,15 +363,18 @@ if __name__ == "__main__":
     parser.add_argument("--output", required=True, help="destination for variants file")
     args = parser.parse_args()
 
-    if args.gene_ids:
-        genes = args.gene_ids
-    else:
-        with open_file(args.genes_file) as f:
-            genes = [l.strip() for l in f if l.strip()]
+    if args.gene_ids or args.genes_file:
+        if args.gene_ids:
+            genes = args.gene_ids
+        elif args.genes_file:
+            with open_file(args.genes_file) as f:
+                genes = [l.strip() for l in f if l.strip()]
+        variants = get_gnomad_lof_variants(
+            args.gnomad_version, genes, include_low_confidence=args.include_low_confidence
+        )
 
-    variants = get_gnomad_lof_variants(
-        args.gnomad_version, genes, include_low_confidence=args.include_low_confidence
-    )
+    elif args.variants_file:
+        variants = annotate_list_of_variants(args.gnomad_version, args.variants_file)
 
     filename = args.output
     os.makedirs(os.path.dirname(filename), exist_ok=True)
