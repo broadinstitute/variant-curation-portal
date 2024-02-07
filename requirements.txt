@@ -4,15 +4,17 @@
 #
 #    pip-compile
 #
-django-filter==2.2.0
-    # via -r requirements.in
-django-webpack-loader==0.6.0
-    # via -r requirements.in
-django==2.2.24
+asgiref==3.7.2
+    # via django
+django==3.2.24
     # via
     #   -r requirements.in
     #   django-filter
     #   djangorestframework
+django-filter==2.2.0
+    # via -r requirements.in
+django-webpack-loader==0.6.0
+    # via -r requirements.in
 djangorestframework==3.11.2
     # via -r requirements.in
 pytz==2019.1
