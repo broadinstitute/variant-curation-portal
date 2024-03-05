@@ -174,7 +174,12 @@ def add(a, b):
 SUPPORTED_GNOMAD_VERSIONS = (2, 4)
 
 
-def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=False):
+def get_gnomad_lof_variants(
+    gnomad_version,
+    gene_ids,
+    include_low_confidence=False,
+    remove_singletons=False,
+):
     if gnomad_version not in SUPPORTED_GNOMAD_VERSIONS:
         raise Exception(f"Invalid gnomAD version {gnomad_version}")
 
@@ -255,6 +260,9 @@ def get_gnomad_lof_variants(gnomad_version, gene_ids, include_low_confidence=Fal
         qc_filter=hl.if_else(ds.qc_filter == "", "PASS", ds.qc_filter),
         AF=hl.if_else(ds.AN == 0, 0, ds.AC / ds.AN),
     )
+
+    if remove_singletons:
+        ds = ds.filter(ds.AC == 1, keep=False)
 
     return ds
 
@@ -360,6 +368,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Include variants marked low-confidence by LOFTEE",
     )
+    parser.add_argument(
+        "--remove-singletons",
+        action="store_true",
+        help="Include variants marked low-confidence by LOFTEE",
+    )
     parser.add_argument("--output", required=True, help="destination for variants file")
     args = parser.parse_args()
 
@@ -370,7 +383,10 @@ if __name__ == "__main__":
             with open_file(args.genes_file) as f:
                 genes = [l.strip() for l in f if l.strip()]
         variants = get_gnomad_lof_variants(
-            args.gnomad_version, genes, include_low_confidence=args.include_low_confidence
+            args.gnomad_version,
+            genes,
+            include_low_confidence=args.include_low_confidence,
+            remove_singletons=args.remove_singletons,
         )
 
     elif args.variants_file:
