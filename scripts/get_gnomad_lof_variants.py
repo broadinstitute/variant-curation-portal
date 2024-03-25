@@ -109,25 +109,33 @@ def load_gnomad_v4_variants():
 def annotate_gnomad_v4_variants_with_liftover(ds):
     rg37 = hl.get_reference("GRCh37")
     rg38 = hl.get_reference("GRCh38")
-    rg38.add_liftover("gs://hail-common/references/grch38_to_grch37.over.chain.gz", rg37)
+
+    if not rg38.has_liftover(rg37):
+        chain_file_path = "gs://hail-common/references/grch38_to_grch37.over.chain.gz"
+        rg38.add_liftover(chain_file_path, rg37)
 
     ds = ds.annotate(liftover_variant_id=variant_id(hl.liftover(ds.locus, "GRCh37"), ds.alleles))
     return ds
 
 
-def fetch_gene(gene_id, reference_genome):
-    query = """
-    query Gene($gene_id: String!, $reference_genome: ReferenceGenomeId!) {
-        gene(gene_id: $gene_id, reference_genome: $reference_genome) {
+def fetch_gene(gene_identifier, identifier_type="gene_id", reference_genome="GRCh38"):
+
+    if identifier_type not in ["gene_id", "gene_symbol"]:
+        raise ValueError("Identifier must be one of: gene_id, gene_symbol")
+
+    query = f"""
+    query Gene(${identifier_type}: String!, $reference_genome: ReferenceGenomeId!) {{
+        gene({identifier_type}: ${"gene_id" if identifier_type == "gene_id" else "gene_symbol"}, reference_genome: $reference_genome) {{
+            gene_id
             chrom
             start
             stop
-        }
-    }
+        }}
+    }}
     """
 
     variables = {
-        "gene_id": gene_id,
+        "gene_id" if identifier_type == "gene_id" else "gene_symbol": gene_identifier,
         "reference_genome": reference_genome,
     }
 
@@ -171,12 +179,34 @@ def add(a, b):
     return hl.or_else(a, 0) + hl.or_else(b, 0)
 
 
+def write_files_one_by_one(gene_symbols):
+    number_of_symbols = len(gene_symbols)
+    for index, gene_symbol in enumerate(gene_symbols):
+        print(f"({index + 1} / {number_of_symbols}) - Writing results for gene: {gene_symbol}")
+        variants = get_gnomad_lof_variants(
+            gnomad_version=4,
+            gene_ids=[gene_symbol],
+            gene_identifier_type="gene_symbol",
+            remove_singletons=True,
+        )
+
+        filename = f"./data/{gene_symbol}.json"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+        rows = variants.annotate(json=hl.json(variants.row_value)).key_by().select("json").collect()
+        with open_file(filename, "w") as f:
+            f.write("[" + ",".join([row.json for row in rows]) + "]")
+
+    print("All results files written!")
+
+
 SUPPORTED_GNOMAD_VERSIONS = (2, 4)
 
 
 def get_gnomad_lof_variants(
     gnomad_version,
     gene_ids,
+    gene_identifier_type="gene_id",
     include_low_confidence=False,
     remove_singletons=False,
 ):
@@ -189,7 +219,11 @@ def get_gnomad_lof_variants(
         ds = load_gnomad_v4_variants()
 
     reference_genome = "GRCh37" if gnomad_version == 2 else "GRCh38"
-    genes = [fetch_gene(gene_id, reference_genome) for gene_id in gene_ids]
+
+    genes = [
+        fetch_gene(gene_id, identifier_type=gene_identifier_type, reference_genome=reference_genome)
+        for gene_id in gene_ids
+    ]
 
     chrom_prefix = "chr" if reference_genome == "GRCh38" else ""
 
@@ -354,6 +388,9 @@ if __name__ == "__main__":
     group.add_argument("--gene-ids", nargs="+", metavar="GENE", help="Ensembl IDs of genes")
     group.add_argument("--genes-file", help="path to file containing list of Ensembl IDs of genes")
     group.add_argument(
+        "--gene-symbols-file", help="path to file containing list of gene symbols of genes"
+    )
+    group.add_argument(
         "--variants-file", help="path to file containing list of gnomAD IDs of variants"
     )
     parser.add_argument(
@@ -388,6 +425,12 @@ if __name__ == "__main__":
             include_low_confidence=args.include_low_confidence,
             remove_singletons=args.remove_singletons,
         )
+
+    elif args.gene_symbols_file:
+        with open_file(args.gene_symbols_file) as f:
+            gene_symbols = [l.strip() for l in f if l.strip()]
+            write_files_one_by_one(gene_symbols)
+            exit(0)
 
     elif args.variants_file:
         variants = annotate_list_of_variants(args.gnomad_version, args.variants_file)
