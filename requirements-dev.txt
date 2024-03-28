@@ -1,4 +1,4 @@
-black==23.11.0
+black==24.3.0
 hail==0.2.126
 pandas==2.1.4
 pip-tools==4.4.1
