@@ -11,6 +11,9 @@ import VariantId from "../../VariantId";
 import Page from "../Page";
 
 const VariantResultsPage = ({ variantId }) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const referenceGenome = urlParams.get("reference_genome") || "GRCh37";
+
   return (
     <Page>
       <DocumentTitle title={`Results | ${variantId}`} />
@@ -28,7 +31,7 @@ const VariantResultsPage = ({ variantId }) => {
         </Button>
       </p>
 
-      <Fetch path={`/variant/${variantId}/results/`}>
+      <Fetch path={`/variant/${variantId}/results/`} params={{ reference_genome: referenceGenome }}>
         {({ data: { results } }) => {
           return (
             <Table>

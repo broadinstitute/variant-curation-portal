@@ -12,6 +12,8 @@ const VariantProjectsPage = ({ variantId }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const referenceGenome = urlParams.get("reference_genome");
 
+  const referenceGenomeParam = referenceGenome ? `?reference_genome=${referenceGenome}` : "";
+
   return (
     <Page>
       <DocumentTitle title={`Projects | ${variantId}`} />
@@ -20,11 +22,13 @@ const VariantProjectsPage = ({ variantId }) => {
       </Header>
 
       <p>
-        <Link to="/variants/">Return to all variants</Link>
+        <Link to={`/variants/${referenceGenomeParam}`}>Return to all variants</Link>
       </p>
 
       <p>
-        <Link to={`/variant/${variantId}/results/`}>View all results for this variant</Link>
+        <Link to={`/variant/${variantId}/results/${referenceGenomeParam}`}>
+          View all results for this variant
+        </Link>
       </p>
 
       <Fetch
