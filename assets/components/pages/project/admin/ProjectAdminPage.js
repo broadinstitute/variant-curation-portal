@@ -8,6 +8,9 @@ import DocumentTitle from "../../../DocumentTitle";
 import Page from "../../Page";
 
 const ProjectAdminPage = ({ project, user }) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const referenceGenome = urlParams.get("reference_genome") || "GRCh37";
+
   const curators = Object.keys(project.assignments || {});
   return (
     <Page>
@@ -57,7 +60,7 @@ const ProjectAdminPage = ({ project, user }) => {
                         as="a"
                         disabled={completed === 0}
                         download
-                        href={`/api/project/${project.id}/results/export/?curator__username=${curator}`}
+                        href={`/api/project/${project.id}/results/export/?curator__username=${curator}&reference_genome=${referenceGenome}`}
                       >
                         Download results
                       </Button>
@@ -83,7 +86,11 @@ const ProjectAdminPage = ({ project, user }) => {
         <p>
           <Link to={`/project/${project.id}/results/import/`}>Import curation results</Link>
         </p>
-        <Button as="a" download href={`/api/project/${project.id}/results/export/`}>
+        <Button
+          as="a"
+          download
+          href={`/api/project/${project.id}/results/export/?reference_genome=${referenceGenome}`}
+        >
           Download all results
         </Button>
       </PermissionRequired>

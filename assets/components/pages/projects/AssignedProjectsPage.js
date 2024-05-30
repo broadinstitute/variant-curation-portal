@@ -8,6 +8,9 @@ import Fetch from "../../Fetch";
 import Page from "../Page";
 
 const AssignedProjectsPage = ({ user }) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const referenceGenome = urlParams.get("reference_genome") || "GRCh37";
+
   return (
     <Page>
       <DocumentTitle title="Assignments" />
@@ -42,7 +45,7 @@ const AssignedProjectsPage = ({ user }) => {
                             as="a"
                             disabled={project.variants_curated === 0}
                             download
-                            href={`/api/project/${project.id}/results/export/?curator__username=${user.username}`}
+                            href={`/api/project/${project.id}/results/export/?curator__username=${user.username}&reference_genome=${referenceGenome}`}
                           >
                             Download results
                           </Button>

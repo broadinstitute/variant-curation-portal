@@ -26,7 +26,12 @@ const VariantResultsPage = ({ variantId }) => {
       </p>
 
       <p>
-        <Button as="a" disabled={false} download href={`/api/variant/${variantId}/results/export/`}>
+        <Button
+          as="a"
+          disabled={false}
+          download
+          href={`/api/variant/${variantId}/results/export/?reference_genome=${referenceGenome}`}
+        >
           Download results
         </Button>
       </p>
