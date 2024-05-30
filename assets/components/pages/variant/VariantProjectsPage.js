@@ -10,9 +10,7 @@ import Page from "../Page";
 
 const VariantProjectsPage = ({ variantId }) => {
   const urlParams = new URLSearchParams(window.location.search);
-  const referenceGenome = urlParams.get("reference_genome");
-
-  const referenceGenomeParam = referenceGenome ? `?reference_genome=${referenceGenome}` : "";
+  const referenceGenome = urlParams.get("reference_genome") || "GRCh37";
 
   return (
     <Page>
@@ -22,11 +20,11 @@ const VariantProjectsPage = ({ variantId }) => {
       </Header>
 
       <p>
-        <Link to={`/variants/${referenceGenomeParam}`}>Return to all variants</Link>
+        <Link to={`/variants/?reference_genome=${referenceGenome}`}>Return to all variants</Link>
       </p>
 
       <p>
-        <Link to={`/variant/${variantId}/results/${referenceGenomeParam}`}>
+        <Link to={`/variant/${variantId}/results/?reference_genome=${referenceGenome}`}>
           View all results for this variant
         </Link>
       </p>

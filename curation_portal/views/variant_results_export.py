@@ -19,10 +19,17 @@ class ExportVariantResultsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+
+        reference_genome = (
+            request.query_params["reference_genome"]
+            if "reference_genome" in request.query_params
+            else "GRCh37"
+        )
+
         variants = (
             Variant.objects.filter(
                 Q(variant_id=kwargs["variant_id"])
-                & Q(reference_genome="GRCh37")  # TODO: Handle different reference genomes
+                & Q(reference_genome=reference_genome)
                 & (
                     Q(project__owners__id__contains=request.user.id)
                     | Q(curation_assignment__curator=request.user)
@@ -38,7 +45,7 @@ class ExportVariantResultsView(APIView):
         completed_assignments = (
             CurationAssignment.objects.filter(
                 Q(variant__variant_id=kwargs["variant_id"])
-                & Q(variant__reference_genome="GRCh37")  # TODO: Handle different reference genomes
+                & Q(variant__reference_genome=reference_genome)
                 & (
                     Q(variant__project__owners__id__contains=request.user.id)
                     | Q(curator=request.user)
@@ -60,9 +67,9 @@ class ExportVariantResultsView(APIView):
         result_fields = ["notes", "should_revisit", "verdict", *FLAG_FIELDS]
 
         response = HttpResponse(content_type="text/csv")
-        response[
-            "Content-Disposition"
-        ] = f'attachment; filename="{kwargs["variant_id"]}_results.csv"'
+        response["Content-Disposition"] = (
+            f'attachment; filename="{kwargs["variant_id"]}_results.csv"'
+        )
 
         writer = csv.writer(response)
 
