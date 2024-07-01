@@ -5,9 +5,13 @@ on:
       - main
     paths:
       - "assets/**"
+      - "package.json"
+      - "yarn.lock"
   pull_request:
     paths:
       - "assets/**"
+      - "package.json"
+      - "yarn.lock"
 jobs:
   checks:
     name: Checks
