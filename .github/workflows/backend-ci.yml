@@ -6,10 +6,14 @@ on:
     paths:
       - "curation-portal/**"
       - "tests/**"
+      - "requirements.txt"
+      - "requirements-dev.txt"
   pull_request:
     paths:
       - "curation-portal/**"
       - "tests/**"
+      - "requirements.txt"
+      - "requirements-dev.txt"
 jobs:
   checks:
     name: Checks
