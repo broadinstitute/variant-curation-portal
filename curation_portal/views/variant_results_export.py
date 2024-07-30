@@ -19,7 +19,6 @@ class ExportVariantResultsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
-
         reference_genome = (
             request.query_params["reference_genome"]
             if "reference_genome" in request.query_params

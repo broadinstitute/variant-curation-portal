@@ -59,7 +59,6 @@ class VariantResultsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):  # pylint: disable=unused-argument
-
         reference_genome = (
             request.query_params["reference_genome"]
             if "reference_genome" in request.query_params
@@ -85,9 +84,7 @@ class VariantResultsView(APIView):
         results = (
             CurationResult.objects.filter(
                 Q(assignment__variant__variant_id=kwargs["variant_id"])
-                & Q(
-                    assignment__variant__reference_genome=reference_genome
-                )
+                & Q(assignment__variant__reference_genome=reference_genome)
                 & (
                     Q(assignment__variant__project__owners__id__contains=request.user.id)
                     | Q(assignment__curator=request.user)
