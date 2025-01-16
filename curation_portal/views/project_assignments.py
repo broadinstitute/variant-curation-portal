@@ -93,13 +93,6 @@ class NewAssignmentSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
-        if CurationAssignment.objects.filter(
-            variant__project=self.context["project"],
-            variant__variant_id=attrs["variant_id"],
-            curator__username=attrs["curator"],
-        ).exists():
-            raise serializers.ValidationError("Duplicate assignment")
-
         return attrs
 
     def create(self, validated_data):
@@ -107,7 +100,13 @@ class NewAssignmentSerializer(serializers.Serializer):
         variant = Variant.objects.get(
             project=self.context["project"], variant_id=validated_data["variant_id"]
         )
-        return CurationAssignment.objects.create(curator=curator, variant=variant)
+
+        assignment, created = CurationAssignment.objects.get_or_create(
+            curator = curator,
+            variant = variant,
+        )
+
+        return assignment
 
     def update(self, instance, validated_data):
         raise NotImplementedError
