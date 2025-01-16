@@ -173,6 +173,23 @@ class ImportedResultListSerializer(ListSerializer):  # pylint: disable=abstract-
 
         return attrs
 
+    def create(self, validated_data):
+        results = []
+
+        # ignore any variants in the curations file
+        #   that are not in the project
+        for item in validated_data:
+            variant_id = item['variant_id']
+            if not Variant.objects.filter(
+                project=self.context["project"],
+                variant_id=variant_id
+            ).exists():
+                continue
+
+            result = self.child.create(item)
+            results.append(result)
+
+        return results
 
 class ImportedResultSerializer(ModelSerializer):
     curator = UserField(required=True)
@@ -188,12 +205,6 @@ class ImportedResultSerializer(ModelSerializer):
         model = CurationResult
         exclude = ("id",)
         list_serializer_class = ImportedResultListSerializer
-
-    def validate_variant_id(self, value):
-        if not Variant.objects.filter(project=self.context["project"], variant_id=value).exists():
-            raise ValidationError("Variant does not exist")
-
-        return value
 
     def validate(self, attrs):
         if CurationAssignment.objects.filter(
