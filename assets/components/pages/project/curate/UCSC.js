@@ -21,22 +21,13 @@ export const UCSCVariantView = ({ settings, variant }) => {
     url = `${url}&hgS_doOtherUser=submit&hgS_otherUserName=${settings.ucsc_username}&hgS_otherUserSessionName=${settings.ucsc_session_name}`;
   }
 
-  if (process.env.NODE_ENV === "development") {
-    return (
-      <Segment placeholder id="ucsc" textAlign="center">
-        <p>UCSC variant view</p>
-        <a href={url}>{url}</a>
-      </Segment>
-    );
-  }
-
   return (
-    <iframe
-      title="UCSC variant view"
-      id="ucsc"
-      src={url}
-      style={{ width: "100%", height: "4000px" }}
-    />
+    <Segment placeholder id="ucsc" textAlign="center">
+      <p>UCSC variant view</p>
+      <a href={url} target="_blank" rel="noopener noreferrer">
+        {url}
+      </a>
+    </Segment>
   );
 };
 
@@ -82,22 +73,13 @@ export const UCSCGeneView = ({ settings, variant }) => {
     url = `${url}&hgS_doOtherUser=submit&hgS_otherUserName=${settings.ucsc_username}&hgS_otherUserSessionName=${settings.ucsc_session_name}`;
   }
 
-  if (process.env.NODE_ENV === "development") {
-    return (
-      <Segment placeholder id="ucsc-gene" textAlign="center">
-        <p>UCSC gene view</p>
-        <a href={url}>{url}</a>
-      </Segment>
-    );
-  }
-
   return (
-    <iframe
-      title="UCSC gene view"
-      id="ucsc-gene"
-      src={url}
-      style={{ width: "100%", height: "4000px" }}
-    />
+    <Segment placeholder id="ucsc-gene" textAlign="center">
+      <p>UCSC gene view</p>
+      <a href={url} target="_blank" rel="noopener noreferrer">
+        {url}
+      </a>
+    </Segment>
   );
 };
 
